@@ -110,6 +110,25 @@ body {
 }
 
 @layer components {
+  /* Skip link: hidden until keyboard-focused */
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-250%);
+    background: var(--color-ink);
+    color: var(--color-cream);
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    transition: transform 0.2s ease-out;
+  }
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+
   /* Desktop nav links with growing butter underline */
   .nav-link {
     position: relative;

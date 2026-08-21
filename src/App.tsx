@@ -23,6 +23,9 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <RouterProvider>
         <SmoothScrollProvider>
+          <a href="#main" className="skip-link on-ink">
+            Zum Inhalt springen
+          </a>
           <Grain />
           <CurrentPage />
         </SmoothScrollProvider>

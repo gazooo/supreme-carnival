@@ -60,7 +60,7 @@ export default function Insights() {
                 </Chip>
                 <Chip tone="cream">Englisch</Chip>
               </div>
-              <h3 className="mt-4 font-display text-title text-ink">
+              <h3 className="mt-4 font-display text-title text-ink" lang="en">
                 Running an LLM email triage in production
               </h3>
               <p className="mt-3 leading-relaxed text-ink-soft">
