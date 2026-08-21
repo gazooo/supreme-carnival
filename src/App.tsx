@@ -1,4 +1,7 @@
+import { MotionConfig } from 'motion/react'
 import { RouterProvider, useRouter } from './lib/router'
+import { SmoothScrollProvider } from './lib/scroll'
+import Grain from './components/Grain'
 import OnePager from './pages/OnePager'
 import Impressum from './pages/Impressum'
 import Datenschutz from './pages/Datenschutz'
@@ -17,8 +20,13 @@ function CurrentPage() {
 
 export default function App() {
   return (
-    <RouterProvider>
-      <CurrentPage />
-    </RouterProvider>
+    <MotionConfig reducedMotion="user">
+      <RouterProvider>
+        <SmoothScrollProvider>
+          <Grain />
+          <CurrentPage />
+        </SmoothScrollProvider>
+      </RouterProvider>
+    </MotionConfig>
   )
 }

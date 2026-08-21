@@ -49,6 +49,7 @@
   --animate-marquee: marquee 32s linear infinite;
   --animate-float: float 7s ease-in-out infinite;
   --animate-float-slow: float 11s ease-in-out infinite;
+  --animate-scroll-dot: scroll-dot 1.9s ease-in-out infinite;
 
   @keyframes marquee {
     to {
@@ -62,6 +63,20 @@
     }
     50% {
       transform: translateY(-14px);
+    }
+  }
+  @keyframes scroll-dot {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    70% {
+      transform: translateY(0.85rem);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0;
     }
   }
 }
@@ -95,6 +110,33 @@ body {
 }
 
 @layer components {
+  /* Desktop nav links with growing butter underline */
+  .nav-link {
+    position: relative;
+    padding: 0.5rem 0.75rem;
+    border-radius: 9999px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--color-ink);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.2rem;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--color-butter-strong);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
   /* Oversized decorative section numerals */
   .section-number {
     font-family: var(--font-display);
@@ -111,6 +153,11 @@ body {
       color: rgb(26 26 46 / 0.07);
     }
   }
+}
+
+/* Anchor targets clear the fixed nav when natively scrolled to */
+[id] {
+  scroll-margin-top: 5.5rem;
 }
 
 /*

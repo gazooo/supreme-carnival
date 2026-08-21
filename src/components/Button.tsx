@@ -1,8 +1,9 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'onInk'
-export type ButtonSize = 'md' | 'lg'
+export type ButtonSize = 'sm' | 'md' | 'lg'
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function buttonClasses(
   variant: ButtonVariant = 'primary',
   size: ButtonSize = 'md',
@@ -19,6 +20,7 @@ export function buttonClasses(
       'on-ink border-2 border-cream bg-cream text-ink hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-butter hover:border-butter hover:shadow-pop-butter',
   }
   const sizes: Record<ButtonSize, string> = {
+    sm: 'px-4 py-2 text-sm',
     md: 'px-6 py-3 text-base',
     lg: 'px-7 py-3.5 text-lg sm:px-9 sm:py-4',
   }
