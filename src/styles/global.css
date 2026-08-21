@@ -1,0 +1,26 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Pastel palette — ink text on cream/pastel surfaces, never pastel text on white */
+  --color-cream: #faf5ec;
+  --color-ink: #1a1a2e;
+  --color-ink-soft: #4c4c66;
+  --color-mint: #b9e6cf;
+  --color-peach: #ffd3be;
+  --color-lavender: #d9cff5;
+  --color-sky: #c2e0f6;
+  --color-butter: #f8e39e;
+
+  --font-display: 'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
