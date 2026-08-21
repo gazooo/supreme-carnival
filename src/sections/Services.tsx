@@ -11,7 +11,12 @@ function IconAI({ className = '' }: { className?: string }) {
       <path d="M12 7V3m0 0h3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
       <circle cx="9" cy="13" r="1.4" fill="currentColor" />
       <circle cx="15" cy="13" r="1.4" fill="currentColor" />
-      <path d="M9.5 16.5c.8.6 4.2.6 5 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path
+        d="M9.5 16.5c.8.6 4.2.6 5 0"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
@@ -22,8 +27,19 @@ function IconPipeline({ className = '' }: { className?: string }) {
       <circle cx="5" cy="6" r="2.2" stroke="currentColor" strokeWidth="2" />
       <circle cx="12" cy="12" r="2.2" stroke="currentColor" strokeWidth="2" />
       <circle cx="19" cy="18" r="2.2" stroke="currentColor" strokeWidth="2" />
-      <path d="M7 7.5 10 10.5M14 13.5l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M14.2 6H20M4 18h5.8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray="1 3" />
+      <path
+        d="M7 7.5 10 10.5M14 13.5l3 3"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M14.2 6H20M4 18h5.8"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeDasharray="1 3"
+      />
     </svg>
   )
 }
@@ -120,7 +136,10 @@ export default function Services() {
                 <h3 className="mt-5 font-display text-title text-ink">{service.title}</h3>
                 <ul className="mt-4 flex flex-col gap-2.5">
                   {service.bullets.map((bullet) => (
-                    <li key={bullet} className="flex gap-2.5 text-[0.95rem] leading-relaxed text-ink-soft">
+                    <li
+                      key={bullet}
+                      className="flex gap-2.5 text-[0.95rem] leading-relaxed text-ink-soft"
+                    >
                       <svg
                         viewBox="0 0 16 16"
                         className="mt-1 h-3.5 w-3.5 shrink-0 text-ink"
@@ -140,9 +159,7 @@ export default function Services() {
                   ))}
                 </ul>
                 {service.footnote ? (
-                  <p className="mt-4 font-display font-semibold text-ink">
-                    „{service.footnote}“
-                  </p>
+                  <p className="mt-4 font-display font-semibold text-ink">„{service.footnote}“</p>
                 ) : null}
                 <div className="mt-auto flex flex-wrap gap-2 pt-6">
                   {service.chips.map((chip) => (

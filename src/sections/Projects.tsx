@@ -12,7 +12,9 @@ function AgentVisual() {
     <div aria-hidden="true" className="relative mx-auto w-full max-w-md">
       <div
         className="absolute -top-10 -left-8 h-56 w-56 rounded-full"
-        style={{ background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)' }}
+        style={{
+          background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)',
+        }}
       />
       <div
         className="absolute -right-6 -bottom-8 h-48 w-48 rounded-full"
@@ -74,7 +76,9 @@ function PipelineVisual() {
       />
       <div
         className="absolute -bottom-10 -left-8 h-56 w-56 rounded-full"
-        style={{ background: 'radial-gradient(closest-side, var(--color-butter), transparent 72%)' }}
+        style={{
+          background: 'radial-gradient(closest-side, var(--color-butter), transparent 72%)',
+        }}
       />
       <div className="relative rounded-3xl border-2 border-ink bg-white p-5 shadow-pop">
         <div className="flex items-center justify-between">

@@ -99,15 +99,6 @@ export default function Hero() {
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 90])
   const indicatorOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
 
-  const intro = {
-    hidden: {},
-    visible: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
-  }
-  const item = {
-    hidden: { opacity: 0, y: 34 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
-  }
-
   return (
     <section
       id="hero"
@@ -123,7 +114,9 @@ export default function Hero() {
         >
           <div
             className="h-full w-full rounded-full"
-            style={{ background: 'radial-gradient(closest-side, var(--color-mint), transparent 72%)' }}
+            style={{
+              background: 'radial-gradient(closest-side, var(--color-mint), transparent 72%)',
+            }}
           />
         </motion.div>
         <motion.div
@@ -143,13 +136,17 @@ export default function Hero() {
         >
           <div
             className="h-full w-full rounded-full"
-            style={{ background: 'radial-gradient(closest-side, var(--color-sky), transparent 72%)' }}
+            style={{
+              background: 'radial-gradient(closest-side, var(--color-sky), transparent 72%)',
+            }}
           />
         </motion.div>
 
         {/* Crisp playful shapes */}
         <motion.div
-          style={reduced ? undefined : { y: shapeButterY, x: shapeButterX, rotate: shapeButterRotate }}
+          style={
+            reduced ? undefined : { y: shapeButterY, x: shapeButterX, rotate: shapeButterRotate }
+          }
           className="absolute top-[20%] right-[10%] hidden sm:block"
         >
           <div
@@ -177,37 +174,39 @@ export default function Hero() {
         </motion.div>
       </div>
 
-      <motion.div style={reduced ? undefined : { y: contentY }} className="relative z-10 flex flex-1">
+      <motion.div
+        style={reduced ? undefined : { y: contentY }}
+        className="relative z-10 flex flex-1"
+      >
         <Container size="wide" className="flex flex-1 flex-col justify-center pb-24 md:pb-28">
-          <motion.div
-            variants={intro}
-            initial={reduced ? false : 'hidden'}
-            animate="visible"
-            className="max-w-5xl"
-          >
-            <motion.div variants={item} className="flex flex-wrap items-center gap-3">
+          {/*
+            Kein Entrance-Stagger: index.html malt einen statischen Hero-Shell
+            vor der JS-Ausführung (FCP/LCP) — der Hero muss ihn nahtlos ersetzen.
+          */}
+          <div className="max-w-5xl">
+            <div className="flex flex-wrap items-center gap-3">
               <Chip variant="sticker" tone="white" rotate={-2}>
                 Malte Lohrer
               </Chip>
               <Chip variant="sticker" tone="butter" rotate={1.5}>
                 DevOps &amp; Platform Engineer
               </Chip>
-            </motion.div>
+            </div>
 
-            <motion.h1 variants={item} className="mt-8 font-display text-hero text-ink">
+            <h1 className="mt-8 font-display text-hero text-ink">
               Ich baue und betreibe
               <span className="block">
                 <RotatingWord />
               </span>
-            </motion.h1>
+            </h1>
 
-            <motion.p variants={item} className="mt-8 max-w-2xl text-lead text-ink-soft">
+            <p className="mt-8 max-w-2xl text-lead text-ink-soft">
               Über zehn Jahre IT: vier Jahre CI/CD-Plattform für die In-Car-UI-Entwicklung von
               Mercedes-Benz, zuletzt agentische KI-Assistenten in Produktion. Ich liefere Systeme,
               die im Alltag bestehen – gebaut, dokumentiert, betrieben.
-            </motion.p>
+            </p>
 
-            <motion.div variants={item} className="mt-10 flex flex-wrap items-center gap-4">
+            <div className="mt-10 flex flex-wrap items-center gap-4">
               <Magnetic>
                 <ButtonLink href={MAILTO} size="lg">
                   Projekt anfragen
@@ -217,8 +216,8 @@ export default function Hero() {
               <ButtonLink variant="secondary" size="lg" href="#leistungen">
                 Leistungen ansehen
               </ButtonLink>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         </Container>
       </motion.div>
 
@@ -229,7 +228,10 @@ export default function Hero() {
         style={reduced ? undefined : { opacity: indicatorOpacity }}
         className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2 text-ink"
       >
-        <span className="relative block h-10 w-6 rounded-full border-2 border-ink" aria-hidden="true">
+        <span
+          className="relative block h-10 w-6 rounded-full border-2 border-ink"
+          aria-hidden="true"
+        >
           <span className="absolute top-1.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-ink motion-safe:animate-scroll-dot" />
         </span>
         <span className="font-display text-xs font-medium tracking-widest uppercase">Scrollen</span>

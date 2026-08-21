@@ -162,11 +162,15 @@ function MobileOverlay({
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className="absolute -top-24 -right-28 h-80 w-80 rounded-full"
-          style={{ background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)' }}
+          style={{
+            background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)',
+          }}
         />
         <div
           className="absolute -bottom-28 -left-24 h-96 w-96 rounded-full"
-          style={{ background: 'radial-gradient(closest-side, var(--color-mint), transparent 72%)' }}
+          style={{
+            background: 'radial-gradient(closest-side, var(--color-mint), transparent 72%)',
+          }}
         />
         <div className="absolute right-10 bottom-40 h-12 w-12 rotate-12 rounded-xl border-2 border-ink bg-butter shadow-pop-sm" />
       </div>

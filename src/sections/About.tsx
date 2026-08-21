@@ -22,7 +22,10 @@ function PortraitPlaceholder() {
             'linear-gradient(140deg, var(--color-mint) 0%, var(--color-sky) 45%, var(--color-lavender) 100%)',
         }}
       >
-        <span aria-hidden="true" className="font-display text-9xl font-bold tracking-tight text-ink">
+        <span
+          aria-hidden="true"
+          className="font-display text-9xl font-bold tracking-tight text-ink"
+        >
           ML
         </span>
         <Asterisk aria-hidden="true" className="absolute top-6 right-6 h-8 w-8 text-ink/50" />
@@ -57,9 +60,8 @@ export default function About() {
             <div className="flex flex-col gap-5 text-lead text-ink-soft">
               <p>
                 M.Sc. Computer Science &amp; Media an der Hochschule der Medien Stuttgart (Note
-                1,5), seit 2015 in der IT – von Daimler über das Innenministerium
-                Baden-Württemberg bis zu Mercedes-Benz und Aremus Finance. Zuhause in Esslingen am
-                Neckar.
+                1,5), seit 2015 in der IT – von Daimler über das Innenministerium Baden-Württemberg
+                bis zu Mercedes-Benz und Aremus Finance. Zuhause in Esslingen am Neckar.
               </p>
               <p>
                 Ich arbeite remote, direkt und ohne Übersetzungsverlust: ein Ansprechpartner für

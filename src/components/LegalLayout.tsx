@@ -36,7 +36,10 @@ export default function LegalLayout({ title, children }: { title: string; childr
         </Container>
       </main>
       <footer className="border-t border-ink/10 py-8 print:hidden">
-        <Container size="narrow" className="flex flex-wrap items-center gap-6 text-sm text-ink-soft">
+        <Container
+          size="narrow"
+          className="flex flex-wrap items-center gap-6 text-sm text-ink-soft"
+        >
           <RouteLink to="/" className="underline underline-offset-4 hover:text-ink">
             Startseite
           </RouteLink>

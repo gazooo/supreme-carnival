@@ -28,8 +28,8 @@ export default function Datenschutz() {
       <h2>Server-Logfiles</h2>
       <p>
         Beim Aufruf dieser Website verarbeitet der Hosting-Anbieter automatisch technische
-        Zugriffsdaten in sogenannten Server-Logfiles, zum Beispiel IP-Adresse, Datum und Uhrzeit
-        des Abrufs, die aufgerufene Datei und den verwendeten Browser. Diese Daten sind für die
+        Zugriffsdaten in sogenannten Server-Logfiles, zum Beispiel IP-Adresse, Datum und Uhrzeit des
+        Abrufs, die aufgerufene Datei und den verwendeten Browser. Diese Daten sind für die
         Auslieferung der Website technisch erforderlich und werden nicht mit anderen Datenquellen
         zusammengeführt. Rechtsgrundlage ist mein berechtigtes Interesse an einem sicheren und
         stabilen Betrieb der Website (Art. 6 Abs. 1 lit. f DSGVO). Die Logfiles werden nach kurzer

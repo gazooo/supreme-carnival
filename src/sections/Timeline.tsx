@@ -52,7 +52,7 @@ const STATIONS = [
 
 export default function Timeline() {
   const reduced = useReducedMotion()
-  const listRef = useRef<HTMLOListElement>(null)
+  const listRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
     target: listRef as RefObject<HTMLElement>,
     offset: ['start 0.8', 'end 0.55'],
@@ -72,7 +72,7 @@ export default function Timeline() {
           />
         </Reveal>
 
-        <ol ref={listRef} className="relative mt-14 flex flex-col gap-12 md:mt-16 md:gap-14">
+        <div ref={listRef} className="relative mt-14 md:mt-16">
           {/* Track + scroll-drawn line */}
           <span
             aria-hidden="true"
@@ -92,34 +92,36 @@ export default function Timeline() {
             />
           </motion.span>
 
-          {STATIONS.map((station, index) => (
-            <Reveal key={station.org + station.period} delay={index * 0.05}>
-              <li className="relative pl-12 sm:pl-16">
+          <ol className="flex flex-col gap-12 md:gap-14">
+            {STATIONS.map((station, index) => (
+              <li key={station.org + station.period} className="relative pl-12 sm:pl-16">
                 <span
                   aria-hidden="true"
                   className={`absolute top-1 left-[2px] h-6 w-6 rounded-full border-2 border-ink shadow-pop-sm ${station.dot}`}
                 />
-                <div
-                  className={
-                    station.final
-                      ? 'inline-block rounded-3xl border-2 border-ink bg-mint p-6 shadow-pop-sm'
-                      : ''
-                  }
-                >
-                  <p className="font-display text-sm font-bold tracking-wide text-ink-soft uppercase">
-                    {station.period}
-                  </p>
-                  <h3 className="mt-1 font-display text-title text-ink">
-                    {station.org}
-                    {station.final ? <span aria-hidden="true"> ✦</span> : null}
-                  </h3>
-                  <p className="mt-0.5 font-semibold text-ink">{station.role}</p>
-                  <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-soft">{station.desc}</p>
-                </div>
+                <Reveal delay={index * 0.05}>
+                  <div
+                    className={
+                      station.final
+                        ? 'inline-block rounded-3xl border-2 border-ink bg-mint p-6 shadow-pop-sm'
+                        : ''
+                    }
+                  >
+                    <p className="font-display text-sm font-bold tracking-wide text-ink-soft uppercase">
+                      {station.period}
+                    </p>
+                    <h3 className="mt-1 font-display text-title text-ink">
+                      {station.org}
+                      {station.final ? <span aria-hidden="true"> ✦</span> : null}
+                    </h3>
+                    <p className="mt-0.5 font-semibold text-ink">{station.role}</p>
+                    <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-soft">{station.desc}</p>
+                  </div>
+                </Reveal>
               </li>
-            </Reveal>
-          ))}
-        </ol>
+            ))}
+          </ol>
+        </div>
       </Container>
     </section>
   )

@@ -3,13 +3,7 @@ import Reveal from '../components/Reveal'
 import Magnetic from '../components/Magnetic'
 import { ButtonLink } from '../components/Button'
 import { ArrowRight, Asterisk, Sparkle, Squiggle } from '../components/doodles'
-import {
-  AVAILABILITY_DATE,
-  EMAIL,
-  MAILTO,
-  PHONE_DISPLAY,
-  PHONE_TEL,
-} from '../content/site'
+import { AVAILABILITY_DATE, EMAIL, MAILTO, PHONE_DISPLAY, PHONE_TEL } from '../content/site'
 
 const FACTS = [
   { title: `Verfügbar ab ${AVAILABILITY_DATE}`, detail: 'Projektstart planbar ab Oktober 2026.' },
@@ -20,7 +14,10 @@ const FACTS = [
 
 export default function Contact() {
   return (
-    <section id="kontakt" className="relative scroll-mt-20 overflow-hidden bg-ink py-24 text-cream md:py-32">
+    <section
+      id="kontakt"
+      className="relative scroll-mt-20 overflow-hidden bg-ink py-24 text-cream md:py-32"
+    >
       {/* Floating pastel doodles */}
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <Sparkle className="absolute top-16 left-[12%] h-8 w-8 text-butter motion-safe:animate-float" />
@@ -32,7 +29,9 @@ export default function Contact() {
         />
         <div
           className="absolute -top-32 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full opacity-25"
-          style={{ background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)' }}
+          style={{
+            background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)',
+          }}
         />
       </div>
 
@@ -46,8 +45,8 @@ export default function Contact() {
             ?
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lead text-cream/75">
-            Erzählen Sie mir, was Sie bauen wollen – Sie erreichen mich direkt, ohne Umwege.
-            Antwort innerhalb von 24 Stunden.
+            Erzählen Sie mir, was Sie bauen wollen – Sie erreichen mich direkt, ohne Umwege. Antwort
+            innerhalb von 24 Stunden.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
