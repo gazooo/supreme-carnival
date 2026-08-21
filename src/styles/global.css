@@ -1,26 +1,132 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Pastel palette — ink text on cream/pastel surfaces, never pastel text on white */
+  /*
+   * Pastel palette — ink text on cream/pastel surfaces.
+   * Rule: pastels are backgrounds/graphics only, never text on light ground.
+   */
   --color-cream: #faf5ec;
+  --color-cream-deep: #f2ebdc;
   --color-ink: #1a1a2e;
   --color-ink-soft: #4c4c66;
   --color-mint: #b9e6cf;
+  --color-mint-strong: #7fd0a7;
   --color-peach: #ffd3be;
+  --color-peach-strong: #ffb18d;
   --color-lavender: #d9cff5;
+  --color-lavender-strong: #b5a3ec;
   --color-sky: #c2e0f6;
+  --color-sky-strong: #8cc3ec;
   --color-butter: #f8e39e;
+  --color-butter-strong: #f2d264;
 
   --font-display: 'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --font-body: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+
+  /* Fluid type scale */
+  --text-hero: clamp(2.75rem, 7vw + 0.75rem, 6.25rem);
+  --text-hero--line-height: 1.02;
+  --text-hero--letter-spacing: -0.03em;
+  --text-hero--font-weight: 600;
+  --text-display: clamp(2.125rem, 3vw + 1.25rem, 3.625rem);
+  --text-display--line-height: 1.06;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 600;
+  --text-title: clamp(1.35rem, 0.8vw + 1.1rem, 1.75rem);
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.01em;
+  --text-title--font-weight: 600;
+  --text-lead: clamp(1.0625rem, 0.35vw + 1rem, 1.3125rem);
+  --text-lead--line-height: 1.55;
+
+  /* Playful hard-offset "sticker" shadows + soft lifts */
+  --shadow-pop: 6px 6px 0 0 #1a1a2e;
+  --shadow-pop-sm: 3px 3px 0 0 #1a1a2e;
+  --shadow-pop-butter: 6px 6px 0 0 #f2d264;
+  --shadow-soft: 0 20px 45px -22px rgb(26 26 46 / 0.28);
+  --shadow-lift: 0 32px 64px -24px rgb(26 26 46 / 0.35);
+
+  --animate-marquee: marquee 32s linear infinite;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-float-slow: float 11s ease-in-out infinite;
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-14px);
+    }
+  }
 }
 
 html {
   background-color: var(--color-cream);
   color: var(--color-ink);
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-butter);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.on-ink :focus-visible,
+.on-ink:focus-visible {
+  outline-color: var(--color-cream);
+}
+
+@layer components {
+  /* Oversized decorative section numerals */
+  .section-number {
+    font-family: var(--font-display);
+    font-size: clamp(5.5rem, 13vw, 10rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgb(26 26 46 / 0.16);
+    user-select: none;
+  }
+  @supports not (-webkit-text-stroke: 1px black) {
+    .section-number {
+      color: rgb(26 26 46 / 0.07);
+    }
+  }
+}
+
+/*
+ * Hard requirement: prefers-reduced-motion disables all non-essential motion.
+ * JS-driven motion is gated via useReducedMotion; this catches every CSS
+ * animation/transition (marquee, pulse, float, hovers) as a safety net.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
