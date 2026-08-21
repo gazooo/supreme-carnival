@@ -153,6 +153,14 @@ body {
       color: rgb(26 26 46 / 0.07);
     }
   }
+  .section-number-on-dark {
+    -webkit-text-stroke-color: rgb(250 245 236 / 0.2);
+  }
+  @supports not (-webkit-text-stroke: 1px black) {
+    .section-number-on-dark {
+      color: rgb(250 245 236 / 0.08);
+    }
+  }
 }
 
 /* Anchor targets clear the fixed nav when natively scrolled to */

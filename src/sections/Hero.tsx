@@ -13,6 +13,7 @@ import Container from '../components/Container'
 import Chip from '../components/Chip'
 import { ButtonLink } from '../components/Button'
 import Magnetic from '../components/Magnetic'
+import { ArrowRight, Asterisk, Squiggle } from '../components/doodles'
 import { EASE } from '../lib/motion'
 import { MAILTO } from '../content/site'
 
@@ -48,33 +49,6 @@ function RotatingWord() {
         </motion.span>
       </AnimatePresence>
     </span>
-  )
-}
-
-/* Decorative doodles */
-function Asterisk({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" className={className} aria-hidden="true" fill="none">
-      <path
-        d="M24 6v36M6 24h36M11.3 11.3l25.4 25.4M36.7 11.3 11.3 36.7"
-        stroke="currentColor"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  )
-}
-
-function Squiggle({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 140 24" className={className} aria-hidden="true" fill="none">
-      <path
-        d="M4 14c8-12 16 12 24 0s16 12 24 0 16 12 24 0 16 12 24 0 12-8 32-4"
-        stroke="currentColor"
-        strokeWidth="4.5"
-        strokeLinecap="round"
-      />
-    </svg>
   )
 }
 
@@ -237,15 +211,7 @@ export default function Hero() {
               <Magnetic>
                 <ButtonLink href={MAILTO} size="lg">
                   Projekt anfragen
-                  <svg viewBox="0 0 20 20" className="h-5 w-5" aria-hidden="true" fill="none">
-                    <path
-                      d="M3 10h13m0 0-5-5m5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <ArrowRight className="h-5 w-5" />
                 </ButtonLink>
               </Magnetic>
               <ButtonLink variant="secondary" size="lg" href="#leistungen">

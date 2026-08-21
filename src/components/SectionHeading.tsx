@@ -12,6 +12,7 @@ export default function SectionHeading({
   description,
   tone = 'butter',
   align = 'left',
+  onDark = false,
   className = '',
 }: {
   number: string
@@ -20,6 +21,7 @@ export default function SectionHeading({
   description?: ReactNode
   tone?: ChipTone
   align?: 'left' | 'center'
+  onDark?: boolean
   className?: string
 }) {
   const centered = align === 'center'
@@ -28,8 +30,8 @@ export default function SectionHeading({
       <span
         aria-hidden="true"
         className={`section-number pointer-events-none absolute -top-10 sm:-top-14 ${
-          centered ? 'left-1/2 -translate-x-1/2' : '-left-2 sm:-left-4'
-        }`}
+          onDark ? 'section-number-on-dark' : ''
+        } ${centered ? 'left-1/2 -translate-x-1/2' : '-left-2 sm:-left-4'}`}
       >
         {number}
       </span>
@@ -37,9 +39,19 @@ export default function SectionHeading({
         <Chip variant="sticker" tone={tone} rotate={centered ? 0 : -2}>
           {eyebrow}
         </Chip>
-        <h2 className="max-w-3xl font-display text-display text-balance">{title}</h2>
+        <h2
+          className={`max-w-3xl font-display text-display text-balance ${
+            onDark ? 'text-cream' : 'text-ink'
+          }`}
+        >
+          {title}
+        </h2>
         {description ? (
-          <p className={`max-w-2xl text-lead text-ink-soft ${centered ? 'mx-auto' : ''}`}>
+          <p
+            className={`max-w-2xl text-lead ${onDark ? 'text-cream/75' : 'text-ink-soft'} ${
+              centered ? 'mx-auto' : ''
+            }`}
+          >
             {description}
           </p>
         ) : null}
