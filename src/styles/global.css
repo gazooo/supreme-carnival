@@ -161,6 +161,43 @@ body {
       color: rgb(250 245 236 / 0.08);
     }
   }
+
+  /* Legal pages: readable document typography, printable */
+  .legal-prose {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    line-height: 1.65;
+    color: var(--color-ink-soft);
+  }
+  .legal-prose h2 {
+    margin-top: 1.4rem;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+  .legal-prose h2:first-child {
+    margin-top: 0;
+  }
+  .legal-prose a {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-color: var(--color-butter-strong);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+}
+
+@media print {
+  html {
+    background: #fff;
+  }
+  .legal-prose,
+  .legal-prose h2 {
+    color: #000;
+  }
 }
 
 /* Anchor targets clear the fixed nav when natively scrolled to */

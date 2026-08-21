@@ -5,7 +5,7 @@ export default function Grain() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-70 opacity-[0.05]"
+      className="pointer-events-none fixed inset-0 z-70 opacity-[0.05] print:hidden"
       style={{ backgroundImage: NOISE_SVG }}
     />
   )

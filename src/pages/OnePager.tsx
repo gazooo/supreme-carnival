@@ -8,6 +8,10 @@ import Projects from '../sections/Projects'
 import Stats from '../sections/Stats'
 import Timeline from '../sections/Timeline'
 import Skills from '../sections/Skills'
+import Insights from '../sections/Insights'
+import About from '../sections/About'
+import Contact from '../sections/Contact'
+import Footer from '../sections/Footer'
 import ScrollProgress from '../components/ScrollProgress'
 
 export default function OnePager() {
@@ -25,10 +29,11 @@ export default function OnePager() {
         <Stats />
         <Timeline />
         <Skills />
-        {/* Placeholder anchors — Insights/Über mich/Kontakt land in Phase 4 */}
-        <section id="ueber-mich" aria-label="Über mich" className="min-h-40" />
-        <section id="kontakt" aria-label="Kontakt" className="min-h-40" />
+        <Insights />
+        <About />
+        <Contact />
       </main>
+      <Footer />
     </>
   )
 }
