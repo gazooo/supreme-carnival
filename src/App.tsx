@@ -1,7 +1,6 @@
 import { MotionConfig } from 'motion/react'
 import { RouterProvider, useRouter } from './lib/router'
 import { SmoothScrollProvider } from './lib/scroll'
-import Grain from './components/Grain'
 import OnePager from './pages/OnePager'
 import Impressum from './pages/Impressum'
 import Datenschutz from './pages/Datenschutz'
@@ -26,7 +25,6 @@ export default function App() {
           <a href="#main" className="skip-link on-ink">
             Zum Inhalt springen
           </a>
-          <Grain />
           <CurrentPage />
         </SmoothScrollProvider>
       </RouterProvider>

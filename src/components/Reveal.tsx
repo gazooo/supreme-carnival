@@ -1,17 +1,16 @@
 import type { ReactNode } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { EASE } from '../lib/motion'
 
 /**
- * Scroll-triggered reveal (fade + rise). Renders a plain div when the user
- * prefers reduced motion — content is always visible without animation.
+ * Restrained scroll reveal: short rise, quick fade. Renders a plain div when
+ * the user prefers reduced motion.
  */
 export default function Reveal({
   children,
   className,
   delay = 0,
-  y = 28,
-  amount = 0.2,
+  y = 14,
+  amount = 0.15,
 }: {
   children: ReactNode
   className?: string
@@ -29,7 +28,7 @@ export default function Reveal({
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay }}
     >
       {children}
     </motion.div>

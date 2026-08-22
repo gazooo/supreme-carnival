@@ -15,31 +15,28 @@ export default function LegalLayout({ title, children }: { title: string; childr
 
   return (
     <div className="min-h-svh">
-      <header className="print:hidden">
+      <header className="border-b border-line print:hidden">
         <Container size="wide" className="flex h-16 items-center justify-between md:h-18">
-          <RouteLink to="/" className="font-display text-xl font-bold tracking-tight text-ink">
-            Malte Lohrer<span className="text-peach-strong">.</span>
+          <RouteLink to="/" className="text-[0.9375rem] font-semibold tracking-tight text-ink">
+            Malte Lohrer
           </RouteLink>
           <RouteLink
             to="/"
-            className="inline-flex items-center gap-2 font-display text-sm font-semibold text-ink underline decoration-butter-strong decoration-2 underline-offset-4"
+            className="link-accent inline-flex items-center gap-1.5 text-sm font-medium"
           >
-            <ArrowRight className="h-4 w-4 rotate-180" />
+            <ArrowRight className="h-3.5 w-3.5 rotate-180" />
             Zurück zur Startseite
           </RouteLink>
         </Container>
       </header>
-      <main id="main" className="pt-8 pb-24 print:pt-0">
+      <main id="main" className="pt-12 pb-24 print:pt-0">
         <Container size="narrow">
-          <h1 className="font-display text-display text-ink">{title}</h1>
+          <h1 className="text-display text-ink">{title}</h1>
           <div className="legal-prose mt-10">{children}</div>
         </Container>
       </main>
-      <footer className="border-t border-ink/10 py-8 print:hidden">
-        <Container
-          size="narrow"
-          className="flex flex-wrap items-center gap-6 text-sm text-ink-soft"
-        >
+      <footer className="border-t border-line py-8 print:hidden">
+        <Container size="narrow" className="flex flex-wrap items-center gap-6 text-sm text-ink-3">
           <RouteLink to="/" className="underline underline-offset-4 hover:text-ink">
             Startseite
           </RouteLink>

@@ -1,10 +1,8 @@
 import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
-import Chip, { type ChipTone } from '../components/Chip'
+import Chip from '../components/Chip'
 import Reveal from '../components/Reveal'
 import { PRIMARY_SKILLS } from '../content/site'
-
-const TONE_CYCLE: ChipTone[] = ['mint', 'peach', 'lavender', 'sky', 'butter']
 
 const SECONDARY_GROUPS = [
   {
@@ -40,46 +38,36 @@ const SECONDARY_GROUPS = [
 
 export default function Skills() {
   return (
-    <section id="skills" className="scroll-mt-20 bg-cream-deep py-24 md:py-32">
-      <Container>
+    <section id="skills" className="border-t border-line bg-paper-alt py-20 md:py-28">
+      <Container size="wide">
         <Reveal>
           <SectionHeading
             number="05"
             eyebrow="Skills"
-            tone="butter"
             title="Womit ich arbeite"
             description="Elf Werkzeuge im Kern – der Rest gruppiert sich darum."
           />
         </Reveal>
 
-        <Reveal className="mt-12 md:mt-14">
-          <ul className="flex max-w-4xl flex-wrap gap-3 sm:gap-4">
-            {PRIMARY_SKILLS.map((skill, index) => (
+        <Reveal className="mt-12 md:mt-16">
+          <ul className="flex max-w-4xl flex-wrap gap-2">
+            {PRIMARY_SKILLS.map((skill) => (
               <li key={skill}>
-                <Chip
-                  variant="sticker"
-                  tone={TONE_CYCLE[index % TONE_CYCLE.length]}
-                  rotate={index % 3 === 0 ? -1.5 : index % 3 === 1 ? 1 : 0}
-                  className="transition-transform duration-200 hover:-translate-y-0.5 hover:rotate-0"
-                >
-                  {skill}
-                </Chip>
+                <Chip className="bg-surface px-3.5 py-1.5 text-[0.8125rem]">{skill}</Chip>
               </li>
             ))}
           </ul>
         </Reveal>
 
-        <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
           {SECONDARY_GROUPS.map((group, index) => (
-            <Reveal key={group.label} delay={index * 0.08} className="h-full">
-              <div className="h-full rounded-3xl border-2 border-ink/15 bg-white p-6">
-                <h3 className="font-display text-sm font-bold tracking-widest text-ink uppercase">
-                  {group.label}
-                </h3>
-                <ul className="mt-4 flex flex-wrap gap-2">
+            <Reveal key={group.label} delay={index * 0.06} className="h-full">
+              <div className="border-t border-line-strong pt-4">
+                <h3 className="mono-label">{group.label}</h3>
+                <ul className="mt-4 flex flex-col gap-2">
                   {group.items.map((item) => (
-                    <li key={item}>
-                      <Chip tone="cream">{item}</Chip>
+                    <li key={item} className="text-sm text-ink-2">
+                      {item}
                     </li>
                   ))}
                 </ul>

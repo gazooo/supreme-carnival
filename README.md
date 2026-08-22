@@ -1,8 +1,9 @@
 # malte-lohrer-website
 
-Persönliche Freelancer-Website von Malte Lohrer — moderner One-Pager (Deutsch) mit
-Parallax-Scroll-Effekten, Pastell-Designsystem und verspielten Animationen, plus
-Impressum und Datenschutzerklärung.
+Persönliche Freelancer-Website von Malte Lohrer — moderner One-Pager (Deutsch) im
+editorialen, technischen Design: neutraler Grund, Haarlinien, Mono-Metadaten, eine
+Akzentfarbe, zurückhaltende Scroll-Animationen. Plus Impressum und
+Datenschutzerklärung.
 
 ## Stack
 
@@ -13,7 +14,7 @@ Impressum und Datenschutzerklärung.
 | Styling   | Tailwind CSS v4 (`@theme`-Design-Tokens in `src/styles/global.css`)                                   |
 | Animation | [Motion](https://motion.dev) (`motion/react`) — Reveals, Parallax, Count-ups                          |
 | Scrolling | [Lenis](https://lenis.darkroom.engineering) (Smooth Scroll, bei `prefers-reduced-motion` deaktiviert) |
-| Fonts     | Self-hosted via `@fontsource-variable` (Space Grotesk, Inter) — keine externen Requests               |
+| Fonts     | Self-hosted via `@fontsource-variable` (Inter, JetBrains Mono) — keine externen Requests              |
 | Tests     | Vitest + Testing Library (Smoke-Tests: Render, Anker, Legal-Routen)                                   |
 | Qualität  | ESLint (flat config) + Prettier                                                                       |
 
@@ -44,9 +45,8 @@ src/
   lib/
     router.tsx          Mini-Router (History API): /, /impressum, /datenschutz
     scroll.tsx          Lenis-Integration + Anker-Scrolling mit Nav-Offset
-    motion.ts           Gemeinsame Easing/Varianten
   components/           Button, Chip, Container, SectionHeading, Reveal, Marquee,
-                        CountUp, Magnetic, Grain, ScrollProgress, LegalLayout, …
+                        CountUp, AvailabilityBadge, ScrollProgress, LegalLayout, …
   sections/             Nav, Hero, TrustBar, TechMarquee, Services, Approach,
                         Projects, Stats, Timeline, Skills, Insights, About,
                         Contact, Footer
@@ -71,7 +71,7 @@ Sektionen halten die Anker-IDs sofort bereit. Lighthouse: 100/100/100/100
   Lenis wird gar nicht erst initialisiert).
 - Skip-Link, sichtbare Fokus-Stile, Dialog-Semantik + Fokus-Falle im mobilen Menü,
   ein `h1`, semantische Landmarken, `lang="de"` (Essay-Titel `lang="en"`).
-- Alle Farbkombinationen erfüllen WCAG AA (geprüft; Ink auf Pastell durchgehend AAA).
+- Alle Farbkombinationen erfüllen WCAG AA (geprüft; die meisten Paarungen AAA).
 
 ## Deployment
 

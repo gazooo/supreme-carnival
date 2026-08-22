@@ -2,6 +2,7 @@ import { useRef, type RefObject } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring } from 'motion/react'
 import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
+import Chip from '../components/Chip'
 import Reveal from '../components/Reveal'
 
 const STATIONS = [
@@ -10,42 +11,36 @@ const STATIONS = [
     org: 'Daimler',
     role: 'Werkstudent & Masterand',
     desc: 'ELK-Monitoring der CI-Infrastruktur.',
-    dot: 'bg-sky',
   },
   {
     period: 'Abschluss',
     org: 'Hochschule der Medien Stuttgart',
     role: 'M.Sc. Computer Science & Media',
     desc: 'Abschlussnote 1,5.',
-    dot: 'bg-lavender',
   },
   {
     period: '02 – 07/2021',
     org: 'Innenministerium Baden-Württemberg',
     role: 'Mitaufbau der Cybersicherheitsagentur (CSBW)',
     desc: 'Aufbau der neuen Cybersicherheitsagentur des Landes Baden-Württemberg.',
-    dot: 'bg-peach',
   },
   {
     period: '11/2021 – 06/2025',
     org: 'Mercedes-Benz',
     role: 'CI/CD-Plattform der In-Car-UI-Entwicklung',
     desc: 'GitLab CI und Jenkins inklusive Migration, Release-Automatisierung, Monitoring mit Grafana, Prometheus und ELK, Incident Management, Aufbau des SRE-Teams.',
-    dot: 'bg-mint',
   },
   {
     period: '07/2025 – 06/2026',
     org: 'Aremus Finance',
     role: 'Betriebsplattform & agentischer KI-Assistent',
     desc: 'Interne Betriebsplattform als einziger Entwickler – acht Dienste im Produktivbetrieb, KI-Assistent mit Tool-Zugriff auf Microsoft 365, SharePoint und CRM.',
-    dot: 'bg-butter',
   },
   {
     period: 'ab 10/2026',
     org: 'Ihr Projekt',
     role: 'Verfügbar für neue Vorhaben',
     desc: '100 % remote, einmaliger Kick-off im Raum Stuttgart möglich.',
-    dot: 'bg-mint-strong',
     final: true,
   },
 ]
@@ -60,62 +55,51 @@ export default function Timeline() {
   const scaleY = useSpring(scrollYProgress, { stiffness: 90, damping: 24, restDelta: 0.001 })
 
   return (
-    <section id="werdegang" className="scroll-mt-20 py-24 md:py-32">
-      <Container>
+    <section id="werdegang" className="border-t border-line py-20 md:py-28">
+      <Container size="wide">
         <Reveal>
           <SectionHeading
             number="04"
             eyebrow="Werdegang"
-            tone="sky"
             title="Stationen seit 2015"
             description="Vom Werkstudenten am CI-Monitoring bis zum agentischen KI-Assistenten in Produktion."
           />
         </Reveal>
 
-        <div ref={listRef} className="relative mt-14 md:mt-16">
-          {/* Track + scroll-drawn line */}
-          <span
-            aria-hidden="true"
-            className="absolute top-2 bottom-2 left-[13px] w-1 rounded-full bg-ink/10"
-          />
+        <div ref={listRef} className="relative mt-14 md:mt-20">
+          {/* Rail + scroll-drawn accent line */}
+          <span aria-hidden="true" className="absolute top-0 bottom-0 left-0 w-px bg-line" />
           <motion.span
             aria-hidden="true"
             style={reduced ? undefined : { scaleY }}
-            className="absolute top-2 bottom-2 left-[13px] w-1 origin-top rounded-full"
-          >
-            <span
-              className="block h-full w-full rounded-full"
-              style={{
-                background:
-                  'linear-gradient(180deg, var(--color-sky-strong), var(--color-lavender-strong), var(--color-peach-strong), var(--color-mint-strong))',
-              }}
-            />
-          </motion.span>
+            className="absolute top-0 bottom-0 left-0 w-px origin-top bg-accent"
+          />
 
-          <ol className="flex flex-col gap-12 md:gap-14">
+          <ol className="flex flex-col">
             {STATIONS.map((station, index) => (
-              <li key={station.org + station.period} className="relative pl-12 sm:pl-16">
+              <li
+                key={station.org + station.period}
+                className="relative border-b border-line py-7 pl-8 last:border-b-0 md:grid md:grid-cols-[11rem_1fr] md:gap-10 md:pl-10"
+              >
                 <span
                   aria-hidden="true"
-                  className={`absolute top-1 left-[2px] h-6 w-6 rounded-full border-2 border-ink shadow-pop-sm ${station.dot}`}
+                  className={`absolute top-[2.35rem] -left-[3.5px] h-2 w-2 rounded-full border ${
+                    station.final ? 'border-accent bg-accent' : 'border-line-strong bg-paper'
+                  }`}
                 />
-                <Reveal delay={index * 0.05}>
-                  <div
-                    className={
-                      station.final
-                        ? 'inline-block rounded-3xl border-2 border-ink bg-mint p-6 shadow-pop-sm'
-                        : ''
-                    }
-                  >
-                    <p className="font-display text-sm font-bold tracking-wide text-ink-soft uppercase">
-                      {station.period}
-                    </p>
-                    <h3 className="mt-1 font-display text-title text-ink">
+                <Reveal delay={index * 0.04}>
+                  <p className="font-mono text-xs text-ink-3">{station.period}</p>
+                </Reveal>
+                <Reveal delay={index * 0.04}>
+                  <div className="mt-2 max-w-2xl md:mt-0">
+                    <h3 className="flex flex-wrap items-center gap-3 text-title text-ink">
                       {station.org}
-                      {station.final ? <span aria-hidden="true"> ✦</span> : null}
+                      {station.final ? <Chip tone="accent">verfügbar</Chip> : null}
                     </h3>
-                    <p className="mt-0.5 font-semibold text-ink">{station.role}</p>
-                    <p className="mt-1.5 max-w-2xl leading-relaxed text-ink-soft">{station.desc}</p>
+                    <p className="mt-1 text-[0.9375rem] font-medium text-ink-2">{station.role}</p>
+                    <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-ink-3">
+                      {station.desc}
+                    </p>
                   </div>
                 </Reveal>
               </li>

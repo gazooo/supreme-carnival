@@ -1,43 +1,37 @@
 import Container from '../components/Container'
 import { RouteLink } from '../lib/router'
-import { Sparkle } from '../components/doodles'
 
 export default function Footer() {
   const year = new Date().getFullYear()
   return (
-    <footer className="border-t border-cream/10 bg-ink py-10 text-cream">
+    <footer className="border-t border-ink-line bg-ink py-10 text-paper">
       <Container size="wide">
         <div className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
           <div>
-            <p className="font-display text-lg font-bold tracking-tight">
-              Malte Lohrer<span className="text-peach-strong">.</span>
-            </p>
-            <p className="mt-1 text-sm text-cream/60">© {year} Malte Lohrer</p>
+            <p className="text-[0.9375rem] font-semibold tracking-tight">Malte Lohrer</p>
+            <p className="mt-1 font-mono text-xs text-ink-2-on-dark">© {year} Malte Lohrer</p>
           </div>
           <nav aria-label="Rechtliches" className="flex items-center gap-6">
             <RouteLink
               to="/impressum"
-              className="on-ink text-sm font-medium text-cream/75 underline-offset-4 hover:text-cream hover:underline"
+              className="on-ink text-sm text-ink-2-on-dark underline-offset-4 hover:text-paper hover:underline"
             >
               Impressum
             </RouteLink>
             <RouteLink
               to="/datenschutz"
-              className="on-ink text-sm font-medium text-cream/75 underline-offset-4 hover:text-cream hover:underline"
+              className="on-ink text-sm text-ink-2-on-dark underline-offset-4 hover:text-paper hover:underline"
             >
               Datenschutz
             </RouteLink>
             <a
               href="#hero"
-              className="on-ink text-sm font-medium text-cream/75 underline-offset-4 hover:text-cream hover:underline"
+              className="on-ink text-sm text-ink-2-on-dark underline-offset-4 hover:text-paper hover:underline"
             >
               Nach oben ↑
             </a>
           </nav>
-          <p className="flex items-center gap-2 text-sm text-cream/60">
-            Made in Esslingen
-            <Sparkle className="h-3.5 w-3.5 text-butter" />
-          </p>
+          <p className="font-mono text-xs text-ink-2-on-dark">Made in Esslingen</p>
         </div>
       </Container>
     </footer>

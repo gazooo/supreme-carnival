@@ -1,17 +1,14 @@
 import type { ReactNode } from 'react'
-import Chip, { type ChipTone } from './Chip'
 
 /**
- * Standard section intro: oversized decorative numeral, sticker eyebrow,
- * display headline and optional description.
+ * Editorial section intro: mono index + label above a large headline.
+ * On wide screens the label sits in its own narrow column beside the text.
  */
 export default function SectionHeading({
   number,
   eyebrow,
   title,
   description,
-  tone = 'butter',
-  align = 'left',
   onDark = false,
   className = '',
 }: {
@@ -19,39 +16,25 @@ export default function SectionHeading({
   eyebrow: string
   title: ReactNode
   description?: ReactNode
-  tone?: ChipTone
-  align?: 'left' | 'center'
   onDark?: boolean
   className?: string
 }) {
-  const centered = align === 'center'
   return (
-    <div className={`relative ${centered ? 'text-center' : ''} ${className}`}>
-      <span
-        aria-hidden="true"
-        className={`section-number pointer-events-none absolute -top-10 sm:-top-14 ${
-          onDark ? 'section-number-on-dark' : ''
-        } ${centered ? 'left-1/2 -translate-x-1/2' : '-left-2 sm:-left-4'}`}
-      >
-        {number}
-      </span>
-      <div className={`relative flex flex-col gap-4 ${centered ? 'items-center' : 'items-start'}`}>
-        <Chip variant="sticker" tone={tone} rotate={centered ? 0 : -2}>
-          {eyebrow}
-        </Chip>
-        <h2
-          className={`max-w-3xl font-display text-display text-balance ${
-            onDark ? 'text-cream' : 'text-ink'
-          }`}
-        >
+    <div className={`grid gap-x-10 gap-y-5 lg:grid-cols-[10rem_1fr] ${className}`}>
+      <p className={`mono-label pt-2 ${onDark ? 'text-ink-2-on-dark' : ''}`}>
+        <span aria-hidden="true">{number}</span>
+        <span className="sr-only">Abschnitt {number}:</span>
+        <span className="mx-2 opacity-40" aria-hidden="true">
+          /
+        </span>
+        {eyebrow}
+      </p>
+      <div>
+        <h2 className={`max-w-3xl text-display text-balance ${onDark ? 'text-paper' : 'text-ink'}`}>
           {title}
         </h2>
         {description ? (
-          <p
-            className={`max-w-2xl text-lead ${onDark ? 'text-cream/75' : 'text-ink-soft'} ${
-              centered ? 'mx-auto' : ''
-            }`}
-          >
+          <p className={`mt-5 max-w-2xl text-lead ${onDark ? 'text-ink-2-on-dark' : 'text-ink-2'}`}>
             {description}
           </p>
         ) : null}

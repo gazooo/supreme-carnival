@@ -1,8 +1,7 @@
 import Container from '../components/Container'
 import Reveal from '../components/Reveal'
-import Magnetic from '../components/Magnetic'
 import { ButtonLink } from '../components/Button'
-import { ArrowRight, Asterisk, Sparkle, Squiggle } from '../components/doodles'
+import { ArrowRight } from '../components/doodles'
 import { AVAILABILITY_DATE, EMAIL, MAILTO, PHONE_DISPLAY, PHONE_TEL } from '../content/site'
 
 const FACTS = [
@@ -14,77 +13,61 @@ const FACTS = [
 
 export default function Contact() {
   return (
-    <section
-      id="kontakt"
-      className="relative scroll-mt-20 overflow-hidden bg-ink py-24 text-cream md:py-32"
-    >
-      {/* Floating pastel doodles */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <Sparkle className="absolute top-16 left-[12%] h-8 w-8 text-butter motion-safe:animate-float" />
-        <Asterisk className="absolute top-24 right-[14%] h-10 w-10 text-mint motion-safe:animate-float-slow" />
-        <Squiggle className="absolute bottom-24 left-[8%] h-6 w-32 text-lavender-strong" />
-        <span
-          className="absolute right-[8%] bottom-20 h-12 w-12 rounded-full border-2 border-cream/30 bg-peach/90 motion-safe:animate-float"
-          style={{ animationDelay: '1.2s' }}
-        />
-        <div
-          className="absolute -top-32 left-1/2 h-96 w-[42rem] -translate-x-1/2 rounded-full opacity-25"
-          style={{
-            background: 'radial-gradient(closest-side, var(--color-lavender), transparent 72%)',
-          }}
-        />
-      </div>
+    <section id="kontakt" className="bg-ink py-24 text-paper md:py-32">
+      <Container size="wide">
+        <Reveal>
+          <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[10rem_1fr]">
+            <p className="mono-label pt-2 text-ink-2-on-dark">
+              08
+              <span className="mx-2 opacity-40" aria-hidden="true">
+                /
+              </span>
+              Kontakt
+            </p>
+            <div>
+              <h2 className="max-w-3xl text-hero text-paper">
+                Projekt im <span className="border-b-2 border-accent-on-dark pb-0.5">Kopf</span>?
+              </h2>
+              <p className="mt-7 max-w-2xl text-lead text-ink-2-on-dark">
+                Erzählen Sie mir, was Sie bauen wollen – Sie erreichen mich direkt, ohne Umwege.
+                Antwort innerhalb von 24 Stunden.
+              </p>
 
-      <Container className="relative">
-        <Reveal className="text-center">
-          <h2 className="mx-auto max-w-4xl font-display text-hero text-cream">
-            Projekt im{' '}
-            <span className="inline-block rotate-1 rounded-2xl border-2 border-cream/20 bg-butter px-4 pb-1 text-ink shadow-pop-butter">
-              Kopf
-            </span>
-            ?
-          </h2>
-          <p className="mx-auto mt-8 max-w-2xl text-lead text-cream/75">
-            Erzählen Sie mir, was Sie bauen wollen – Sie erreichen mich direkt, ohne Umwege. Antwort
-            innerhalb von 24 Stunden.
-          </p>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <Magnetic>
-              <ButtonLink href={MAILTO} variant="onInk" size="lg">
-                E-Mail schreiben
-                <ArrowRight className="h-5 w-5" />
-              </ButtonLink>
-            </Magnetic>
-            <a
-              href={`tel:${PHONE_TEL}`}
-              className="on-ink inline-flex items-center justify-center gap-2 rounded-full border-2 border-cream/40 px-7 py-3.5 font-display text-lg font-semibold text-cream transition-colors duration-200 hover:border-cream hover:bg-cream/10 sm:px-9 sm:py-4"
-            >
-              {PHONE_DISPLAY}
-            </a>
-          </div>
-
-          <p className="mt-6 text-cream/60">
-            Oder direkt an{' '}
-            <a
-              href={`mailto:${EMAIL}`}
-              className="on-ink font-medium text-cream underline decoration-butter-strong decoration-2 underline-offset-4"
-            >
-              {EMAIL}
-            </a>
-          </p>
-        </Reveal>
-
-        <div className="mt-16 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {FACTS.map((fact, index) => (
-            <Reveal key={fact.title} delay={index * 0.08} className="h-full">
-              <div className="h-full rounded-2xl border-2 border-cream/15 p-5 text-left">
-                <p className="font-display font-semibold text-cream">{fact.title}</p>
-                <p className="mt-1 text-sm leading-relaxed text-cream/60">{fact.detail}</p>
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                <ButtonLink href={MAILTO} variant="onInk" size="lg">
+                  E-Mail schreiben
+                  <ArrowRight className="h-4 w-4" />
+                </ButtonLink>
+                <ButtonLink href={`tel:${PHONE_TEL}`} variant="onInkGhost" size="lg">
+                  {PHONE_DISPLAY}
+                </ButtonLink>
               </div>
-            </Reveal>
-          ))}
-        </div>
+
+              <p className="mt-6 font-mono text-sm text-ink-2-on-dark">
+                Oder direkt an{' '}
+                <a
+                  href={`mailto:${EMAIL}`}
+                  className="on-ink text-paper underline decoration-accent-on-dark underline-offset-4"
+                >
+                  {EMAIL}
+                </a>
+              </p>
+
+              <div className="mt-14 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+                {FACTS.map((fact, index) => (
+                  <Reveal key={fact.title} delay={index * 0.06} className="h-full">
+                    <div className="border-t border-ink-line pt-4">
+                      <p className="text-[0.9375rem] font-medium text-paper">{fact.title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-ink-2-on-dark">
+                        {fact.detail}
+                      </p>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Reveal>
       </Container>
     </section>
   )

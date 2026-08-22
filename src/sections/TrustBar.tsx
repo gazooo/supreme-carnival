@@ -6,22 +6,19 @@ const NAMES = ['Mercedes-Benz', 'Aremus Finance', 'Innenministerium BW', 'Daimle
 /** Trademark-safe text wordmarks — no logo files. */
 export default function TrustBar() {
   return (
-    <section aria-label="Gebaut für und im Einsatz bei" className="py-10 md:py-14">
-      <Container>
+    <section aria-label="Gebaut für und im Einsatz bei" className="py-12 md:py-16">
+      <Container size="wide">
         <Reveal>
-          <p className="text-center font-display text-xs font-semibold tracking-[0.2em] text-ink-soft uppercase">
-            Gebaut für und im Einsatz bei
-          </p>
-          <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 sm:gap-x-14">
-            {NAMES.map((name) => (
-              <li
-                key={name}
-                className="font-display text-lg font-bold tracking-tight text-ink/45 sm:text-xl"
-              >
-                {name}
-              </li>
-            ))}
-          </ul>
+          <div className="grid gap-x-10 gap-y-5 lg:grid-cols-[10rem_1fr]">
+            <p className="mono-label pt-1">Im Einsatz bei</p>
+            <ul className="flex flex-wrap items-center gap-x-10 gap-y-3">
+              {NAMES.map((name) => (
+                <li key={name} className="text-[0.9375rem] font-medium text-ink-2">
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </div>
         </Reveal>
       </Container>
     </section>

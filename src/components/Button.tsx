@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'onInk'
+export type ButtonVariant = 'primary' | 'secondary' | 'onInk' | 'onInkGhost'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -10,19 +10,17 @@ export function buttonClasses(
   className = '',
 ): string {
   const base =
-    'inline-flex items-center justify-center gap-2 rounded-full font-display font-semibold tracking-tight select-none transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-out active:translate-x-0 active:translate-y-0'
+    'inline-flex items-center justify-center gap-2 font-medium select-none transition-colors duration-200 ease-out'
   const variants: Record<ButtonVariant, string> = {
-    primary:
-      'border-2 border-ink bg-ink text-cream shadow-pop-sm hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-pop active:shadow-pop-sm',
-    secondary:
-      'border-2 border-ink bg-transparent text-ink hover:-translate-y-0.5 hover:bg-butter hover:shadow-pop-sm active:shadow-none',
-    onInk:
-      'on-ink border-2 border-cream bg-cream text-ink hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-butter hover:border-butter hover:shadow-pop-butter',
+    primary: 'bg-ink text-paper hover:bg-accent',
+    secondary: 'border border-line-strong text-ink hover:border-ink hover:bg-paper-alt',
+    onInk: 'on-ink bg-paper text-ink hover:bg-accent-on-dark',
+    onInkGhost: 'on-ink border border-ink-line text-paper hover:border-paper hover:bg-white/5',
   }
   const sizes: Record<ButtonSize, string> = {
     sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base',
-    lg: 'px-7 py-3.5 text-lg sm:px-9 sm:py-4',
+    md: 'px-5 py-2.5 text-[0.9375rem]',
+    lg: 'px-6 py-3.5 text-base',
   }
   return `${base} ${variants[variant]} ${sizes[size]} ${className}`.trim()
 }

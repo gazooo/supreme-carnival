@@ -9,7 +9,7 @@
       content="DevOps & Platform Engineer aus dem Raum Stuttgart: CI/CD-Plattformen, LLM-Integration und agentische KI-Assistenten – gebaut, dokumentiert, betrieben. Verfügbar ab Oktober 2026, 100 % remote."
     />
     <meta name="author" content="Malte Lohrer" />
-    <meta name="theme-color" content="#faf5ec" />
+    <meta name="theme-color" content="#fbfaf8" />
 
     <!-- TODO: Platzhalter-Domain https://example.invalid ersetzen, sobald die Domain gewählt ist -->
     <link rel="canonical" href="https://example.invalid/" />
@@ -83,48 +83,43 @@
       <!--
         Statischer Hero-Shell: malt Inhalt, bevor das JS-Bundle ausgeführt ist
         (FCP/LCP). React ersetzt ihn beim ersten Commit durch identisch
-        aussehendes Markup — die Klassen stammen aus dem Tailwind-Bundle.
+        aussehendes Markup — Klassen und Abstände müssen deshalb exakt zu
+        src/sections/Hero.tsx passen (sonst kehrt Layout-Shift zurück).
       -->
       <section class="relative flex min-h-svh flex-col overflow-hidden pt-24 md:pt-32">
-        <div aria-hidden="true" class="absolute inset-0">
+        <div aria-hidden="true" class="absolute inset-0 -top-24 opacity-70">
           <div
-            class="absolute -top-36 -left-44 h-[32rem] w-[32rem] rounded-full sm:h-[44rem] sm:w-[44rem]"
-            style="background: radial-gradient(closest-side, #b9e6cf, transparent 72%)"
-          ></div>
-          <div
-            class="absolute top-1/4 -right-52 h-[36rem] w-[36rem] rounded-full sm:h-[50rem] sm:w-[50rem]"
-            style="background: radial-gradient(closest-side, #d9cff5, transparent 72%)"
+            class="h-full w-full"
+            style="
+              background-image:
+                linear-gradient(to right, #e3e0da 1px, transparent 1px),
+                linear-gradient(to bottom, #e3e0da 1px, transparent 1px);
+              background-size: 76px 76px;
+              mask-image: radial-gradient(115% 85% at 22% 32%, #000 12%, transparent 72%);
+              -webkit-mask-image: radial-gradient(115% 85% at 22% 32%, #000 12%, transparent 72%);
+            "
           ></div>
         </div>
         <div class="relative z-10 flex flex-1">
           <div
             class="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 pb-24 sm:px-8 md:pb-28"
           >
-            <div class="max-w-5xl">
-              <div class="flex flex-wrap items-center gap-3">
-                <span
-                  class="inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-white px-4 py-1.5 font-display text-sm font-semibold text-ink shadow-pop-sm sm:text-base"
-                  style="rotate: -2deg"
-                  >Malte Lohrer</span
-                >
-                <span
-                  class="inline-flex items-center gap-1.5 rounded-full border-2 border-ink bg-butter px-4 py-1.5 font-display text-sm font-semibold text-ink shadow-pop-sm sm:text-base"
-                  style="rotate: 1.5deg"
-                  >DevOps &amp; Platform Engineer</span
-                >
-              </div>
-              <h1 class="mt-8 font-display text-hero text-ink">
+            <div class="max-w-4xl">
+              <p class="mono-label">
+                Malte Lohrer
+                <span class="mx-2 opacity-40" aria-hidden="true">/</span>
+                DevOps &amp; Platform Engineer
+              </p>
+              <h1 class="mt-7 text-hero text-ink">
                 Ich baue und betreibe
-                <span class="block"
-                  ><span class="mt-4 inline-flex overflow-hidden py-2"
-                    ><span
-                      class="inline-block max-w-full -rotate-1 rounded-2xl border-2 border-ink bg-mint px-3 pb-2 text-[0.72em] whitespace-nowrap shadow-pop sm:px-6 md:text-[1em]"
-                      >CI/CD-Plattformen</span
-                    ></span
+                <span class="mt-2 block"
+                  ><span
+                    class="inline-flex overflow-hidden border-b border-accent/40 pb-1 text-accent"
+                    ><span class="inline-block whitespace-nowrap">CI/CD-Plattformen</span></span
                   ></span
                 >
               </h1>
-              <p class="mt-8 max-w-2xl text-lead text-ink-soft">
+              <p class="mt-8 max-w-2xl text-lead text-ink-2">
                 Über zehn Jahre IT: vier Jahre CI/CD-Plattform für die In-Car-UI-Entwicklung von
                 Mercedes-Benz, zuletzt agentische KI-Assistenten in Produktion. Ich liefere Systeme,
                 die im Alltag bestehen – gebaut, dokumentiert, betrieben.

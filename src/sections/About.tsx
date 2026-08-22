@@ -1,8 +1,6 @@
 import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
 import Reveal from '../components/Reveal'
-import Chip from '../components/Chip'
-import { Asterisk, Squiggle } from '../components/doodles'
 
 /*
  * TODO: Porträtfoto einsetzen. Quelle laut Spezifikation:
@@ -12,52 +10,37 @@ import { Asterisk, Squiggle } from '../components/doodles'
  */
 function PortraitPlaceholder() {
   return (
-    <div className="relative mx-auto w-full max-w-sm">
+    <div className="w-full max-w-sm">
       <div
         role="img"
         aria-label="Monogramm von Malte Lohrer – Porträtfoto folgt"
-        className="relative flex aspect-4/5 items-center justify-center overflow-hidden rounded-[2rem] border-2 border-ink shadow-pop"
-        style={{
-          background:
-            'linear-gradient(140deg, var(--color-mint) 0%, var(--color-sky) 45%, var(--color-lavender) 100%)',
-        }}
+        className="flex aspect-4/5 items-center justify-center border border-line bg-paper-alt"
       >
         <span
           aria-hidden="true"
-          className="font-display text-9xl font-bold tracking-tight text-ink"
+          className="text-8xl font-semibold tracking-tighter text-line-strong select-none"
         >
           ML
         </span>
-        <Asterisk aria-hidden="true" className="absolute top-6 right-6 h-8 w-8 text-ink/50" />
-        <Squiggle aria-hidden="true" className="absolute bottom-7 left-6 h-5 w-28 text-ink/40" />
       </div>
-      <div className="absolute -right-3 -bottom-4 rotate-2">
-        <Chip variant="sticker" tone="white">
-          Esslingen am Neckar
-        </Chip>
-      </div>
+      <p className="mt-3 font-mono text-xs text-ink-3">Esslingen am Neckar · Raum Stuttgart</p>
     </div>
   )
 }
 
 export default function About() {
   return (
-    <section id="ueber-mich" className="scroll-mt-20 py-24 md:py-32">
-      <Container>
+    <section id="ueber-mich" className="border-t border-line py-20 md:py-28">
+      <Container size="wide">
         <Reveal>
-          <SectionHeading
-            number="07"
-            eyebrow="Über mich"
-            tone="peach"
-            title="Wer hier eigentlich baut"
-          />
+          <SectionHeading number="07" eyebrow="Über mich" title="Wer hier eigentlich baut" />
         </Reveal>
-        <div className="mt-14 grid items-center gap-12 md:mt-16 lg:grid-cols-[2fr_3fr] lg:gap-20">
+        <div className="mt-14 grid items-start gap-12 md:mt-20 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-20">
           <Reveal>
             <PortraitPlaceholder />
           </Reveal>
-          <Reveal delay={0.1}>
-            <div className="flex flex-col gap-5 text-lead text-ink-soft">
+          <Reveal delay={0.08}>
+            <div className="flex max-w-2xl flex-col gap-5 text-lead text-ink-2">
               <p>
                 M.Sc. Computer Science &amp; Media an der Hochschule der Medien Stuttgart (Note
                 1,5), seit 2015 in der IT – von Daimler über das Innenministerium Baden-Württemberg

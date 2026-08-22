@@ -1,47 +1,28 @@
 import type { ReactNode } from 'react'
 
-export type ChipTone = 'mint' | 'peach' | 'lavender' | 'sky' | 'butter' | 'white' | 'cream'
-
-const toneBg: Record<ChipTone, string> = {
-  mint: 'bg-mint',
-  peach: 'bg-peach',
-  lavender: 'bg-lavender',
-  sky: 'bg-sky',
-  butter: 'bg-butter',
-  white: 'bg-white',
-  cream: 'bg-cream',
-}
+export type ChipTone = 'default' | 'accent' | 'onDark'
 
 /**
- * `sticker`: bold bordered badge with hard shadow — for headline-level chips.
- * `soft`: quiet pastel pill — for tech tags inside cards.
+ * Technical tag: mono type, hairline border, no fill. Used for stack items
+ * and result metrics — never as decoration.
  */
 export default function Chip({
   children,
-  tone = 'white',
-  variant = 'soft',
-  rotate = 0,
+  tone = 'default',
   className = '',
 }: {
   children: ReactNode
   tone?: ChipTone
-  variant?: 'sticker' | 'soft'
-  rotate?: number
   className?: string
 }) {
-  if (variant === 'sticker') {
-    return (
-      <span
-        className={`inline-flex items-center gap-1.5 rounded-full border-2 border-ink px-4 py-1.5 font-display text-sm font-semibold text-ink shadow-pop-sm sm:text-base ${toneBg[tone]} ${className}`}
-        style={rotate ? { rotate: `${rotate}deg` } : undefined}
-      >
-        {children}
-      </span>
-    )
+  const tones: Record<ChipTone, string> = {
+    default: 'border-line text-ink-2',
+    accent: 'border-accent/35 bg-accent-soft text-accent',
+    onDark: 'border-ink-line text-ink-2-on-dark',
   }
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-medium text-ink ${toneBg[tone]} ${className}`}
+      className={`inline-flex items-center border px-2.5 py-1 font-mono text-xs tracking-tight ${tones[tone]} ${className}`}
     >
       {children}
     </span>
