@@ -1,7 +1,6 @@
 import Services from '../sections/Services'
 import Approach from '../sections/Approach'
 import Projects from '../sections/Projects'
-import Stats from '../sections/Stats'
 import Timeline from '../sections/Timeline'
 import Skills from '../sections/Skills'
 import Insights from '../sections/Insights'
@@ -18,7 +17,6 @@ export default function BelowFold() {
       <Services />
       <Approach />
       <Projects />
-      <Stats />
       <Timeline />
       <Skills />
       <Insights />

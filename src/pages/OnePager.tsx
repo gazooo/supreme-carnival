@@ -19,7 +19,6 @@ function SectionShells() {
       <section id="leistungen" aria-label="Leistungen" className="min-h-[52rem]" />
       <section id="arbeitsweise" aria-label="Arbeitsweise" className="min-h-[44rem]" />
       <section id="projekte" aria-label="Ausgewählte Projekte" className="min-h-[90rem]" />
-      <section aria-hidden="true" className="min-h-[18rem]" />
       <section id="werdegang" aria-label="Werdegang" className="min-h-[56rem]" />
       <section id="skills" aria-label="Skills" className="min-h-[48rem]" />
       <section id="insights" aria-label="Insights" className="min-h-[34rem]" />

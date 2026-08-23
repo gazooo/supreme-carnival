@@ -28,8 +28,13 @@ function staticRouteFallback(routes: string[]): Plugin {
   }
 }
 
+/** Lokaler Formular-Test: /api → contact-relay (siehe README „Kontaktformular lokal testen") */
+const contactProxy = { '/api': 'http://127.0.0.1:3081' }
+
 export default defineConfig({
   plugins: [react(), tailwindcss(), staticRouteFallback(['impressum', 'datenschutz'])],
+  server: { proxy: contactProxy },
+  preview: { proxy: contactProxy },
   build: {
     target: 'es2022',
   },

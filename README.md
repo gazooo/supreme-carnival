@@ -23,6 +23,25 @@ keine Google Fonts, kein Tracking, keine Cookies. Das Kontaktformular postet
 same-origin an `server/contact-relay.mjs`, der die private Mailserver-API
 (github.com/gazooo/mailserver) aufruft — Setup in [DEPLOY.md](DEPLOY.md).
 
+## Kontaktformular lokal testen
+
+Das Formular postet an `/api/contact`. Lokal gibt es dahinter erst dann einen
+Dienst, wenn der Relay läuft — ohne ihn zeigt das Formular den
+E-Mail-Fallback (erwartet, kein Bug). Test-Setup in zwei Terminals:
+
+```bash
+# Terminal 1: Relay im Dry-Run (loggt statt zu senden, kein Token nötig)
+MAIL_DRY_RUN=1 node server/contact-relay.mjs
+# PowerShell:  $env:MAIL_DRY_RUN='1'; node server/contact-relay.mjs
+
+# Terminal 2: Dev-Server (proxied /api automatisch an den Relay)
+npm run dev
+```
+
+Formular absenden → Erfolgsmeldung auf der Seite, geloggte Anfrage in
+Terminal 1. Echter Versand passiert nur auf dem VPS neben dem Mailserver —
+Produktions-Setup in [DEPLOY.md](DEPLOY.md).
+
 ## Befehle
 
 ```bash

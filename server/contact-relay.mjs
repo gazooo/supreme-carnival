@@ -9,21 +9,24 @@
  * (siehe DEPLOY.md). Nur Node-Standardbibliothek, Node >= 18.
  *
  * Env:
- *   MAIL_API_TOKEN  (Pflicht)  Token der Mailserver-API
- *   CONTACT_TO      (Pflicht)  Zieladresse der Anfragen
- *   MAIL_API_URL    (optional) Default: http://127.0.0.1:3080/v1/send
- *   RELAY_HOST      (optional) Default: 127.0.0.1
- *   RELAY_PORT      (optional) Default: 3081
+ *   MAIL_API_TOKEN  (Pflicht*)  Token der Mailserver-API
+ *   CONTACT_TO      (Pflicht*)  Zieladresse der Anfragen
+ *   MAIL_API_URL    (optional)  Default: http://127.0.0.1:3080/v1/send
+ *   RELAY_HOST      (optional)  Default: 127.0.0.1
+ *   RELAY_PORT      (optional)  Default: 3081
+ *   MAIL_DRY_RUN=1  (optional)  Lokaler Test: loggt statt zu senden;
+ *                               *Token/Zieladresse dann nicht nötig.
  */
 import { createServer } from 'node:http'
 
+const DRY_RUN = process.env.MAIL_DRY_RUN === '1'
 const MAIL_API_URL = process.env.MAIL_API_URL ?? 'http://127.0.0.1:3080/v1/send'
 const MAIL_API_TOKEN = process.env.MAIL_API_TOKEN
 const CONTACT_TO = process.env.CONTACT_TO
 const HOST = process.env.RELAY_HOST ?? '127.0.0.1'
 const PORT = Number(process.env.RELAY_PORT ?? 3081)
 
-if (!MAIL_API_TOKEN || !CONTACT_TO) {
+if (!DRY_RUN && (!MAIL_API_TOKEN || !CONTACT_TO)) {
   console.error('contact-relay: MAIL_API_TOKEN und CONTACT_TO müssen gesetzt sein')
   process.exit(1)
 }
@@ -87,6 +90,12 @@ createServer((req, res) => {
       return json(res, 400, { error: 'invalid fields' })
     }
 
+    if (DRY_RUN) {
+      console.log('[dry-run] Anfrage NICHT versendet:', { name, email, message })
+      res.writeHead(204)
+      return res.end()
+    }
+
     try {
       const response = await fetch(MAIL_API_URL, {
         method: 'POST',
@@ -111,5 +120,9 @@ createServer((req, res) => {
     }
   })
 }).listen(PORT, HOST, () => {
-  console.log(`contact-relay listening on http://${HOST}:${PORT}/api/contact → ${MAIL_API_URL}`)
+  console.log(
+    `contact-relay listening on http://${HOST}:${PORT}/api/contact → ${
+      DRY_RUN ? 'DRY-RUN (kein Versand)' : MAIL_API_URL
+    }`,
+  )
 })

@@ -151,10 +151,11 @@ export default function Services() {
                       key={bullet}
                       className="flex gap-3 text-[0.9375rem] leading-relaxed text-ink-2"
                     >
-                      <span
-                        aria-hidden="true"
-                        className="mt-2.5 h-px w-3 shrink-0 bg-line-strong transition-all duration-300 group-hover:w-5 group-hover:bg-accent/60"
-                      />
+                      {/* Fixed-width marker box: the dash grows inside it, so the
+                          text column never reflows on hover */}
+                      <span aria-hidden="true" className="mt-2.5 w-5 shrink-0">
+                        <span className="block h-px w-3 bg-line-strong transition-all duration-300 group-hover:w-5 group-hover:bg-accent/60" />
+                      </span>
                       {bullet}
                     </li>
                   ))}
