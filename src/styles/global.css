@@ -45,10 +45,20 @@
   --text-lead--line-height: 1.62;
 
   --animate-marquee: marquee 60s linear infinite;
+  --animate-drift: drift 32s ease-in-out infinite alternate;
 
   @keyframes marquee {
     to {
       transform: translateX(-50%);
+    }
+  }
+  /* Slow, subtle wander for the blurred hero flakes */
+  @keyframes drift {
+    from {
+      transform: translate(0, 0) rotate(0deg);
+    }
+    to {
+      transform: translate(16px, -22px) rotate(24deg);
     }
   }
 }

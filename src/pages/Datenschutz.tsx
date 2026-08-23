@@ -1,5 +1,5 @@
 import LegalLayout from '../components/LegalLayout'
-import { EMAIL, PHONE_DISPLAY } from '../content/site'
+import { EMAIL } from '../content/site'
 
 export default function Datenschutz() {
   return (
@@ -7,9 +7,10 @@ export default function Datenschutz() {
       <h2>Das Wichtigste vorab</h2>
       <p>
         Diese Website ist eine statische Seite. Sie verwendet keine Cookies, kein Tracking, keine
-        Analyse-Tools und lädt keine Inhalte von Drittanbietern nach. Auch die Schriften sind lokal
-        eingebunden – beim Besuch dieser Website wird keine Verbindung zu externen Diensten
-        aufgebaut.
+        Analyse-Tools und lädt keine Inhalte von Drittanbietern nach; auch die Schriften sind lokal
+        eingebunden. Beim bloßen Besuch der Website wird keine Verbindung zu Diensten Dritter
+        aufgebaut. Nur wenn Sie das Kontaktformular nutzen, wird Ihre Nachricht an meine eigene
+        Server-Infrastruktur übermittelt – Details dazu unten.
       </p>
 
       <h2>Verantwortlicher</h2>
@@ -21,8 +22,6 @@ export default function Datenschutz() {
         73728 Esslingen am Neckar
         <br />
         E-Mail: {EMAIL}
-        <br />
-        Telefon: {PHONE_DISPLAY}
       </p>
 
       <h2>Server-Logfiles</h2>
@@ -36,14 +35,24 @@ export default function Datenschutz() {
         Zeit automatisch gelöscht.
       </p>
 
-      <h2>Kontaktaufnahme</h2>
+      <h2>Kontaktformular</h2>
       <p>
-        Wenn Sie mir per E-Mail oder Telefon eine Anfrage schicken, verarbeite ich die dabei
-        übermittelten Daten (etwa Name, Kontaktdaten und den Inhalt der Nachricht) ausschließlich
-        zur Bearbeitung Ihrer Anfrage. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, soweit die
-        Anfrage auf einen Vertrag zielt, im Übrigen mein berechtigtes Interesse an der Beantwortung
-        (Art. 6 Abs. 1 lit. f DSGVO). Ich lösche diese Daten, sobald sie für die Bearbeitung nicht
-        mehr erforderlich sind und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.
+        Wenn Sie das Kontaktformular nutzen, verarbeite ich die von Ihnen eingegebenen Daten (Name,
+        E-Mail-Adresse und Inhalt der Nachricht) ausschließlich zur Bearbeitung Ihrer Anfrage. Die
+        Übermittlung erfolgt verschlüsselt an meinen eigenen Server; der Versand der Nachricht läuft
+        über einen von mir selbst betriebenen Mailserver. Es sind keine Drittanbieter-Dienste
+        beteiligt, und die Daten werden nicht weitergegeben. Rechtsgrundlage ist Art. 6 Abs. 1 lit.
+        b DSGVO, soweit Ihre Anfrage auf einen Vertrag zielt, im Übrigen mein berechtigtes Interesse
+        an der Beantwortung (Art. 6 Abs. 1 lit. f DSGVO). Ich lösche die Daten, sobald sie für die
+        Bearbeitung nicht mehr erforderlich sind und keine gesetzlichen Aufbewahrungspflichten
+        entgegenstehen.
+      </p>
+
+      <h2>Kontakt per E-Mail</h2>
+      <p>
+        Dasselbe gilt, wenn Sie mir direkt per E-Mail schreiben: Die übermittelten Daten werden
+        ausschließlich zur Bearbeitung Ihrer Anfrage verarbeitet und nach denselben Maßstäben
+        gelöscht.
       </p>
 
       <h2>Ihre Rechte</h2>

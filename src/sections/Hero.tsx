@@ -7,14 +7,19 @@ import {
   useScroll,
   useSpring,
   useTransform,
+  type MotionValue,
 } from 'motion/react'
 import Container from '../components/Container'
 import AvailabilityBadge from '../components/AvailabilityBadge'
 import { ButtonLink } from '../components/Button'
 import { ArrowRight } from '../components/doodles'
-import { MAILTO } from '../content/site'
 
-const ROTATING = ['CI/CD-Plattformen', 'LLM-Agenten', 'KI-Automatisierung'] as const
+const ROTATING = [
+  'CI/CD-Plattformen',
+  'Business-Plattformen',
+  'LLM-Agenten',
+  'KI-Automatisierung',
+] as const
 
 function RotatingWord() {
   const reduced = useReducedMotion()
@@ -42,6 +47,136 @@ function RotatingWord() {
         </motion.span>
       </AnimatePresence>
     </span>
+  )
+}
+
+/* ---------- Blurry drifting snowflakes (decorative) ---------- */
+
+function SnowflakeIcon({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" className={className} aria-hidden="true">
+      <g stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M24 4v40M6.7 14l34.6 20M6.7 34 41.3 14" />
+        <path d="m24 11-4.5-4.5M24 11l4.5-4.5M24 37l-4.5 4.5M24 37l4.5 4.5" />
+        <path d="m12 17-6-1M12 17l-1-6M36 31l6 1M36 31l1 6" />
+        <path d="m12 31-1 6M12 31l-6 1M36 17l1-6M36 17l6-1" />
+      </g>
+    </svg>
+  )
+}
+
+interface FlakeConfig {
+  pos: string
+  size: string
+  color: string
+  blur: number
+  opacity: number
+  parallax: number
+  duration: string
+  delay: string
+  reverse?: boolean
+  hide?: string
+}
+
+const FLAKES: FlakeConfig[] = [
+  {
+    pos: 'top-[14%] left-[8%]',
+    size: 'h-10 w-10',
+    color: 'text-line-strong',
+    blur: 2.5,
+    opacity: 0.35,
+    parallax: 22,
+    duration: '38s',
+    delay: '0s',
+  },
+  {
+    pos: 'top-[24%] right-[16%]',
+    size: 'h-14 w-14',
+    color: 'text-accent',
+    blur: 4,
+    opacity: 0.16,
+    parallax: -30,
+    duration: '46s',
+    delay: '-12s',
+    reverse: true,
+  },
+  {
+    pos: 'top-[58%] left-[22%]',
+    size: 'h-7 w-7',
+    color: 'text-line-strong',
+    blur: 1.5,
+    opacity: 0.3,
+    parallax: 14,
+    duration: '30s',
+    delay: '-6s',
+    hide: 'hidden sm:block',
+  },
+  {
+    pos: 'bottom-[18%] right-[9%]',
+    size: 'h-9 w-9',
+    color: 'text-line-strong',
+    blur: 3,
+    opacity: 0.3,
+    parallax: 26,
+    duration: '42s',
+    delay: '-20s',
+  },
+  {
+    pos: 'top-[38%] right-[34%]',
+    size: 'h-6 w-6',
+    color: 'text-accent',
+    blur: 2,
+    opacity: 0.14,
+    parallax: -16,
+    duration: '34s',
+    delay: '-3s',
+    hide: 'hidden lg:block',
+  },
+  {
+    pos: 'bottom-[30%] left-[6%]',
+    size: 'h-12 w-12',
+    color: 'text-line-strong',
+    blur: 3.5,
+    opacity: 0.24,
+    parallax: -20,
+    duration: '50s',
+    delay: '-28s',
+    reverse: true,
+    hide: 'hidden md:block',
+  },
+]
+
+function Flake({
+  config,
+  mx,
+  my,
+  reduced,
+}: {
+  config: FlakeConfig
+  mx: MotionValue<number>
+  my: MotionValue<number>
+  reduced: boolean
+}) {
+  const x = useTransform(mx, (v) => v * config.parallax)
+  const y = useTransform(my, (v) => v * config.parallax)
+  return (
+    <motion.div
+      style={reduced ? undefined : { x, y }}
+      className={`absolute ${config.pos} ${config.hide ?? ''}`}
+    >
+      <div
+        className="motion-safe:animate-drift"
+        style={{
+          animationDuration: config.duration,
+          animationDelay: config.delay,
+          animationDirection: config.reverse ? 'alternate-reverse' : 'alternate',
+          filter: `blur(${config.blur}px)`,
+          opacity: config.opacity,
+        }}
+      >
+        <SnowflakeIcon className={`${config.size} ${config.color}`} />
+      </div>
+    </motion.div>
   )
 }
 
@@ -95,6 +230,13 @@ export default function Hero() {
         />
       </motion.div>
 
+      {/* Blurry snowflakes wandering slowly, parallax to the pointer */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        {FLAKES.map((config, index) => (
+          <Flake key={index} config={config} mx={smoothX} my={smoothY} reduced={reduced ?? false} />
+        ))}
+      </div>
+
       {/* Accent hairline drifting against the grid */}
       <motion.div
         aria-hidden="true"
@@ -113,7 +255,7 @@ export default function Hero() {
               <span className="mx-2 opacity-40" aria-hidden="true">
                 /
               </span>
-              DevOps &amp; Platform Engineer
+              DevOps, Platform &amp; AI Engineering
             </p>
 
             <h1 className="mt-7 text-hero text-ink">
@@ -125,14 +267,14 @@ export default function Hero() {
 
             <p className="mt-8 max-w-2xl text-lead text-ink-2">
               Über zehn Jahre IT: vier Jahre CI/CD-Plattform für die In-Car-UI-Entwicklung von
-              Mercedes-Benz, zuletzt agentische KI-Assistenten in Produktion. Ich liefere Systeme,
-              die im Alltag bestehen – gebaut, dokumentiert, betrieben.
+              Mercedes-Benz, zuletzt Business-Plattform und agentischer KI-Assistent in Produktion.
+              Ich liefere Systeme, die im Alltag bestehen – gebaut, dokumentiert, betrieben.
             </p>
 
             <div className="mt-10 flex flex-wrap items-center gap-3">
-              <ButtonLink href={MAILTO} size="lg">
+              <ButtonLink href="#kontakt" size="lg" className="group">
                 Projekt anfragen
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
               </ButtonLink>
               <ButtonLink variant="secondary" size="lg" href="#leistungen">
                 Leistungen ansehen

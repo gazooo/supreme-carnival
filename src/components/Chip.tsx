@@ -16,13 +16,13 @@ export default function Chip({
   className?: string
 }) {
   const tones: Record<ChipTone, string> = {
-    default: 'border-line text-ink-2',
+    default: 'border-line text-ink-2 hover:border-ink-2 hover:text-ink',
     accent: 'border-accent/35 bg-accent-soft text-accent',
-    onDark: 'border-ink-line text-ink-2-on-dark',
+    onDark: 'border-ink-line text-ink-2-on-dark hover:border-ink-2-on-dark',
   }
   return (
     <span
-      className={`inline-flex items-center border px-2.5 py-1 font-mono text-xs tracking-tight ${tones[tone]} ${className}`}
+      className={`inline-flex items-center border px-2.5 py-1 font-mono text-xs tracking-tight transition-colors duration-200 ${tones[tone]} ${className}`}
     >
       {children}
     </span>

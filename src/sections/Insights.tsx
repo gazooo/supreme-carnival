@@ -42,10 +42,10 @@ export default function Insights() {
                   onClick={(event) => event.preventDefault()}
                   aria-disabled="true"
                   title="Veröffentlichung folgt"
-                  className="link-accent inline-flex items-center gap-1.5 text-[0.9375rem] font-medium"
+                  className="link-accent group inline-flex items-center gap-1.5 text-[0.9375rem] font-medium"
                 >
                   Zum Essay
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </a>
                 <span className="font-mono text-xs text-ink-3">Veröffentlichung folgt</span>
               </p>

@@ -1,8 +1,7 @@
 import Container from '../components/Container'
 import Reveal from '../components/Reveal'
-import { ButtonLink } from '../components/Button'
-import { ArrowRight } from '../components/doodles'
-import { AVAILABILITY_DATE, EMAIL, MAILTO, PHONE_DISPLAY, PHONE_TEL } from '../content/site'
+import ContactForm from '../components/ContactForm'
+import { AVAILABILITY_DATE, EMAIL } from '../content/site'
 
 const FACTS = [
   { title: `Verfügbar ab ${AVAILABILITY_DATE}`, detail: 'Projektstart planbar ab Oktober 2026.' },
@@ -29,21 +28,13 @@ export default function Contact() {
                 Projekt im <span className="border-b-2 border-accent-on-dark pb-0.5">Kopf</span>?
               </h2>
               <p className="mt-7 max-w-2xl text-lead text-ink-2-on-dark">
-                Erzählen Sie mir, was Sie bauen wollen – Sie erreichen mich direkt, ohne Umwege.
-                Antwort innerhalb von 24 Stunden.
+                Erzählen Sie mir, was Sie bauen wollen – eine kurze Nachricht genügt. Antwort
+                innerhalb von 24 Stunden.
               </p>
 
-              <div className="mt-9 flex flex-wrap items-center gap-3">
-                <ButtonLink href={MAILTO} variant="onInk" size="lg">
-                  E-Mail schreiben
-                  <ArrowRight className="h-4 w-4" />
-                </ButtonLink>
-                <ButtonLink href={`tel:${PHONE_TEL}`} variant="onInkGhost" size="lg">
-                  {PHONE_DISPLAY}
-                </ButtonLink>
-              </div>
+              <ContactForm />
 
-              <p className="mt-6 font-mono text-sm text-ink-2-on-dark">
+              <p className="mt-8 font-mono text-sm text-ink-2-on-dark">
                 Oder direkt an{' '}
                 <a
                   href={`mailto:${EMAIL}`}
@@ -56,7 +47,7 @@ export default function Contact() {
               <div className="mt-14 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
                 {FACTS.map((fact, index) => (
                   <Reveal key={fact.title} delay={index * 0.06} className="h-full">
-                    <div className="border-t border-ink-line pt-4">
+                    <div className="group h-full border-t border-ink-line pt-4 transition-colors duration-300 hover:border-accent-on-dark/50">
                       <p className="text-[0.9375rem] font-medium text-paper">{fact.title}</p>
                       <p className="mt-1 text-sm leading-relaxed text-ink-2-on-dark">
                         {fact.detail}

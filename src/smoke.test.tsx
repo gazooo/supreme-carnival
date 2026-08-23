@@ -23,6 +23,15 @@ describe('App', () => {
     }
   })
 
+  it('renders the contact form fields', async () => {
+    window.history.pushState(null, '', '/')
+    render(<App />)
+    expect(await screen.findByLabelText('Name')).toBeTruthy()
+    expect(await screen.findByLabelText('E-Mail')).toBeTruthy()
+    expect(await screen.findByLabelText('Nachricht')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /nachricht senden/i })).toBeTruthy()
+  })
+
   it('renders the Impressum route', () => {
     window.history.pushState(null, '', '/impressum')
     render(<App />)

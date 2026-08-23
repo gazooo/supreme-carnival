@@ -79,16 +79,20 @@ export default function Timeline() {
             {STATIONS.map((station, index) => (
               <li
                 key={station.org + station.period}
-                className="relative border-b border-line py-7 pl-8 last:border-b-0 md:grid md:grid-cols-[11rem_1fr] md:gap-10 md:pl-10"
+                className="group relative border-b border-line py-7 pl-8 transition-colors duration-300 last:border-b-0 hover:bg-surface/70 md:grid md:grid-cols-[11rem_1fr] md:gap-10 md:pl-10"
               >
                 <span
                   aria-hidden="true"
-                  className={`absolute top-[2.35rem] -left-[3.5px] h-2 w-2 rounded-full border ${
-                    station.final ? 'border-accent bg-accent' : 'border-line-strong bg-paper'
+                  className={`absolute top-[2.35rem] -left-[3.5px] h-2 w-2 rounded-full border transition-all duration-300 ${
+                    station.final
+                      ? 'border-accent bg-accent'
+                      : 'border-line-strong bg-paper group-hover:scale-125 group-hover:border-accent group-hover:bg-accent'
                   }`}
                 />
                 <Reveal delay={index * 0.04}>
-                  <p className="font-mono text-xs text-ink-3">{station.period}</p>
+                  <p className="font-mono text-xs text-ink-3 transition-colors duration-300 group-hover:text-ink">
+                    {station.period}
+                  </p>
                 </Reveal>
                 <Reveal delay={index * 0.04}>
                   <div className="mt-2 max-w-2xl md:mt-0">

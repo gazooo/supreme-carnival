@@ -19,7 +19,9 @@ Datenschutzerklärung.
 | Qualität  | ESLint (flat config) + Prettier                                                                       |
 
 **Datenschutz by design:** Die Seite macht null Third-Party-Requests — keine CDNs,
-keine Google Fonts, kein Tracking, keine Cookies.
+keine Google Fonts, kein Tracking, keine Cookies. Das Kontaktformular postet
+same-origin an `server/contact-relay.mjs`, der die private Mailserver-API
+(github.com/gazooo/mailserver) aufruft — Setup in [DEPLOY.md](DEPLOY.md).
 
 ## Befehle
 

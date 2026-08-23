@@ -10,7 +10,7 @@ import Container from '../components/Container'
 import AvailabilityBadge from '../components/AvailabilityBadge'
 import { ButtonLink } from '../components/Button'
 import { useLenis } from '../lib/scroll'
-import { EMAIL, MAILTO, NAV_LINKS, PHONE_DISPLAY, PHONE_TEL } from '../content/site'
+import { EMAIL, NAV_LINKS } from '../content/site'
 
 function Wordmark({ className = '' }: { className?: string }) {
   return (
@@ -90,7 +90,7 @@ export default function Nav() {
 
           <div className="hidden items-center gap-6 lg:flex">
             <AvailabilityBadge />
-            <ButtonLink href={MAILTO} size="sm">
+            <ButtonLink href="#kontakt" size="sm">
               Projekt anfragen
             </ButtonLink>
           </div>
@@ -192,16 +192,12 @@ function MobileOverlay({
 
       <div className="flex flex-col gap-5 px-5 pt-8 pb-10 sm:px-8">
         <AvailabilityBadge />
-        <ButtonLink href={MAILTO} size="lg" className="self-start" onClick={onClose}>
+        <ButtonLink href="#kontakt" size="lg" className="self-start" onClick={onClose}>
           Projekt anfragen
         </ButtonLink>
         <p className="font-mono text-xs text-ink-2">
           <a href={`mailto:${EMAIL}`} className="link-accent">
             {EMAIL}
-          </a>
-          <span className="mx-2 text-ink-3">·</span>
-          <a href={`tel:${PHONE_TEL}`} className="link-accent">
-            {PHONE_DISPLAY}
           </a>
         </p>
       </div>

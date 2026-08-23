@@ -1,16 +1,18 @@
+import { useState } from 'react'
 import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
 import Reveal from '../components/Reveal'
 
 /*
- * TODO: Porträtfoto einsetzen. Quelle laut Spezifikation:
- * templates/img/portrait.png (als optimiertes WebP/AVIF mit expliziten
- * Dimensionen in public/ ablegen und das Monogramm hier ersetzen).
- * Die Quelldatei lag in dieser Umgebung nicht vor.
+ * TODO: public/portrait.webp ablegen (Porträtfoto, 4:5, empfohlen 768×960,
+ * WebP-Qualität ~80). Solange die Datei fehlt, rendert der onError-Fallback
+ * das Monogramm — die Seite bleibt also auch ohne Foto intakt.
  */
-function PortraitPlaceholder() {
-  return (
-    <div className="w-full max-w-sm">
+function Portrait() {
+  const [failed, setFailed] = useState(false)
+
+  if (failed) {
+    return (
       <div
         role="img"
         aria-label="Monogramm von Malte Lohrer – Porträtfoto folgt"
@@ -23,8 +25,20 @@ function PortraitPlaceholder() {
           ML
         </span>
       </div>
-      <p className="mt-3 font-mono text-xs text-ink-3">Esslingen am Neckar · Raum Stuttgart</p>
-    </div>
+    )
+  }
+
+  return (
+    <img
+      src="/portrait.webp"
+      width={768}
+      height={960}
+      alt="Porträt von Malte Lohrer"
+      loading="lazy"
+      decoding="async"
+      onError={() => setFailed(true)}
+      className="aspect-4/5 w-full border border-line bg-paper-alt object-cover"
+    />
   )
 }
 
@@ -37,7 +51,12 @@ export default function About() {
         </Reveal>
         <div className="mt-14 grid items-start gap-12 md:mt-20 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-20">
           <Reveal>
-            <PortraitPlaceholder />
+            <div className="w-full max-w-sm">
+              <Portrait />
+              <p className="mt-3 font-mono text-xs text-ink-3">
+                Esslingen am Neckar · Raum Stuttgart
+              </p>
+            </div>
           </Reveal>
           <Reveal delay={0.08}>
             <div className="flex max-w-2xl flex-col gap-5 text-lead text-ink-2">

@@ -1,5 +1,5 @@
 import LegalLayout from '../components/LegalLayout'
-import { EMAIL, PHONE_DISPLAY, PHONE_TEL } from '../content/site'
+import { EMAIL } from '../content/site'
 
 export default function Impressum() {
   return (
@@ -17,9 +17,9 @@ export default function Impressum() {
 
       <h2>Kontakt</h2>
       <p>
-        Telefon: <a href={`tel:${PHONE_TEL}`}>{PHONE_DISPLAY}</a>
-        <br />
         E-Mail: <a href={`mailto:${EMAIL}`}>{EMAIL}</a>
+        <br />
+        Oder über das Kontaktformular auf der Startseite.
       </p>
 
       {/*

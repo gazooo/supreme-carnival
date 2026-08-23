@@ -34,11 +34,20 @@ export default function Approach() {
           />
         </Reveal>
 
-        <div className="mt-14 grid gap-px bg-ink-line md:mt-20 lg:grid-cols-3">
+        <div className="mt-14 grid gap-y-10 md:mt-20 lg:grid-cols-3 lg:gap-x-0 lg:divide-x lg:divide-ink-line">
           {PRINCIPLES.map((principle, index) => (
-            <Reveal key={principle.number} delay={index * 0.07} className="bg-ink">
-              <article className="flex h-full flex-col py-8 lg:px-8 lg:first:pl-0 lg:last:pr-0">
-                <span aria-hidden="true" className="font-mono text-xs text-ink-2-on-dark">
+            <Reveal
+              key={principle.number}
+              delay={index * 0.07}
+              className={`group h-full border-t border-ink-line pt-8 first:border-t-0 first:pt-0 lg:border-t-0 lg:px-10 lg:pt-0 ${
+                index === 0 ? 'lg:pl-0' : ''
+              } ${index === PRINCIPLES.length - 1 ? 'lg:pr-0' : ''}`}
+            >
+              <article className="flex h-full flex-col">
+                <span
+                  aria-hidden="true"
+                  className="font-mono text-xs text-ink-2-on-dark transition-colors duration-300 group-hover:text-accent-on-dark"
+                >
                   {principle.number}
                 </span>
                 <h3 className="mt-4 text-title text-paper">{principle.title}</h3>

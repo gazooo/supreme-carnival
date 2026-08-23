@@ -15,6 +15,23 @@ function IconAI({ className = '' }: { className?: string }) {
   )
 }
 
+function IconApp({ className = '' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="none">
+      <rect x="3.5" y="4.5" width="17" height="15" stroke="currentColor" strokeWidth="1.25" />
+      <path d="M3.5 9h17" stroke="currentColor" strokeWidth="1.25" />
+      <circle cx="6.2" cy="6.75" r="0.8" fill="currentColor" />
+      <circle cx="8.8" cy="6.75" r="0.8" fill="currentColor" />
+      <path
+        d="M6.5 13h7M6.5 16h4.5"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+      />
+    </svg>
+  )
+}
+
 function IconPipeline({ className = '' }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden="true" fill="none">
@@ -61,6 +78,18 @@ const SERVICES: Service[] = [
   },
   {
     index: '02',
+    title: 'Business-Plattformen',
+    icon: <IconApp className="h-5 w-5" />,
+    bullets: [
+      'Interne Plattformen und Web-Apps: React, Node.js, PostgreSQL',
+      'Frontend, Backend und Datenbank aus einer Hand – ein Ansprechpartner',
+      'Integrationen: Microsoft 365, SharePoint, CRM, E-Mail',
+      'Acht Dienste im Produktivbetrieb bei Aremus Finance',
+    ],
+    chips: ['React', 'Node.js', 'PostgreSQL'],
+  },
+  {
+    index: '03',
     title: 'CI/CD & Platform Engineering',
     icon: <IconPipeline className="h-5 w-5" />,
     bullets: [
@@ -72,7 +101,7 @@ const SERVICES: Service[] = [
     chips: ['GitLab CI', 'Jenkins', 'GitHub Actions', 'Kubernetes'],
   },
   {
-    index: '03',
+    index: '04',
     title: 'Betrieb & Infrastruktur',
     icon: <IconServer className="h-5 w-5" />,
     bullets: [
@@ -95,17 +124,25 @@ export default function Services() {
             number="01"
             eyebrow="Leistungen"
             title="Was Sie bei mir bekommen"
-            description="Zwei Schwerpunkte, ein Anspruch: Systeme, die produktiv laufen – nicht nur in der Demo."
+            description="Vier Bereiche, ein Anspruch: Systeme, die produktiv laufen – nicht nur in der Demo."
           />
         </Reveal>
 
-        <div className="mt-14 grid gap-px bg-line md:mt-20 lg:grid-cols-3">
+        <div className="mt-14 grid gap-y-10 md:mt-20 md:grid-cols-2 md:gap-x-12 md:gap-y-14 xl:grid-cols-4 xl:gap-x-0 xl:divide-x xl:divide-line">
           {SERVICES.map((service, index) => (
-            <Reveal key={service.title} delay={index * 0.07} className="bg-paper">
-              <article className="flex h-full flex-col py-8 lg:px-8 lg:first:pl-0 lg:last:pr-0">
-                <div className="flex items-center gap-3 text-ink">
+            <Reveal
+              key={service.title}
+              delay={index * 0.06}
+              className={`group h-full border-t border-line pt-8 first:border-t-0 first:pt-0 md:border-t-0 md:pt-0 xl:px-9 ${
+                index === 0 ? 'xl:pl-0' : ''
+              } ${index === SERVICES.length - 1 ? 'xl:pr-0' : ''}`}
+            >
+              <article className="flex h-full flex-col">
+                <div className="flex items-center gap-3 text-ink transition-colors duration-300 group-hover:text-accent">
                   {service.icon}
-                  <span className="font-mono text-xs text-ink-3">{service.index}</span>
+                  <span className="font-mono text-xs text-ink-3 transition-colors duration-300 group-hover:text-accent">
+                    {service.index}
+                  </span>
                 </div>
                 <h3 className="mt-4 text-title text-ink">{service.title}</h3>
                 <ul className="mt-5 flex flex-col gap-3">
@@ -116,7 +153,7 @@ export default function Services() {
                     >
                       <span
                         aria-hidden="true"
-                        className="mt-2.5 h-px w-3 shrink-0 bg-line-strong"
+                        className="mt-2.5 h-px w-3 shrink-0 bg-line-strong transition-all duration-300 group-hover:w-5 group-hover:bg-accent/60"
                       />
                       {bullet}
                     </li>

@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
 import Chip from '../components/Chip'
@@ -37,6 +39,9 @@ const SECONDARY_GROUPS = [
 ]
 
 export default function Skills() {
+  const reduced = useReducedMotion()
+  const [hovered, setHovered] = useState<number | null>(null)
+
   return (
     <section id="skills" className="border-t border-line bg-paper-alt py-20 md:py-28">
       <Container size="wide">
@@ -59,14 +64,48 @@ export default function Skills() {
           </ul>
         </Reveal>
 
-        <div className="mt-14 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        {/*
+          Magic underline: one shared highlight travels between the group
+          labels as the pointer moves across the columns.
+        */}
+        <div
+          className="mt-14 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
+          onMouseLeave={() => setHovered(null)}
+        >
           {SECONDARY_GROUPS.map((group, index) => (
             <Reveal key={group.label} delay={index * 0.06} className="h-full">
-              <div className="border-t border-line-strong pt-4">
-                <h3 className="mono-label">{group.label}</h3>
-                <ul className="mt-4 flex flex-col gap-2">
+              <div
+                className="group h-full border-t border-line-strong pt-4 transition-colors duration-300"
+                onMouseEnter={() => setHovered(index)}
+              >
+                <h3 className="relative inline-flex flex-col">
+                  <span className="mono-label transition-colors duration-200 group-hover:text-ink">
+                    {group.label}
+                  </span>
+                  <span className="relative mt-1.5 block h-0.5 w-full">
+                    <AnimatePresence>
+                      {hovered === index && (
+                        <motion.span
+                          layoutId="skills-underline"
+                          initial={reduced ? { opacity: 0 } : { opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{
+                            layout: { type: 'spring', stiffness: 420, damping: 38 },
+                            opacity: { duration: 0.18 },
+                          }}
+                          className="absolute inset-0 bg-accent"
+                        />
+                      )}
+                    </AnimatePresence>
+                  </span>
+                </h3>
+                <ul className="mt-3 flex flex-col gap-2">
                   {group.items.map((item) => (
-                    <li key={item} className="text-sm text-ink-2">
+                    <li
+                      key={item}
+                      className="text-sm text-ink-2 transition-[color,translate] duration-200 hover:translate-x-1 hover:text-ink"
+                    >
                       {item}
                     </li>
                   ))}

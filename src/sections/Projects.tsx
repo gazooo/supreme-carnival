@@ -103,13 +103,13 @@ function CaseCard({ study }: { study: CaseStudy }) {
           {study.metrics.map((metric, index) => (
             <div
               key={metric.label}
-              className={`bg-surface px-4 py-3.5 ${
+              className={`group/metric bg-surface px-4 py-3.5 transition-colors duration-300 hover:bg-accent-soft ${
                 study.metrics.length % 2 === 1 && index === study.metrics.length - 1
                   ? 'col-span-2 sm:col-span-1'
                   : ''
               }`}
             >
-              <p className="text-lg font-semibold tracking-tight text-ink tabular-nums">
+              <p className="text-lg font-semibold tracking-tight text-ink tabular-nums transition-colors duration-300 group-hover/metric:text-accent">
                 {metric.value}
               </p>
               <p className="mt-0.5 font-mono text-[0.6875rem] text-ink-3">{metric.label}</p>

@@ -20,19 +20,87 @@ Build eigene `index.html`-Kopien für diese Pfade anlegt.
 2. **E-Mail** — sobald ein Domain-Postfach existiert: `src/content/site.ts`
 3. Weitere `TODO`-Marker: `grep -rn "TODO" src/ index.html public/`
 
-## Option A — Eigener Server (Hetzner) mit Caddy
+## Option A — Eigener Server (VPS) mit Caddy
 
 ```caddyfile
 malte-lohrer.example {
-    root * /var/www/malte-lohrer-website/dist
-    file_server
     encode zstd gzip
-    header /assets/* Cache-Control "public, max-age=31536000, immutable"
+
+    handle /api/contact {
+        reverse_proxy 127.0.0.1:3081
+    }
+
+    handle {
+        root * /var/www/malte-lohrer-website/dist
+        file_server
+        header /assets/* Cache-Control "public, max-age=31536000, immutable"
+    }
 }
 ```
 
 Deploy z. B. per `rsync -avz --delete dist/ server:/var/www/malte-lohrer-website/dist/`.
 Caddy besorgt TLS automatisch (Let's Encrypt).
+
+## Kontaktformular: Contact-Relay + Mailserver
+
+Das Formular postet an den Same-Origin-Pfad `/api/contact`. Dahinter läuft
+`server/contact-relay.mjs` (Node ≥ 18, keine Dependencies) — er validiert,
+rate-limitiert und ruft die private API des Mailservers
+([github.com/gazooo/mailserver](https://github.com/gazooo/mailserver)) auf.
+
+**Wichtig:** Der Browser darf die Mailserver-API nie direkt erreichen — der
+Bearer-Token wäre öffentlich, und Besucher könnten beliebige Empfänger
+setzen. Deshalb bleibt die API loopback-only und nur der Relay kennt den
+Token und den festen Empfänger.
+
+Systemd-Unit auf dem VPS (`/etc/systemd/system/contact-relay.service`):
+
+```ini
+[Unit]
+Description=Website contact relay
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /var/www/malte-lohrer-website/server/contact-relay.mjs
+Environment=MAIL_API_URL=http://127.0.0.1:3080/v1/send
+Environment=CONTACT_TO=maltelohrer1990@hotmail.de
+EnvironmentFile=/etc/contact-relay.env   ; enthält MAIL_API_TOKEN=…
+Restart=on-failure
+DynamicUser=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Test nach dem Start:
+
+```bash
+curl -X POST http://127.0.0.1:3081/api/contact \
+  -H 'Content-Type: application/json' \
+  --data '{"name":"Test","email":"test@example.com","message":"Probelauf"}'
+# → HTTP 204, Mail landet bei CONTACT_TO
+```
+
+### Absenderadresse (z. B. kontaktanfrage@bangum.com)
+
+Die Mailserver-API erlaubt bewusst **kein** Absender-Override pro Request —
+der Absender kommt aus `MAIL_FROM` in der Mailserver-`.env` und muss wegen
+SPF/DKIM/DMARC-Alignment zur signierten Domain passen. Für eine Adresse wie
+`kontaktanfrage@bangum.com` heißt das:
+
+1. Domain `bangum.com` registrieren.
+2. DNS für bangum.com einrichten: SPF-TXT auf die VPS-IP, DKIM-Key
+   (OpenDKIM auf dem VPS um die Domain erweitern bzw. Installer mit
+   `MAIL_DOMAIN=bangum.com` laufen lassen), DMARC-Record.
+3. Im Mailserver `MAIL_FROM=kontaktanfrage@bangum.com` setzen und den
+   Container neu starten. Achtung: `MAIL_FROM` gilt global für alle
+   Anwendungen, die diese Mailserver-Instanz nutzen — falls andere Dienste
+   den alten Absender brauchen, eine zweite API-Instanz mit eigenem
+   `MAIL_FROM` (anderer Port) betreiben.
+
+Ohne diese DNS-Einrichtung landen Mails mit fremder Absenderdomain im Spam
+oder werden abgewiesen.
 
 ## Option B — GitHub Pages
 
@@ -50,5 +118,14 @@ Caddy besorgt TLS automatisch (Let's Encrypt).
 ## Nach dem Deploy prüfen
 
 - `curl -I https://<domain>/impressum` → 200
-- DevTools → Network: **keine** Requests an fremde Hosts
+- Kontaktformular absenden → Mail kommt an, Antwort an die Absenderadresse
+  funktioniert (`replyTo`)
+- DevTools → Network: keine Requests an fremde Hosts (nur `/api/contact`
+  auf der eigenen Domain)
 - Lighthouse (Performance/Accessibility/Best Practices/SEO)
+
+Hinweis zu GitHub Pages / Cloudflare Pages: Dort gibt es kein `/api/contact`
+auf derselben Origin — das Formular zeigt dann den E-Mail-Fallback. Für das
+Formular ist Option A (eigener VPS) vorgesehen; alternativ den Relay separat
+hosten und `CONTACT_ENDPOINT` in `src/content/site.ts` auf dessen URL stellen
+(dann CORS im Relay ergänzen).
