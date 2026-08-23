@@ -4,9 +4,9 @@ import SectionHeading from '../components/SectionHeading'
 import Reveal from '../components/Reveal'
 
 /*
- * TODO: public/portrait.webp ablegen (Porträtfoto, 4:5, empfohlen 768×960,
- * WebP-Qualität ~80). Solange die Datei fehlt, rendert der onError-Fallback
- * das Monogramm — die Seite bleibt also auch ohne Foto intakt.
+ * public/portrait.webp: 768×960 (4:5), generiert aus
+ * assets/portrait/portrait-malte.jpg. Der onError-Fallback (Monogramm)
+ * bleibt als Robustheitsnetz, falls die Datei je fehlt.
  */
 function Portrait() {
   const [failed, setFailed] = useState(false)

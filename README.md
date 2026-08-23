@@ -79,4 +79,4 @@ Sektionen halten die Anker-IDs sofort bereit. Lighthouse: 100/100/100/100
 
 Statisches `dist/`-Verzeichnis, überall deploybar — Optionen und Schritte in
 [DEPLOY.md](DEPLOY.md). Offene Platzhalter (Domain, Social-Links, USt-IdNr.,
-Essay-URL, Porträtfoto) sind im Code als `TODO` markiert.
+Essay-URL) sind im Code als `TODO` markiert.
