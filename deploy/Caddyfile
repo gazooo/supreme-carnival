@@ -1,6 +1,10 @@
-# lohrer.dev — statische Website + Contact-Relay-Proxy.
-# Wird von deploy/setup-vps.sh nach /etc/caddy/sites/lohrer.dev.caddy kopiert.
-# TLS besorgt Caddy automatisch (Let's Encrypt), sobald die DNS-Records zeigen.
+# lohrer.dev — wird von deploy/setup-vps.sh in das Caddyfile des bestehenden
+# Caddy-Containers eingefügt (zwischen den Markern). __UPSTREAM__ ersetzt das
+# Skript durch die Gateway-IP des Docker-Netzes, in dem Caddy läuft.
+#
+# Bewusst nur ein reverse_proxy: Der Node-Dienst auf dem Host liefert sowohl
+# die statischen Dateien als auch /api/contact aus. So braucht der Container
+# kein zusätzliches Volume — und damit keinen Neustart.
 
 lohrer.dev {
 	encode zstd gzip
@@ -13,15 +17,7 @@ lohrer.dev {
 		-Server
 	}
 
-	handle /api/contact {
-		reverse_proxy 127.0.0.1:3081
-	}
-
-	handle {
-		root * /var/www/lohrer.dev/dist
-		file_server
-		header /assets/* Cache-Control "public, max-age=31536000, immutable"
-	}
+	reverse_proxy __UPSTREAM__
 }
 
 www.lohrer.dev {

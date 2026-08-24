@@ -1,130 +1,159 @@
 #!/usr/bin/env bash
 #
-# Einmalige Einrichtung von lohrer.dev auf dem VPS (Ubuntu 24.04):
-#   - prüft, ob Port 80/443 bereits von einem anderen Dienst belegt sind
-#   - Caddy installieren (falls nicht vorhanden) und Site-Config aktivieren
-#   - Contact-Relay als systemd-Dienst einrichten
+# Richtet lohrer.dev auf dem VPS ein — OHNE den laufenden Betrieb zu stören.
 #
-# Aufruf als root aus dem Repo-Checkout auf dem VPS:
+# Ausgangslage (per deploy/inspect-*.sh ermittelt): Ports 80/443 gehören einem
+# Caddy-Container eines fremden Projekts. Dieses Skript installiert deshalb
+# KEINEN eigenen Webserver, sondern
+#   1. startet einen Node-Dienst auf dem Host (Website + /api/contact) und
+#   2. ergänzt das Caddyfile dieses Containers um einen lohrer.dev-Block,
+#      der dorthin proxied — anschließend `caddy reload`, also ohne Neustart
+#      und ohne Ausfall für die bereits laufenden Sites.
+#
+# Aufruf auf dem VPS aus dem Repo-Checkout:
 #   sudo bash deploy/setup-vps.sh
 #
 # Optional:
-#   DEPLOY_USER=deploy   Besitzer des Webroots (Default: der sudo-Aufrufer)
-#   FORCE=1              Vorprüfung auf belegte Ports übergehen
+#   CADDY_CONTAINER=lol-stats-caddy-1   anderer Container
+#   DEPLOY_USER=deploy                  Besitzer des Webroots
 #
-# Idempotent: mehrfaches Ausführen ist sicher (aktualisiert Config + Relay).
+# Idempotent: mehrfaches Ausführen aktualisiert nur.
 set -euo pipefail
 
 DOMAIN="lohrer.dev"
 WEBROOT="/var/www/${DOMAIN}"
 APPDIR="/opt/${DOMAIN}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENVFILE="/etc/lohrer-site.env"
+PORT=3081
+CONTAINER="${CADDY_CONTAINER:-lol-stats-caddy-1}"
 DEPLOY_USER="${DEPLOY_USER:-${SUDO_USER:-root}}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BEGIN_MARK="# >>> ${DOMAIN} — verwaltet von supreme-carnival/deploy >>>"
+END_MARK="# <<< ${DOMAIN} <<<"
 
-[[ $EUID -eq 0 ]] || { echo "Bitte als root ausführen: sudo bash deploy/setup-vps.sh"; exit 1; }
+die() { echo "FEHLER: $*" >&2; exit 1; }
 
-echo "== 0/5 Vorprüfung: Ports 80/443 =="
-listeners="$(ss -ltnp '( sport = :80 or sport = :443 )' 2>/dev/null | tail -n +2 || true)"
-if [[ -n "${listeners}" ]]; then
-  echo "${listeners}"
-  if grep -q 'caddy' <<<"${listeners}"; then
-    echo "-> Caddy lauscht bereits. lohrer.dev wird als zusätzliche Site ergänzt."
-  else
-    cat <<'WARN'
+[[ $EUID -eq 0 ]] || die "Bitte als root ausführen: sudo bash deploy/setup-vps.sh"
 
-ABBRUCH: Auf Port 80/443 lauscht ein anderer Dienst (nginx, Apache, Traefik
-oder ein Docker-Container). Eine parallele Caddy-Installation könnte nicht
-binden — und im schlimmsten Fall den laufenden Betrieb stören.
+echo "== 1/6 Vorprüfung =="
+command -v docker >/dev/null || die "docker nicht gefunden."
+docker inspect "${CONTAINER}" >/dev/null 2>&1 || die "Container '${CONTAINER}' existiert nicht."
+[[ "$(docker inspect -f '{{.State.Running}}' "${CONTAINER}")" == "true" ]] ||
+  die "Container '${CONTAINER}' läuft nicht."
+command -v node >/dev/null || die "node nicht gefunden."
 
-Bitte erst klären, wie ausgeliefert wird. Zwei saubere Wege:
-  a) lohrer.dev im bereits laufenden Reverse-Proxy als weitere Site eintragen
-     (deploy/Caddyfile zeigt, was gebraucht wird: statisches dist/ ausliefern
-     plus /api/contact -> 127.0.0.1:3081 proxen), oder
-  b) den bestehenden Proxy bewusst ablösen.
+# Host-Pfad des Caddyfiles aus den Mounts des Containers lesen
+CADDYFILE="$(docker inspect "${CONTAINER}" \
+  --format '{{range .Mounts}}{{if eq .Destination "/etc/caddy/Caddyfile"}}{{.Source}}{{end}}{{end}}')"
+[[ -n "${CADDYFILE}" && -f "${CADDYFILE}" ]] ||
+  die "Caddyfile-Mount des Containers nicht gefunden — bitte manuell ergänzen (Vorlage: deploy/Caddyfile)."
 
-Wenn wirklich parallel gestartet werden soll: FORCE=1 sudo bash deploy/setup-vps.sh
-WARN
-    [[ "${FORCE:-0}" == "1" ]] || exit 2
-  fi
-else
-  echo "-> 80/443 sind frei."
+# Gateway-IP des Netzes, in dem Caddy hängt — darüber erreicht der Container den Host
+GATEWAY="$(docker inspect "${CONTAINER}" \
+  --format '{{range .NetworkSettings.Networks}}{{.Gateway}}{{break}}{{end}}')"
+[[ -n "${GATEWAY}" ]] || die "Gateway-IP des Container-Netzes nicht ermittelbar."
+
+if ss -ltnH "( sport = :${PORT} )" | grep -q .; then
+  ss -ltnp "( sport = :${PORT} )"
+  die "Port ${PORT} ist bereits belegt."
 fi
 
-echo "== 1/5 Caddy =="
-if ! command -v caddy >/dev/null 2>&1; then
-  apt-get update
-  apt-get install -y debian-keyring debian-archive-keyring apt-transport-https curl gpg
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' |
-    gpg --dearmor --yes -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
-  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' \
-    >/etc/apt/sources.list.d/caddy-stable.list
-  apt-get update
-  apt-get install -y caddy
-else
-  echo "-> Caddy ist bereits installiert: $(caddy version | head -1)"
-fi
+echo "  Container : ${CONTAINER}"
+echo "  Caddyfile : ${CADDYFILE}"
+echo "  Upstream  : ${GATEWAY}:${PORT}"
+echo "  Webroot   : ${WEBROOT} (Besitzer: ${DEPLOY_USER})"
 
-echo "== 2/5 Site-Konfiguration =="
-mkdir -p /etc/caddy/sites "${WEBROOT}/dist" "${APPDIR}"
-install -m 0644 "${SCRIPT_DIR}/Caddyfile" "/etc/caddy/sites/${DOMAIN}.caddy"
-if ! grep -qs 'import sites/\*.caddy' /etc/caddy/Caddyfile; then
-  if [[ -f /etc/caddy/Caddyfile ]]; then
-    backup="/etc/caddy/Caddyfile.bak.$(date +%s)"
-    cp /etc/caddy/Caddyfile "${backup}"
-    echo "-> Bestehende Caddyfile gesichert: ${backup}"
-    # Debian-Default-Caddyfile (Beispielseite) ersetzen, echte Configs ergänzen
-    if grep -qs '/usr/share/caddy' /etc/caddy/Caddyfile; then
-      printf 'import sites/*.caddy\n' >/etc/caddy/Caddyfile
-    else
-      printf '\nimport sites/*.caddy\n' >>/etc/caddy/Caddyfile
-    fi
-  else
-    printf 'import sites/*.caddy\n' >/etc/caddy/Caddyfile
-  fi
-fi
-if ! caddy validate --config /etc/caddy/Caddyfile; then
-  echo "FEHLER: Caddy-Konfiguration ist ungültig — bitte prüfen (Backup s. o.)." >&2
-  exit 3
-fi
+echo "== 2/6 Node-Dienst installieren =="
+mkdir -p "${APPDIR}" "${WEBROOT}/dist"
+install -m 0755 "${SCRIPT_DIR}/../server/site-server.mjs" "${APPDIR}/site-server.mjs"
+id -u "${DEPLOY_USER}" >/dev/null 2>&1 && chown -R "${DEPLOY_USER}:${DEPLOY_USER}" "${WEBROOT}"
 
-# Webroot dem Deploy-User geben, damit publish.sh ohne sudo hochladen kann
-if id -u "${DEPLOY_USER}" >/dev/null 2>&1; then
-  chown -R "${DEPLOY_USER}:${DEPLOY_USER}" "${WEBROOT}"
-  echo "-> Webroot gehört ${DEPLOY_USER}: ${WEBROOT}"
-fi
-
-systemctl enable --now caddy
-systemctl reload caddy
-echo "-> Caddy aktiv. Zertifikate holt Caddy automatisch, sobald DNS zeigt."
-
-echo "== 3/5 Contact-Relay =="
-if ! command -v node >/dev/null 2>&1; then
-  apt-get install -y nodejs
-fi
-install -m 0755 "${SCRIPT_DIR}/../server/contact-relay.mjs" "${APPDIR}/contact-relay.mjs"
-install -m 0644 "${SCRIPT_DIR}/contact-relay.service" /etc/systemd/system/contact-relay.service
-if [[ ! -f /etc/contact-relay.env ]]; then
-  cat >/etc/contact-relay.env <<'ENV'
-# Token der Mailserver-API — derselbe Wert wie MAIL_API_TOKEN in der .env
-# des Mailserver-Repos auf diesem Server.
+if [[ ! -f "${ENVFILE}" ]]; then
+  cat >"${ENVFILE}" <<ENV
+# Bind-Adresse: Gateway des Docker-Netzes, in dem Caddy läuft (privat, nicht
+# aus dem Internet routbar). Ändert sich die Docker-Netz-Konfiguration, muss
+# dieser Wert angepasst werden.
+RELAY_HOST=${GATEWAY}
+RELAY_PORT=${PORT}
+STATIC_DIR=${WEBROOT}/dist
+MAIL_API_URL=http://127.0.0.1:3080/v1/send
+# Token der Mailserver-API — derselbe Wert wie MAIL_API_TOKEN in dessen .env:
 MAIL_API_TOKEN=HIER_EINTRAGEN
-# Zieladresse, an die Kontaktanfragen zugestellt werden.
 CONTACT_TO=maltelohrer1990@hotmail.de
 ENV
-  chmod 600 /etc/contact-relay.env
-  echo "-> ANGELEGT: /etc/contact-relay.env — bitte MAIL_API_TOKEN eintragen!"
+  chmod 600 "${ENVFILE}"
+  echo "  ANGELEGT: ${ENVFILE} — MAIL_API_TOKEN muss noch eingetragen werden."
+else
+  # Bind-Adresse nachziehen, falls sich das Docker-Netz geändert hat
+  sed -i "s|^RELAY_HOST=.*|RELAY_HOST=${GATEWAY}|" "${ENVFILE}"
+  echo "  ${ENVFILE} existiert bereits — nur RELAY_HOST aktualisiert."
 fi
 
-echo "== 4/5 Dienste starten =="
+install -m 0644 "${SCRIPT_DIR}/lohrer-site.service" /etc/systemd/system/lohrer-site.service
 systemctl daemon-reload
-systemctl enable --now contact-relay
-systemctl restart contact-relay
+systemctl enable --now lohrer-site
+systemctl restart lohrer-site
+sleep 1
+systemctl is-active --quiet lohrer-site || {
+  journalctl -u lohrer-site -n 20 --no-pager
+  die "lohrer-site startet nicht."
+}
+echo "  lohrer-site läuft auf ${GATEWAY}:${PORT}."
 
-echo "== 5/5 Status =="
-systemctl --no-pager --lines=0 status caddy contact-relay || true
-echo
-echo "Fertig. Nächste Schritte:"
-echo "  1. Falls noch nicht geschehen: MAIL_API_TOKEN in /etc/contact-relay.env eintragen,"
-echo "     dann: sudo systemctl restart contact-relay"
-echo "  2. Website hochladen (vom Entwicklerrechner): bash deploy/publish.sh"
-echo "  3. Test: curl -I https://lohrer.dev"
+echo "== 3/6 Erreichbarkeit aus dem Container prüfen =="
+# wget-Exitcode 0 = OK, 8 = HTTP-Fehlerstatus (z. B. 404 bei noch leerem Webroot).
+# Beides beweist, dass die TCP-Verbindung steht; alles andere ist ein Netzproblem.
+if docker exec "${CONTAINER}" sh -c \
+  "wget -q -O /dev/null --timeout=5 --tries=1 http://${GATEWAY}:${PORT}/ 2>/dev/null; rc=\$?; [ \$rc -eq 0 ] || [ \$rc -eq 8 ]"; then
+  echo "  Container erreicht den Dienst."
+else
+  echo "  WARNUNG: Container erreicht ${GATEWAY}:${PORT} nicht — Caddy könnte lohrer.dev"
+  echo "  nicht ausliefern. Docker-Netz/Routing prüfen, bevor es weitergeht."
+fi
+
+echo "== 4/6 Caddyfile ergänzen =="
+BACKUP="${CADDYFILE}.bak.$(date +%s)"
+cp -a "${CADDYFILE}" "${BACKUP}"
+echo "  Sicherung: ${BACKUP}"
+
+# vorhandenen Block zwischen den Markern entfernen (idempotent), dann neu anhängen
+TMP="$(mktemp)"
+awk -v b="${BEGIN_MARK}" -v e="${END_MARK}" '
+  $0 == b { skip = 1 } !skip { print } $0 == e { skip = 0 }
+' "${CADDYFILE}" >"${TMP}"
+{
+  printf '\n%s\n' "${BEGIN_MARK}"
+  sed "s|__UPSTREAM__|${GATEWAY}:${PORT}|" "${SCRIPT_DIR}/Caddyfile" | grep -v '^#' || true
+  printf '%s\n' "${END_MARK}"
+} >>"${TMP}"
+cat "${TMP}" >"${CADDYFILE}"   # Inhalt ersetzen, Besitzer/Rechte des Mounts bleiben
+rm -f "${TMP}"
+
+echo "== 5/6 Konfiguration validieren =="
+if ! VALIDATE_OUT="$(docker exec "${CONTAINER}" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile 2>&1)"; then
+  echo "${VALIDATE_OUT}" | tail -15
+  cat "${BACKUP}" >"${CADDYFILE}"
+  die "Caddy-Konfiguration ungültig — Sicherung wurde zurückgespielt, nichts geändert."
+fi
+echo "  Konfiguration gültig."
+
+echo "== 6/6 Caddy neu laden (ohne Neustart, ohne Ausfall) =="
+if ! docker exec "${CONTAINER}" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile; then
+  cat "${BACKUP}" >"${CADDYFILE}"
+  docker exec "${CONTAINER}" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile || true
+  die "Reload fehlgeschlagen — Sicherung zurückgespielt."
+fi
+
+cat <<DONE
+
+Fertig. Bereits laufende Sites (zoinkr.com, chat.zoinkr.com) wurden nicht
+angefasst — es gab keinen Neustart, nur ein Reload.
+
+Nächste Schritte:
+  1. MAIL_API_TOKEN in ${ENVFILE} eintragen, dann:
+     sudo systemctl restart lohrer-site
+  2. Website hochladen (vom Entwicklerrechner, im Repo-Ordner):
+     bash deploy/publish.sh
+  3. Prüfen:
+     curl -I https://${DOMAIN}
+DONE

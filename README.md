@@ -20,21 +20,21 @@ Datenschutzerklärung.
 
 **Datenschutz by design:** Die Seite macht null Third-Party-Requests — keine CDNs,
 keine Google Fonts, kein Tracking, keine Cookies. Das Kontaktformular postet
-same-origin an `server/contact-relay.mjs`, der die private Mailserver-API
+same-origin an `server/site-server.mjs`, der die private Mailserver-API
 (github.com/gazooo/mailserver) aufruft — Setup in [DEPLOY.md](DEPLOY.md).
 
 ## Kontaktformular lokal testen
 
 Das Formular postet an `/api/contact`. Lokal gibt es dahinter erst dann einen
-Dienst, wenn der Relay läuft — ohne ihn zeigt das Formular den
+Dienst, wenn `server/site-server.mjs` läuft — ohne ihn zeigt das Formular den
 E-Mail-Fallback (erwartet, kein Bug). Test-Setup in zwei Terminals:
 
 ```bash
-# Terminal 1: Relay im Dry-Run (loggt statt zu senden, kein Token nötig)
-MAIL_DRY_RUN=1 node server/contact-relay.mjs
-# PowerShell:  $env:MAIL_DRY_RUN='1'; node server/contact-relay.mjs
+# Terminal 1: Dienst im Dry-Run (loggt statt zu senden, kein Token nötig)
+MAIL_DRY_RUN=1 node server/site-server.mjs
+# PowerShell:  $env:MAIL_DRY_RUN='1'; node server/site-server.mjs
 
-# Terminal 2: Dev-Server (proxied /api automatisch an den Relay)
+# Terminal 2: Dev-Server (proxied /api automatisch dorthin)
 npm run dev
 ```
 
@@ -67,12 +67,13 @@ src/
     router.tsx          Mini-Router (History API): /, /impressum, /datenschutz
     scroll.tsx          Lenis-Integration + Anker-Scrolling mit Nav-Offset
   components/           Button, Chip, Container, SectionHeading, Reveal, Marquee,
-                        CountUp, AvailabilityBadge, ScrollProgress, LegalLayout, …
+                        ContactForm, AvailabilityBadge, ScrollProgress, LegalLayout, …
   sections/             Nav, Hero, TrustBar, TechMarquee, Services, Approach,
-                        Projects, Stats, Timeline, Skills, Insights, About,
-                        Contact, Footer
+                        Projects, Timeline, Skills, Insights, About, Contact, Footer
   pages/                OnePager (+ lazy BelowFold-Chunk), Impressum, Datenschutz
   content/site.ts       Kontaktdaten, Verfügbarkeit, Nav-Links, Primär-Skills
+server/site-server.mjs  Produktionsdienst: liefert dist/ aus + POST /api/contact
+deploy/                 Caddy-Snippet, systemd-Unit, Setup-/Publish-/Inspektionsskripte
 ```
 
 Die Legal-Routen funktionieren auf jedem statischen Host ohne Rewrites: ein
@@ -96,7 +97,8 @@ Sektionen halten die Anker-IDs sofort bereit. Lighthouse: 100/100/100/100
 
 ## Deployment
 
-Produktionsziel ist **https://lohrer.dev** auf dem eigenen VPS (Caddy +
-Contact-Relay) — komplette Anleitung inkl. netcup-DNS und `deploy/`-Skripten
+Produktionsziel ist **https://lohrer.dev** auf dem eigenen VPS: ein
+systemd-Dienst liefert Website und `/api/contact` aus, der dort bereits
+laufende Caddy-Container proxied davor. Architektur, Einrichtung und Rollback
 in [DEPLOY.md](DEPLOY.md). Offene Platzhalter (Social-Links, USt-IdNr.,
 Essay-URL, Domain-Postfach) sind im Code als `TODO` markiert.

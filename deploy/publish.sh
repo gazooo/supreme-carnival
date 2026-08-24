@@ -25,24 +25,26 @@ tar czf - -C dist . | ssh "${SSH_TARGET}" "
   if [ -d '${WEBROOT}/dist' ]; then mv '${WEBROOT}/dist' '${WEBROOT}/dist.prev'; fi
   mv '${WEBROOT}/dist.new' '${WEBROOT}/dist'
 "
-echo "-> Website aktualisiert."
+echo "-> Website aktualisiert (der Dienst liest die Dateien pro Anfrage neu,"
+echo "   ein Neustart ist dafür nicht nötig)."
 
-# Relay nur aktualisieren, wenn passwortloses sudo verfügbar ist; sonst
-# überspringen (die Website ist davon unabhängig bereits live).
-echo "== Contact-Relay =="
+# site-server.mjs nur nachziehen, wenn es sich geändert hat und sudo ohne
+# Passwort verfügbar ist. Die Website ist davon unabhängig bereits live.
+echo "== Dienst (nur bei Änderung an site-server.mjs nötig) =="
 if ssh "${SSH_TARGET}" 'sudo -n true' 2>/dev/null; then
-  scp -q server/contact-relay.mjs "${SSH_TARGET}:/tmp/contact-relay.mjs"
+  scp -q server/site-server.mjs "${SSH_TARGET}:/tmp/site-server.mjs"
   ssh "${SSH_TARGET}" '
-    sudo -n install -m 0755 /tmp/contact-relay.mjs /opt/lohrer.dev/contact-relay.mjs
-    rm -f /tmp/contact-relay.mjs
-    sudo -n systemctl restart contact-relay
+    if ! sudo -n cmp -s /tmp/site-server.mjs /opt/lohrer.dev/site-server.mjs; then
+      sudo -n install -m 0755 /tmp/site-server.mjs /opt/lohrer.dev/site-server.mjs
+      sudo -n systemctl restart lohrer-site
+      echo "   site-server.mjs aktualisiert, Dienst neu gestartet."
+    else
+      echo "   unverändert — kein Neustart."
+    fi
+    rm -f /tmp/site-server.mjs
   '
-  echo "-> Relay aktualisiert und neu gestartet."
 else
-  echo "-> Übersprungen (kein passwortloses sudo). Falls sich contact-relay.mjs"
-  echo "   geändert hat, auf dem Server manuell nachziehen:"
-  echo "   sudo install -m 0755 server/contact-relay.mjs /opt/lohrer.dev/contact-relay.mjs"
-  echo "   sudo systemctl restart contact-relay"
+  echo "   Übersprungen (kein passwortloses sudo)."
 fi
 
 echo "Fertig: https://lohrer.dev"

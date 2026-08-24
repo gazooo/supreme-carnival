@@ -1,146 +1,158 @@
 # Deployment — lohrer.dev
 
-Zielbild: Der Hetzner-VPS (`178.104.124.207`, Ubuntu 24.04, dort läuft schon
-der Send-only-Mailserver) serviert die Website über Caddy; das Kontaktformular
-läuft über den Contact-Relay auf demselben Server. Alle nötigen Dateien liegen
-in diesem Repo unter `deploy/`.
+## Wie es aufgebaut ist (und warum so)
+
+Auf dem VPS `178.104.124.207` (Ubuntu 24.04) laufen bereits mehrere Dienste.
+Die Ports 80/443 gehören dem **Caddy-Container `lol-stats-caddy-1`**, der
+zoinkr.com und chat.zoinkr.com ausliefert. Ein zweiter Webserver auf dem Host
+ist damit ausgeschlossen. Außerdem hat dieser Container kein Volume für
+statische Dateien — ein neues Volume würde ein Neuanlegen des Containers und
+damit eine kurze Unterbrechung für zoinkr.com bedeuten.
+
+Daraus folgt die Aufteilung:
+
+```
+Browser ──► Caddy-Container (80/443, TLS, HTTP/3)
+              └── lohrer.dev  ──reverse_proxy──►  172.18.0.1:3081
+                                                   (Docker-Gateway = Host)
+                                                        │
+                                            systemd-Dienst „lohrer-site"
+                                            ├── liefert /var/www/lohrer.dev/dist
+                                            └── POST /api/contact
+                                                     │
+                                            Mailserver-API 127.0.0.1:3080
+```
+
+- **Kein neuer Webserver, kein Container-Neustart.** Der lohrer.dev-Block wird
+  in das vom Host gemountete Caddyfile geschrieben und mit `caddy reload`
+  aktiviert — laufende Sites bleiben ununterbrochen online.
+- **Der Node-Dienst liefert die Dateien aus**, weil Caddy sie im Container
+  nicht sehen könnte. Caddy bleibt Reverse-Proxy und behält TLS, HTTP/3 und
+  Kompression.
+- **Bind-Adresse `172.18.0.1`** (Gateway des Caddy-Netzes): Der Container kann
+  das Loopback des Hosts nicht erreichen. Die Adresse ist privat und nicht aus
+  dem Internet routbar — wichtig, weil auf dem Server keine Firewall aktiv
+  ist. Postfix nutzt auf derselben Maschine schon dasselbe Muster.
+- **Der Browser erreicht die Mailserver-API nie direkt.** Sonst wäre der
+  Bearer-Token öffentlich und Besucher könnten beliebige Empfänger setzen.
 
 ## 1. DNS bei netcup
 
-Im netcup-CCP unter Domains → lohrer.dev → DNS diese Records anlegen:
+Erledigt — `lohrer.dev` löst bereits auf `178.104.124.207` auf:
 
-| Host  | Typ | Ziel/Wert         |
+| Host  | Typ | Ziel              |
 | ----- | --- | ----------------- |
 | `@`   | A   | `178.104.124.207` |
 | `www` | A   | `178.104.124.207` |
 
-Hat der VPS auch eine IPv6-Adresse (Hetzner-Konsole oder `ip -6 addr` auf dem
-Server), zusätzlich:
+Das Zertifikat holt der Caddy-Container automatisch, sobald der Site-Block
+aktiv ist. `.dev` ist HSTS-preloaded, also ohnehin nur HTTPS.
 
-| Host  | Typ  | Ziel/Wert        |
-| ----- | ---- | ---------------- |
-| `@`   | AAAA | `<IPv6 des VPS>` |
-| `www` | AAAA | `<IPv6 des VPS>` |
-
-Mehr braucht die Website nicht. Hinweise:
-
-- `.dev` steht auf der HSTS-Preload-Liste: Browser erzwingen HTTPS. Caddy
-  besorgt die Zertifikate automatisch — es muss nichts weiter konfiguriert
-  werden, die DNS-Records müssen nur zeigen und die Ports 80 + 443 offen sein
-  (Hetzner-Firewall prüfen).
-- Mail-Records (SPF/DKIM/DMARC) für lohrer.dev sind erst nötig, wenn der
-  Formular-Absender auf eine @lohrer.dev-Adresse umgestellt wird — siehe
-  Abschnitt 5.
-
-## 2. Einmalige VPS-Einrichtung
-
-**Vorher prüfen**, was auf dem Server bereits Port 80/443 bedient — auf dieser
-Maschine laufen weitere Dienste (Mailserver, PM2-Apps, Docker-Stack):
+## 2. Einmalige Einrichtung auf dem VPS
 
 ```bash
-sudo ss -ltnp '( sport = :80 or sport = :443 )'
-docker ps --format 'table {{.Names}}\t{{.Ports}}'
-```
-
-Ist dort ein anderer Reverse-Proxy (nginx/Apache/Traefik) aktiv, **nicht**
-einfach Caddy danebeninstallieren, sondern lohrer.dev in diesem Proxy als
-weitere Site eintragen — `deploy/Caddyfile` zeigt, was gebraucht wird:
-statisches `dist/` ausliefern plus `/api/contact` → `127.0.0.1:3081`.
-`setup-vps.sh` bricht in diesem Fall von sich aus ab.
-
-Sind 80/443 frei (oder läuft dort bereits Caddy), auf dem VPS:
-
-```bash
-git clone https://github.com/gazooo/supreme-carnival ~/lohrer.dev-repo
+git clone -b claude/new-session-m8e15a https://github.com/gazooo/supreme-carnival ~/lohrer.dev-repo
 cd ~/lohrer.dev-repo
+bash deploy/inspect-vps.sh              # rein lesend, Lagebild
+bash deploy/inspect-caddy-container.sh  # rein lesend, Proxy-Details
 sudo bash deploy/setup-vps.sh
 ```
 
-Das Skript ist idempotent und
+`setup-vps.sh` ist idempotent und geht defensiv vor:
 
-- prüft zuerst die Ports 80/443 und bricht bei fremdem Webserver ab,
-- installiert Caddy (offizielles apt-Repo), falls nicht vorhanden,
-- aktiviert `deploy/Caddyfile` als `/etc/caddy/sites/lohrer.dev.caddy`
-  (Website + `/api/contact`-Proxy + Security-Header, www→Apex-Redirect),
-- installiert den Contact-Relay nach `/opt/lohrer.dev/` als systemd-Dienst
-  `contact-relay`,
-- legt `/etc/contact-relay.env` an (chmod 600),
-- übergibt `/var/www/lohrer.dev` dem aufrufenden Benutzer (z. B. `deploy`),
-  damit `publish.sh` später ohne sudo hochladen kann.
+1. prüft Container, Node, freien Port 3081 und liest Caddyfile-Pfad sowie
+   Gateway-IP aus der Docker-Konfiguration (statt sie zu raten),
+2. installiert `server/site-server.mjs` nach `/opt/lohrer.dev/`, legt
+   `/etc/lohrer-site.env` an (chmod 600) und startet den Dienst `lohrer-site`,
+3. prüft, ob der Container den Dienst erreicht,
+4. **sichert das Caddyfile**, ersetzt nur den eigenen Block zwischen zwei
+   Markern und lässt den Rest unangetastet,
+5. **validiert** die Konfiguration im Container — schlägt das fehl, wird die
+   Sicherung sofort zurückgespielt und abgebrochen,
+6. lädt Caddy neu (`reload`, kein `restart`).
 
-Danach einmalig den API-Token eintragen (derselbe Wert wie `MAIL_API_TOKEN`
-in der `.env` des Mailserver-Repos auf dem Server):
+Danach den API-Token eintragen:
 
 ```bash
-sudo nano /etc/contact-relay.env     # MAIL_API_TOKEN=… eintragen
-sudo systemctl restart contact-relay
+sudo nano /etc/lohrer-site.env     # MAIL_API_TOKEN=… (Wert aus der .env des Mailservers)
+sudo systemctl restart lohrer-site
 ```
+
+Ohne Token bleibt die Website erreichbar; nur `/api/contact` antwortet mit
+503, das Formular zeigt dann den E-Mail-Fallback.
 
 ## 3. Website veröffentlichen
 
-Vom Entwicklerrechner (Git Bash unter Windows funktioniert — nur ssh + tar
-nötig, kein rsync):
+Vom Entwicklerrechner (Git Bash unter Windows genügt — nur ssh + tar):
 
 ```bash
 bash deploy/publish.sh
-# oder mit anderem SSH-Ziel:
-SSH_TARGET=user@178.104.124.207 bash deploy/publish.sh
 ```
 
-Baut das Projekt und tauscht `/var/www/lohrer.dev/dist` atomar aus; die
-vorherige Version bleibt als `dist.prev` liegen.
+Baut das Projekt, tauscht `/var/www/lohrer.dev/dist` atomar aus (vorherige
+Version bleibt als `dist.prev`) und zieht `site-server.mjs` nur nach, wenn es
+sich geändert hat. Für reine Inhaltsänderungen ist kein Neustart nötig.
 
 ## 4. Nach dem Deploy prüfen
 
 ```bash
-curl -I https://lohrer.dev              # 200, Security-Header sichtbar
+curl -I https://lohrer.dev              # 200
 curl -I https://lohrer.dev/impressum    # 200
 curl -I https://www.lohrer.dev          # 308 -> https://lohrer.dev
+curl -I https://zoinkr.com              # unverändert erreichbar
 curl -X POST https://lohrer.dev/api/contact \
   -H 'Content-Type: application/json' \
   --data '{"name":"Test","email":"test@example.com","message":"Probelauf"}'
-# -> HTTP 204, Mail landet bei CONTACT_TO; Antwort an Absender via replyTo testen
+# -> 204, Mail kommt an; Antwort geht per replyTo an die Absenderadresse
 ```
 
-Zusätzlich: DevTools → Network (keine Requests an fremde Hosts) und ein
-Lighthouse-Lauf.
+Dienststatus: `systemctl status lohrer-site`, Logs: `journalctl -u lohrer-site -f`.
 
-## 5. Absenderadresse des Formulars
+## 5. Zurückrollen
+
+```bash
+# Caddyfile: jede Änderung liegt als Sicherung daneben
+ls /opt/lol-stats/deploy/Caddyfile.bak.*
+cp /opt/lol-stats/deploy/Caddyfile.bak.<zeitstempel> /opt/lol-stats/deploy/Caddyfile
+docker exec lol-stats-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+
+# Website: vorherige Version wiederherstellen
+mv /var/www/lohrer.dev/dist /var/www/lohrer.dev/dist.broken
+mv /var/www/lohrer.dev/dist.prev /var/www/lohrer.dev/dist
+
+# Dienst komplett entfernen
+sudo systemctl disable --now lohrer-site && sudo rm /etc/systemd/system/lohrer-site.service
+```
+
+## 6. Absenderadresse des Formulars
 
 Die Mailserver-API erlaubt bewusst **kein** Absender-Override pro Request —
-der Absender kommt aus `MAIL_FROM` in der Mailserver-`.env` und muss wegen
+der Absender kommt aus `MAIL_FROM` in dessen `.env` und muss wegen
 SPF/DKIM/DMARC-Alignment zur signierten Domain passen.
 
-**Stand jetzt (funktioniert sofort, ohne weitere DNS-Arbeit):** Der Versand
-läuft mit dem bestehenden Absender `noreply@zoinkr.com` — SPF/DKIM/DMARC für
-zoinkr.com sind auf dem Server bereits fertig eingerichtet.
+**Stand jetzt:** Versand läuft mit dem bestehenden `noreply@zoinkr.com`; die
+DNS-Einträge dafür sind fertig. Funktioniert ohne weitere Arbeit.
 
-**Späterer Wechsel auf z. B. `kontaktanfrage@lohrer.dev`** (naheliegender als
-eine dritte Domain, weil lohrer.dev ohnehin existiert — bangum.com ginge nach
-demselben Muster):
+**Wechsel auf `kontaktanfrage@lohrer.dev`:**
 
 1. DNS bei netcup für lohrer.dev ergänzen:
    - `@ TXT "v=spf1 ip4:178.104.124.207 -all"`
    - `mail._domainkey TXT <DKIM-Public-Key>` (OpenDKIM auf dem VPS um die
-     Domain erweitern, z. B. Installer des Mailserver-Repos mit
-     `MAIL_DOMAIN=lohrer.dev` — er erhält bestehende Keys)
+     Domain erweitern; der Installer des Mailserver-Repos erhält bestehende
+     Keys)
    - `_dmarc TXT "v=DMARC1; p=none; adkim=s; aspf=s; pct=100"`
-2. Im Mailserver `MAIL_FROM=kontaktanfrage@lohrer.dev` setzen, Container neu
-   starten. Achtung: `MAIL_FROM` gilt global für alle Nutzer dieser
-   API-Instanz — falls andere Dienste den zoinkr-Absender brauchen, eine
-   zweite Instanz mit eigenem Port betreiben.
+2. `MAIL_FROM=kontaktanfrage@lohrer.dev` setzen, Mail-Container neu starten.
+   Achtung: gilt global für alle Nutzer dieser API-Instanz — brauchen andere
+   Dienste den zoinkr-Absender, eine zweite Instanz auf eigenem Port fahren.
 
-## Alternative Hosts (ohne Kontaktformular-Backend)
+## Wichtig: nginx nicht starten
 
-GitHub Pages / Cloudflare Pages servieren `dist/` ebenfalls (Build:
-`npm run build`, Output: `dist`), aber dort gibt es kein `/api/contact` auf
-derselben Origin — das Formular zeigt dann den E-Mail-Fallback. Für das
-Formular ist der eigene VPS der vorgesehene Weg; alternativ den Relay separat
-hosten und `CONTACT_ENDPOINT` in `src/content/site.ts` auf dessen URL stellen
-(dann CORS im Relay ergänzen).
+nginx ist installiert (Konfiguration für zoinkr.com aus einer früheren
+certbot-Ära), aber `inactive` und `disabled`. Ein Start würde mit dem
+Caddy-Container um Port 80/443 konkurrieren. Der Zustand ist korrekt so.
 
 ## Offene Platzhalter im Code
 
-`grep -rn "TODO" src/ index.html` — aktuell: GitHub-/LinkedIn-URLs
-(`sameAs`/Social-Icons), USt-IdNr. im Impressum, Publikations-URL des Essays,
-E-Mail-Adresse auf ein @lohrer.dev-Postfach umstellen, sobald eines existiert.
+`grep -rn "TODO" src/ index.html` — GitHub-/LinkedIn-URLs (`sameAs` und
+Social-Icons), USt-IdNr. im Impressum, Publikations-URL des Essays, sowie die
+E-Mail-Adresse, sobald ein @lohrer.dev-Postfach existiert.

@@ -1,0 +1,25 @@
+[Unit]
+Description=lohrer.dev — statische Website + Kontakt-Endpunkt
+Documentation=https://github.com/gazooo/supreme-carnival
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/node /opt/lohrer.dev/site-server.mjs
+# STATIC_DIR, RELAY_HOST, MAIL_API_TOKEN, CONTACT_TO stehen hier (chmod 600):
+EnvironmentFile=/etc/lohrer-site.env
+Restart=on-failure
+RestartSec=3
+
+# Härtung: der Dienst braucht nur Lesezugriff auf den Webroot
+DynamicUser=yes
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target
