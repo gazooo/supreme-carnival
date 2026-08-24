@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
 
-# TODO: Platzhalter-Domain ersetzen, sobald die echte Domain gewählt ist
-Sitemap: https://example.invalid/sitemap.xml
+
+Sitemap: https://lohrer.dev/sitemap.xml

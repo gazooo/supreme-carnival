@@ -1,131 +1,129 @@
-# Deployment
+# Deployment — lohrer.dev
 
-Das Build-Ergebnis ist ein rein statisches Verzeichnis:
+Zielbild: Der Hetzner-VPS (`178.104.124.207`, Ubuntu 24.04, dort läuft schon
+der Send-only-Mailserver) serviert die Website über Caddy; das Kontaktformular
+läuft über den Contact-Relay auf demselben Server. Alle nötigen Dateien liegen
+in diesem Repo unter `deploy/`.
 
-```bash
-npm ci
-npm run build   # erzeugt dist/
-```
+## 1. DNS bei netcup
 
-`dist/` kann auf jedem statischen Host liegen. Die Legal-Routen
-(`/impressum`, `/datenschutz`) funktionieren ohne Server-Rewrites, weil der
-Build eigene `index.html`-Kopien für diese Pfade anlegt.
+Im netcup-CCP unter Domains → lohrer.dev → DNS diese Records anlegen:
 
-## Vor dem ersten Deploy: Platzhalter ersetzen
+| Host  | Typ | Ziel/Wert         |
+| ----- | --- | ----------------- |
+| `@`   | A   | `178.104.124.207` |
+| `www` | A   | `178.104.124.207` |
 
-1. **Domain** — `https://example.invalid` ersetzen in:
-   - `index.html` (canonical, `og:url`, `og:image`, `twitter:image`, JSON-LD `url`)
-   - `public/robots.txt` (Sitemap-URL)
-   - `public/sitemap.xml` (alle `<loc>`)
-2. **E-Mail** — sobald ein Domain-Postfach existiert: `src/content/site.ts`
-3. Weitere `TODO`-Marker: `grep -rn "TODO" src/ index.html public/`
+Hat der VPS auch eine IPv6-Adresse (Hetzner-Konsole oder `ip -6 addr` auf dem
+Server), zusätzlich:
 
-## Option A — Eigener Server (VPS) mit Caddy
+| Host  | Typ  | Ziel/Wert        |
+| ----- | ---- | ---------------- |
+| `@`   | AAAA | `<IPv6 des VPS>` |
+| `www` | AAAA | `<IPv6 des VPS>` |
 
-```caddyfile
-malte-lohrer.example {
-    encode zstd gzip
+Mehr braucht die Website nicht. Hinweise:
 
-    handle /api/contact {
-        reverse_proxy 127.0.0.1:3081
-    }
+- `.dev` steht auf der HSTS-Preload-Liste: Browser erzwingen HTTPS. Caddy
+  besorgt die Zertifikate automatisch — es muss nichts weiter konfiguriert
+  werden, die DNS-Records müssen nur zeigen und die Ports 80 + 443 offen sein
+  (Hetzner-Firewall prüfen).
+- Mail-Records (SPF/DKIM/DMARC) für lohrer.dev sind erst nötig, wenn der
+  Formular-Absender auf eine @lohrer.dev-Adresse umgestellt wird — siehe
+  Abschnitt 5.
 
-    handle {
-        root * /var/www/malte-lohrer-website/dist
-        file_server
-        header /assets/* Cache-Control "public, max-age=31536000, immutable"
-    }
-}
-```
+## 2. Einmalige VPS-Einrichtung
 
-Deploy z. B. per `rsync -avz --delete dist/ server:/var/www/malte-lohrer-website/dist/`.
-Caddy besorgt TLS automatisch (Let's Encrypt).
-
-## Kontaktformular: Contact-Relay + Mailserver
-
-Das Formular postet an den Same-Origin-Pfad `/api/contact`. Dahinter läuft
-`server/contact-relay.mjs` (Node ≥ 18, keine Dependencies) — er validiert,
-rate-limitiert und ruft die private API des Mailservers
-([github.com/gazooo/mailserver](https://github.com/gazooo/mailserver)) auf.
-
-**Wichtig:** Der Browser darf die Mailserver-API nie direkt erreichen — der
-Bearer-Token wäre öffentlich, und Besucher könnten beliebige Empfänger
-setzen. Deshalb bleibt die API loopback-only und nur der Relay kennt den
-Token und den festen Empfänger.
-
-Systemd-Unit auf dem VPS (`/etc/systemd/system/contact-relay.service`):
-
-```ini
-[Unit]
-Description=Website contact relay
-After=network.target
-
-[Service]
-ExecStart=/usr/bin/node /var/www/malte-lohrer-website/server/contact-relay.mjs
-Environment=MAIL_API_URL=http://127.0.0.1:3080/v1/send
-Environment=CONTACT_TO=maltelohrer1990@hotmail.de
-EnvironmentFile=/etc/contact-relay.env   ; enthält MAIL_API_TOKEN=…
-Restart=on-failure
-DynamicUser=yes
-NoNewPrivileges=yes
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Test nach dem Start:
+Auf dem VPS (als root):
 
 ```bash
-curl -X POST http://127.0.0.1:3081/api/contact \
+git clone https://github.com/gazooo/supreme-carnival /opt/lohrer.dev-repo
+cd /opt/lohrer.dev-repo
+sudo bash deploy/setup-vps.sh
+```
+
+Das Skript ist idempotent und
+
+- installiert Caddy (offizielles apt-Repo), falls nicht vorhanden,
+- aktiviert `deploy/Caddyfile` als `/etc/caddy/sites/lohrer.dev.caddy`
+  (Website + `/api/contact`-Proxy + Security-Header, www→Apex-Redirect),
+- installiert den Contact-Relay nach `/opt/lohrer.dev/` als systemd-Dienst
+  `contact-relay`,
+- legt `/etc/contact-relay.env` an (chmod 600).
+
+Danach einmalig den API-Token eintragen (derselbe Wert wie `MAIL_API_TOKEN`
+in der `.env` des Mailserver-Repos auf dem Server):
+
+```bash
+sudo nano /etc/contact-relay.env     # MAIL_API_TOKEN=… eintragen
+sudo systemctl restart contact-relay
+```
+
+## 3. Website veröffentlichen
+
+Vom Entwicklerrechner (Git Bash unter Windows funktioniert — nur ssh + tar
+nötig, kein rsync):
+
+```bash
+bash deploy/publish.sh
+# oder mit anderem SSH-Ziel:
+SSH_TARGET=user@178.104.124.207 bash deploy/publish.sh
+```
+
+Baut das Projekt und tauscht `/var/www/lohrer.dev/dist` atomar aus; die
+vorherige Version bleibt als `dist.prev` liegen.
+
+## 4. Nach dem Deploy prüfen
+
+```bash
+curl -I https://lohrer.dev              # 200, Security-Header sichtbar
+curl -I https://lohrer.dev/impressum    # 200
+curl -I https://www.lohrer.dev          # 308 -> https://lohrer.dev
+curl -X POST https://lohrer.dev/api/contact \
   -H 'Content-Type: application/json' \
   --data '{"name":"Test","email":"test@example.com","message":"Probelauf"}'
-# → HTTP 204, Mail landet bei CONTACT_TO
+# -> HTTP 204, Mail landet bei CONTACT_TO; Antwort an Absender via replyTo testen
 ```
 
-### Absenderadresse (z. B. kontaktanfrage@bangum.com)
+Zusätzlich: DevTools → Network (keine Requests an fremde Hosts) und ein
+Lighthouse-Lauf.
+
+## 5. Absenderadresse des Formulars
 
 Die Mailserver-API erlaubt bewusst **kein** Absender-Override pro Request —
 der Absender kommt aus `MAIL_FROM` in der Mailserver-`.env` und muss wegen
-SPF/DKIM/DMARC-Alignment zur signierten Domain passen. Für eine Adresse wie
-`kontaktanfrage@bangum.com` heißt das:
+SPF/DKIM/DMARC-Alignment zur signierten Domain passen.
 
-1. Domain `bangum.com` registrieren.
-2. DNS für bangum.com einrichten: SPF-TXT auf die VPS-IP, DKIM-Key
-   (OpenDKIM auf dem VPS um die Domain erweitern bzw. Installer mit
-   `MAIL_DOMAIN=bangum.com` laufen lassen), DMARC-Record.
-3. Im Mailserver `MAIL_FROM=kontaktanfrage@bangum.com` setzen und den
-   Container neu starten. Achtung: `MAIL_FROM` gilt global für alle
-   Anwendungen, die diese Mailserver-Instanz nutzen — falls andere Dienste
-   den alten Absender brauchen, eine zweite API-Instanz mit eigenem
-   `MAIL_FROM` (anderer Port) betreiben.
+**Stand jetzt (funktioniert sofort, ohne weitere DNS-Arbeit):** Der Versand
+läuft mit dem bestehenden Absender `noreply@zoinkr.com` — SPF/DKIM/DMARC für
+zoinkr.com sind auf dem Server bereits fertig eingerichtet.
 
-Ohne diese DNS-Einrichtung landen Mails mit fremder Absenderdomain im Spam
-oder werden abgewiesen.
+**Späterer Wechsel auf z. B. `kontaktanfrage@lohrer.dev`** (naheliegender als
+eine dritte Domain, weil lohrer.dev ohnehin existiert — bangum.com ginge nach
+demselben Muster):
 
-## Option B — GitHub Pages
+1. DNS bei netcup für lohrer.dev ergänzen:
+   - `@ TXT "v=spf1 ip4:178.104.124.207 -all"`
+   - `mail._domainkey TXT <DKIM-Public-Key>` (OpenDKIM auf dem VPS um die
+     Domain erweitern, z. B. Installer des Mailserver-Repos mit
+     `MAIL_DOMAIN=lohrer.dev` — er erhält bestehende Keys)
+   - `_dmarc TXT "v=DMARC1; p=none; adkim=s; aspf=s; pct=100"`
+2. Im Mailserver `MAIL_FROM=kontaktanfrage@lohrer.dev` setzen, Container neu
+   starten. Achtung: `MAIL_FROM` gilt global für alle Nutzer dieser
+   API-Instanz — falls andere Dienste den zoinkr-Absender brauchen, eine
+   zweite Instanz mit eigenem Port betreiben.
 
-1. Repo-Einstellung: Pages → Source „GitHub Actions".
-2. Workflow: Build-Job (`npm ci && npm run build`) + `actions/upload-pages-artifact`
-   mit `path: dist` + `actions/deploy-pages`.
-3. Eigene Domain in den Pages-Einstellungen hinterlegen (CNAME).
+## Alternative Hosts (ohne Kontaktformular-Backend)
 
-## Option C — Cloudflare Pages
-
-1. Projekt anlegen, Repo verbinden.
-2. Build command: `npm run build`, Output directory: `dist`.
-3. Eigene Domain im Dashboard verbinden.
-
-## Nach dem Deploy prüfen
-
-- `curl -I https://<domain>/impressum` → 200
-- Kontaktformular absenden → Mail kommt an, Antwort an die Absenderadresse
-  funktioniert (`replyTo`)
-- DevTools → Network: keine Requests an fremde Hosts (nur `/api/contact`
-  auf der eigenen Domain)
-- Lighthouse (Performance/Accessibility/Best Practices/SEO)
-
-Hinweis zu GitHub Pages / Cloudflare Pages: Dort gibt es kein `/api/contact`
-auf derselben Origin — das Formular zeigt dann den E-Mail-Fallback. Für das
-Formular ist Option A (eigener VPS) vorgesehen; alternativ den Relay separat
+GitHub Pages / Cloudflare Pages servieren `dist/` ebenfalls (Build:
+`npm run build`, Output: `dist`), aber dort gibt es kein `/api/contact` auf
+derselben Origin — das Formular zeigt dann den E-Mail-Fallback. Für das
+Formular ist der eigene VPS der vorgesehene Weg; alternativ den Relay separat
 hosten und `CONTACT_ENDPOINT` in `src/content/site.ts` auf dessen URL stellen
 (dann CORS im Relay ergänzen).
+
+## Offene Platzhalter im Code
+
+`grep -rn "TODO" src/ index.html` — aktuell: GitHub-/LinkedIn-URLs
+(`sameAs`/Social-Icons), USt-IdNr. im Impressum, Publikations-URL des Essays,
+E-Mail-Adresse auf ein @lohrer.dev-Postfach umstellen, sobald eines existiert.

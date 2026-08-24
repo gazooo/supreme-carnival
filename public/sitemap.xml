@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- TODO: Platzhalter-Domain https://example.invalid ersetzen, sobald die echte Domain gewählt ist -->
+
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://example.invalid/</loc>
-    <lastmod>2026-08-21</lastmod>
+    <loc>https://lohrer.dev/</loc>
+    <lastmod>2026-08-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://example.invalid/impressum</loc>
-    <lastmod>2026-08-21</lastmod>
+    <loc>https://lohrer.dev/impressum</loc>
+    <lastmod>2026-08-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>
   <url>
-    <loc>https://example.invalid/datenschutz</loc>
-    <lastmod>2026-08-21</lastmod>
+    <loc>https://lohrer.dev/datenschutz</loc>
+    <lastmod>2026-08-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.2</priority>
   </url>

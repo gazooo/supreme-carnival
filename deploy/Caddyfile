@@ -1,0 +1,29 @@
+# lohrer.dev — statische Website + Contact-Relay-Proxy.
+# Wird von deploy/setup-vps.sh nach /etc/caddy/sites/lohrer.dev.caddy kopiert.
+# TLS besorgt Caddy automatisch (Let's Encrypt), sobald die DNS-Records zeigen.
+
+lohrer.dev {
+	encode zstd gzip
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+		-Server
+	}
+
+	handle /api/contact {
+		reverse_proxy 127.0.0.1:3081
+	}
+
+	handle {
+		root * /var/www/lohrer.dev/dist
+		file_server
+		header /assets/* Cache-Control "public, max-age=31536000, immutable"
+	}
+}
+
+www.lohrer.dev {
+	redir https://lohrer.dev{uri} permanent
+}

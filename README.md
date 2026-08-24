@@ -96,6 +96,7 @@ Sektionen halten die Anker-IDs sofort bereit. Lighthouse: 100/100/100/100
 
 ## Deployment
 
-Statisches `dist/`-Verzeichnis, überall deploybar — Optionen und Schritte in
-[DEPLOY.md](DEPLOY.md). Offene Platzhalter (Domain, Social-Links, USt-IdNr.,
-Essay-URL) sind im Code als `TODO` markiert.
+Produktionsziel ist **https://lohrer.dev** auf dem eigenen VPS (Caddy +
+Contact-Relay) — komplette Anleitung inkl. netcup-DNS und `deploy/`-Skripten
+in [DEPLOY.md](DEPLOY.md). Offene Platzhalter (Social-Links, USt-IdNr.,
+Essay-URL, Domain-Postfach) sind im Code als `TODO` markiert.
