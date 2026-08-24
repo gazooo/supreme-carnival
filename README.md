@@ -73,7 +73,8 @@ src/
   pages/                OnePager (+ lazy BelowFold-Chunk), Impressum, Datenschutz
   content/site.ts       Kontaktdaten, Verfügbarkeit, Nav-Links, Primär-Skills
 server/site-server.mjs  Produktionsdienst: liefert dist/ aus + POST /api/contact
-deploy/                 Caddy-Snippet, systemd-Unit, Setup-/Publish-/Inspektionsskripte
+deploy/                 Caddy-Snippet, systemd-Unit, Setup-/Publish-/Inspektions-
+                        skripte (publish.ps1 für Windows, publish.sh für bash)
 ```
 
 Die Legal-Routen funktionieren auf jedem statischen Host ohne Rewrites: ein

@@ -83,7 +83,17 @@ Ohne Token bleibt die Website erreichbar; nur `/api/contact` antwortet mit
 
 ## 3. Website veröffentlichen
 
-Vom Entwicklerrechner (Git Bash unter Windows genügt — nur ssh + tar):
+Vom Entwicklerrechner aus. **Unter Windows/PowerShell:**
+
+```powershell
+.\deploy\publish.ps1
+```
+
+Nutzt nur Bordmittel (tar.exe, scp.exe, ssh.exe) — kein bash, kein WSL.
+Achtung: `bash deploy/publish.sh` in PowerShell landet bei WSL, nicht bei
+Git Bash; ist WSL kaputt, schlägt es mit `execvpe(/bin/bash) failed` fehl.
+
+**Unter Linux/macOS oder in Git Bash:**
 
 ```bash
 bash deploy/publish.sh
@@ -104,6 +114,14 @@ curl -X POST https://lohrer.dev/api/contact \
   -H 'Content-Type: application/json' \
   --data '{"name":"Test","email":"test@example.com","message":"Probelauf"}'
 # -> 204, Mail kommt an; Antwort geht per replyTo an die Absenderadresse
+```
+
+In PowerShell (Zeilenfortsetzung ist dort der Backtick, nicht `\`) einfacher:
+
+```powershell
+Invoke-RestMethod -Uri https://lohrer.dev/api/contact -Method Post `
+  -ContentType 'application/json' `
+  -Body '{"name":"Test","email":"test@example.com","message":"Probelauf"}'
 ```
 
 Dienststatus: `systemctl status lohrer-site`, Logs: `journalctl -u lohrer-site -f`.
