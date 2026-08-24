@@ -34,22 +34,39 @@ Mehr braucht die Website nicht. Hinweise:
 
 ## 2. Einmalige VPS-Einrichtung
 
-Auf dem VPS (als root):
+**Vorher prüfen**, was auf dem Server bereits Port 80/443 bedient — auf dieser
+Maschine laufen weitere Dienste (Mailserver, PM2-Apps, Docker-Stack):
 
 ```bash
-git clone https://github.com/gazooo/supreme-carnival /opt/lohrer.dev-repo
-cd /opt/lohrer.dev-repo
+sudo ss -ltnp '( sport = :80 or sport = :443 )'
+docker ps --format 'table {{.Names}}\t{{.Ports}}'
+```
+
+Ist dort ein anderer Reverse-Proxy (nginx/Apache/Traefik) aktiv, **nicht**
+einfach Caddy danebeninstallieren, sondern lohrer.dev in diesem Proxy als
+weitere Site eintragen — `deploy/Caddyfile` zeigt, was gebraucht wird:
+statisches `dist/` ausliefern plus `/api/contact` → `127.0.0.1:3081`.
+`setup-vps.sh` bricht in diesem Fall von sich aus ab.
+
+Sind 80/443 frei (oder läuft dort bereits Caddy), auf dem VPS:
+
+```bash
+git clone https://github.com/gazooo/supreme-carnival ~/lohrer.dev-repo
+cd ~/lohrer.dev-repo
 sudo bash deploy/setup-vps.sh
 ```
 
 Das Skript ist idempotent und
 
+- prüft zuerst die Ports 80/443 und bricht bei fremdem Webserver ab,
 - installiert Caddy (offizielles apt-Repo), falls nicht vorhanden,
 - aktiviert `deploy/Caddyfile` als `/etc/caddy/sites/lohrer.dev.caddy`
   (Website + `/api/contact`-Proxy + Security-Header, www→Apex-Redirect),
 - installiert den Contact-Relay nach `/opt/lohrer.dev/` als systemd-Dienst
   `contact-relay`,
-- legt `/etc/contact-relay.env` an (chmod 600).
+- legt `/etc/contact-relay.env` an (chmod 600),
+- übergibt `/var/www/lohrer.dev` dem aufrufenden Benutzer (z. B. `deploy`),
+  damit `publish.sh` später ohne sudo hochladen kann.
 
 Danach einmalig den API-Token eintragen (derselbe Wert wie `MAIL_API_TOKEN`
 in der `.env` des Mailserver-Repos auf dem Server):
