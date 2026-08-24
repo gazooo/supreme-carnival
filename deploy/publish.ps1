@@ -44,18 +44,24 @@ try {
 
   # Atomarer Wechsel auf dem Server. set -e, damit ein Teilfehler nicht
   # ein halb ausgetauschtes Verzeichnis hinterlaesst.
-  $remote = @"
+  #
+  # WICHTIG: literaler Here-String (@'...'@) — in einem expandierenden
+  # (@"..."@) wuerde PowerShell $(...) und $var im Shell-Code selbst
+  # auswerten. Die Platzhalter werden deshalb per Replace ersetzt.
+  $remoteTemplate = @'
 set -e
-rm -rf '$WebRoot/dist.new'
-mkdir -p '$WebRoot/dist.new'
-tar xzf /tmp/lohrer-dist.tgz -C '$WebRoot/dist.new'
+rm -rf '__WEBROOT__/dist.new'
+mkdir -p '__WEBROOT__/dist.new'
+tar xzf /tmp/lohrer-dist.tgz -C '__WEBROOT__/dist.new'
 rm -f /tmp/lohrer-dist.tgz
-rm -rf '$WebRoot/dist.prev'
-if [ -d '$WebRoot/dist' ]; then mv '$WebRoot/dist' '$WebRoot/dist.prev'; fi
-mv '$WebRoot/dist.new' '$WebRoot/dist'
-echo "   entpackt: \$(find '$WebRoot/dist' -type f | wc -l) Dateien"
-"@
-  $remote = $remote -replace "`r`n", "`n"   # der Server erwartet LF
+rm -rf '__WEBROOT__/dist.prev'
+if [ -d '__WEBROOT__/dist' ]; then mv '__WEBROOT__/dist' '__WEBROOT__/dist.prev'; fi
+mv '__WEBROOT__/dist.new' '__WEBROOT__/dist'
+printf '   entpackt: '
+find '__WEBROOT__/dist' -type f | wc -l
+'@
+  # der Server erwartet LF, nicht CRLF
+  $remote = $remoteTemplate.Replace('__WEBROOT__', $WebRoot).Replace("`r`n", "`n")
   & ssh $SshTarget $remote
   if ($LASTEXITCODE -ne 0) { throw 'Entpacken auf dem Server ist fehlgeschlagen.' }
 
@@ -63,13 +69,9 @@ echo "   entpackt: \$(find '$WebRoot/dist' -type f | wc -l) Dateien"
 
   Write-Host '== Pruefung ==' -ForegroundColor Cyan
   foreach ($path in '/', '/impressum', '/datenschutz') {
-    try {
-      $r = Invoke-WebRequest -Uri "https://lohrer.dev$path" -Method Head -SkipHttpErrorCheck
-      $color = if ($r.StatusCode -eq 200) { 'Green' } else { 'Yellow' }
-      Write-Host ("   {0,-14} {1}" -f $path, $r.StatusCode) -ForegroundColor $color
-    } catch {
-      Write-Host ("   {0,-14} nicht erreichbar" -f $path) -ForegroundColor Yellow
-    }
+    $code = & curl.exe -s -o NUL -w '%{http_code}' "https://lohrer.dev$path"
+    $color = if ($code -eq '200') { 'Green' } else { 'Yellow' }
+    Write-Host ("   {0,-14} {1}" -f $path, $code) -ForegroundColor $color
   }
 
   Write-Host ''
