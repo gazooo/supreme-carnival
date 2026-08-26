@@ -3,6 +3,7 @@ import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
 import Chip from '../components/Chip'
 import Reveal from '../components/Reveal'
+import { useCopy } from '../lib/i18n'
 
 function IconAI({ className = '' }: { className?: string }) {
   return (
@@ -54,102 +55,48 @@ function IconServer({ className = '' }: { className?: string }) {
   )
 }
 
-interface Service {
-  index: string
-  title: string
-  icon: ReactNode
-  bullets: string[]
-  chips: string[]
-  footnote?: string
-}
-
-const SERVICES: Service[] = [
-  {
-    index: '01',
-    title: 'Applied AI Engineering',
-    icon: <IconAI className="h-5 w-5" />,
-    bullets: [
-      'LLM-Integration in bestehende Geschäftsprozesse',
-      'Agentische Assistenten mit Tool-Zugriff auf Microsoft 365, SharePoint und CRM',
-      'KI-Automatisierung mit n8n',
-      'RAG-Pipelines und MCP-Tooling',
-    ],
-    chips: ['LLM-Integration', 'n8n', 'RAG', 'MCP'],
-  },
-  {
-    index: '02',
-    title: 'Business-Plattformen',
-    icon: <IconApp className="h-5 w-5" />,
-    bullets: [
-      'Interne Plattformen und Web-Apps: React, Node.js, PostgreSQL',
-      'Frontend, Backend und Datenbank aus einer Hand – ein Ansprechpartner',
-      'Integrationen: Microsoft 365, SharePoint, CRM, E-Mail',
-      'Acht Dienste im Produktivbetrieb bei Aremus Finance',
-    ],
-    chips: ['React', 'Node.js', 'PostgreSQL'],
-  },
-  {
-    index: '03',
-    title: 'CI/CD & Platform Engineering',
-    icon: <IconPipeline className="h-5 w-5" />,
-    bullets: [
-      'CI/CD-Plattformen: Konzeption, Aufbau und Migration',
-      'Pipeline-Performance durch Parallelisierung und Caching',
-      'Release-Automatisierung: Tagging, Changelogs, Rollbacks',
-      'Docker- und Kubernetes-Workloads',
-    ],
-    chips: ['GitLab CI', 'Jenkins', 'GitHub Actions', 'Kubernetes'],
-  },
-  {
-    index: '04',
-    title: 'Betrieb & Infrastruktur',
-    icon: <IconServer className="h-5 w-5" />,
-    bullets: [
-      'Docker-Stacks im Produktivbetrieb – auf eigenem Server oder in AWS',
-      'Monitoring und Alerting mit Grafana, Prometheus und ELK',
-      'Verschlüsselte Offsite-Backups (AWS S3)',
-      'Incident Management und SRE-Praktiken',
-    ],
-    chips: ['Docker', 'AWS', 'Linux', 'Grafana'],
-    footnote: 'Ich betreibe, was ich baue.',
-  },
+const ICONS: readonly ReactNode[] = [
+  <IconAI key="ai" className="h-5 w-5" />,
+  <IconApp key="app" className="h-5 w-5" />,
+  <IconPipeline key="pipeline" className="h-5 w-5" />,
+  <IconServer key="server" className="h-5 w-5" />,
 ]
 
 export default function Services() {
+  const t = useCopy()
   return (
     <section id="leistungen" className="border-t border-line py-20 md:py-28">
       <Container size="wide">
         <Reveal>
           <SectionHeading
-            number="01"
-            eyebrow="Leistungen"
-            title="Was Sie bei mir bekommen"
-            description="Vier Bereiche, ein Anspruch: Systeme, die produktiv laufen – nicht nur in der Demo."
+            eyebrow={t.services.eyebrow}
+            title={t.services.title}
+            description={t.services.description}
           />
         </Reveal>
 
         <div className="mt-14 grid gap-y-10 md:mt-20 md:grid-cols-2 md:gap-x-12 md:gap-y-14 xl:grid-cols-4 xl:gap-x-0 xl:divide-x xl:divide-line">
-          {SERVICES.map((service, index) => (
+          {t.services.items.map((service, index) => (
             <Reveal
               key={service.title}
               delay={index * 0.06}
               className={`group h-full border-t border-line pt-8 first:border-t-0 first:pt-0 md:border-t-0 md:pt-0 xl:px-9 ${
                 index === 0 ? 'xl:pl-0' : ''
-              } ${index === SERVICES.length - 1 ? 'xl:pr-0' : ''}`}
+              } ${index === t.services.items.length - 1 ? 'xl:pr-0' : ''}`}
             >
               <article className="flex h-full flex-col">
-                <div className="flex items-center gap-3 text-ink transition-colors duration-300 group-hover:text-accent">
-                  {service.icon}
-                  <span className="font-mono text-xs text-ink-3 transition-colors duration-300 group-hover:text-accent">
-                    {service.index}
+                <div className="flex items-center gap-3 text-fg transition-colors duration-300 group-hover:text-accent">
+                  {ICONS[index]}
+                  <span className="font-mono text-xs text-fg-3 transition-colors duration-300 group-hover:text-accent">
+                    {String(index + 1).padStart(2, '0')}
                   </span>
                 </div>
-                <h3 className="mt-4 text-title text-ink">{service.title}</h3>
+                <h3 className="mt-4 text-title text-fg">{service.title}</h3>
                 <ul className="mt-5 flex flex-col gap-3">
                   {service.bullets.map((bullet) => (
                     <li
                       key={bullet}
-                      className="flex gap-3 text-[0.9375rem] leading-relaxed text-ink-2"
+                      className="flex gap-3 text-[0.9375rem] leading-relaxed text-fg-2"
                     >
                       {/* Fixed-width marker box: the dash grows inside it, so the
                           text column never reflows on hover */}
@@ -161,7 +108,7 @@ export default function Services() {
                   ))}
                 </ul>
                 {service.footnote ? (
-                  <p className="mt-5 text-[0.9375rem] font-medium text-ink">{service.footnote}</p>
+                  <p className="mt-5 text-[0.9375rem] font-medium text-fg">{service.footnote}</p>
                 ) : null}
                 <div className="mt-auto flex flex-wrap gap-1.5 pt-7">
                   {service.chips.map((chip) => (

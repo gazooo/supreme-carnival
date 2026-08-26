@@ -12,7 +12,7 @@ export default function Marquee({ items }: { items: readonly string[] }) {
       <div className="flex w-max animate-marquee items-center gap-8 pr-8" aria-hidden="true">
         {doubled.map((item, index) => (
           <Fragment key={index}>
-            <span className="font-mono text-xs tracking-[0.13em] whitespace-nowrap text-ink-3 uppercase">
+            <span className="font-mono text-xs tracking-[0.13em] whitespace-nowrap text-fg-3 uppercase">
               {item}
             </span>
             <span className="h-1 w-1 shrink-0 rounded-full bg-line-strong" />

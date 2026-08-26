@@ -1,15 +1,22 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Malte Lohrer · DevOps & Platform Engineer</title>
+    <title>Malte Lohrer · DevOps, Platform & AI Engineer</title>
+    <!-- Paint the dark ground before the stylesheet arrives (no white flash) -->
+    <style>
+      html {
+        background-color: #171b22;
+      }
+    </style>
     <meta
       name="description"
-      content="DevOps & Platform Engineer aus dem Raum Stuttgart: CI/CD-Plattformen, LLM-Integration und agentische KI-Assistenten – gebaut, dokumentiert, betrieben. Verfügbar ab Oktober 2026, 100 % remote."
+      content="Freelance DevOps, Platform & AI Engineer near Stuttgart, Germany: CI/CD platforms, LLM integration, and agentic AI assistants — built, documented, operated. Available from October 2026, 100% remote."
     />
     <meta name="author" content="Malte Lohrer" />
-    <meta name="theme-color" content="#fbfaf8" />
+    <meta name="theme-color" content="#171b22" />
+    <meta name="color-scheme" content="dark" />
 
     <link rel="canonical" href="https://lohrer.dev/" />
 
@@ -20,23 +27,24 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Malte Lohrer" />
-    <meta property="og:title" content="Malte Lohrer · DevOps & Platform Engineer" />
+    <meta property="og:title" content="Malte Lohrer · DevOps, Platform & AI Engineer" />
     <meta
       property="og:description"
-      content="CI/CD-Plattformen, LLM-Integration und agentische KI-Assistenten – gebaut, dokumentiert, betrieben. Verfügbar ab Oktober 2026, 100 % remote."
+      content="CI/CD platforms, LLM integration, and agentic AI assistants — built, documented, operated. Available from October 2026, 100% remote."
     />
     <meta property="og:url" content="https://lohrer.dev/" />
     <meta property="og:image" content="https://lohrer.dev/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="de_DE" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="de_DE" />
 
     <!-- Twitter card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Malte Lohrer · DevOps & Platform Engineer" />
+    <meta name="twitter:title" content="Malte Lohrer · DevOps, Platform & AI Engineer" />
     <meta
       name="twitter:description"
-      content="CI/CD-Plattformen, LLM-Integration und agentische KI-Assistenten – gebaut, dokumentiert, betrieben."
+      content="CI/CD platforms, LLM integration, and agentic AI assistants — built, documented, operated."
     />
     <meta name="twitter:image" content="https://lohrer.dev/og.png" />
 
@@ -46,8 +54,8 @@
         "@context": "https://schema.org",
         "@type": "Person",
         "name": "Malte Lohrer",
-        "jobTitle": "DevOps & Platform Engineer",
-        "description": "Freiberuflicher DevOps & Platform Engineer: CI/CD-Plattformen, LLM-Integration und agentische KI-Assistenten.",
+        "jobTitle": "DevOps, Platform & AI Engineer",
+        "description": "Freelance DevOps, Platform & AI Engineer: CI/CD platforms, LLM integration, and agentic AI assistants.",
         "email": "mailto:maltelohrer1990@hotmail.de",
         "address": {
           "@type": "PostalAddress",
@@ -68,9 +76,10 @@
           "AWS",
           "Linux",
           "Python",
-          "LLM-Integration",
+          "LLM integration",
           "n8n"
         ],
+        "knowsLanguage": ["de", "en"],
         "url": "https://lohrer.dev/",
         "sameAs": []
       }
@@ -82,7 +91,8 @@
         Statischer Hero-Shell: malt Inhalt, bevor das JS-Bundle ausgeführt ist
         (FCP/LCP). React ersetzt ihn beim ersten Commit durch identisch
         aussehendes Markup — Klassen und Abstände müssen deshalb exakt zu
-        src/sections/Hero.tsx passen (sonst kehrt Layout-Shift zurück).
+        src/sections/Hero.tsx + src/components/Portrait.tsx passen (sonst
+        kehrt Layout-Shift zurück). Default-Sprache des Shells ist Englisch.
       -->
       <section class="relative flex min-h-svh flex-col overflow-hidden pt-24 md:pt-32">
         <div aria-hidden="true" class="absolute inset-0 -top-24 opacity-70">
@@ -90,8 +100,8 @@
             class="h-full w-full"
             style="
               background-image:
-                linear-gradient(to right, #e3e0da 1px, transparent 1px),
-                linear-gradient(to bottom, #e3e0da 1px, transparent 1px);
+                linear-gradient(to right, #272d38 1px, transparent 1px),
+                linear-gradient(to bottom, #272d38 1px, transparent 1px);
               background-size: 76px 76px;
               mask-image: radial-gradient(115% 85% at 22% 32%, #000 12%, transparent 72%);
               -webkit-mask-image: radial-gradient(115% 85% at 22% 32%, #000 12%, transparent 72%);
@@ -103,25 +113,46 @@
             class="mx-auto flex w-full max-w-7xl flex-1 flex-col justify-center px-5 pb-24 sm:px-8 md:pb-28"
           >
             <div class="max-w-4xl">
-              <p class="mono-label">
-                Malte Lohrer
-                <span class="mx-2 opacity-40" aria-hidden="true">/</span>
-                DevOps, Platform &amp; AI Engineering
+              <p class="font-mono text-sm md:text-[0.9375rem]">
+                <span class="text-signal">malte@lohrer.dev</span><span class="text-fg-3">:~$</span>
+                <span class="text-fg">whoami</span>
+                <span
+                  aria-hidden="true"
+                  class="ml-1.5 inline-block h-[1.05em] w-[0.55em] translate-y-[0.18em] bg-accent motion-safe:animate-blink"
+                ></span>
               </p>
-              <h1 class="mt-7 text-hero text-ink">
-                Ich baue und betreibe
-                <span class="mt-2 block"
-                  ><span
-                    class="inline-flex overflow-hidden border-b border-accent/40 pb-1 text-accent"
-                    ><span class="inline-block whitespace-nowrap">CI/CD-Plattformen</span></span
-                  ></span
-                >
-              </h1>
-              <p class="mt-8 max-w-2xl text-lead text-ink-2">
-                Über zehn Jahre IT: vier Jahre CI/CD-Plattform für die In-Car-UI-Entwicklung von
-                Mercedes-Benz, zuletzt Business-Plattform und agentischer KI-Assistent in
-                Produktion. Ich liefere Systeme, die im Alltag bestehen – gebaut, dokumentiert,
-                betrieben.
+              <div
+                class="mt-9 flex flex-col items-start gap-7 sm:flex-row sm:items-center sm:gap-10"
+              >
+                <span class="relative shrink-0 rounded-full border border-line p-2">
+                  <img
+                    src="/portrait.webp"
+                    width="768"
+                    height="960"
+                    alt="Portrait of Malte Lohrer"
+                    fetchpriority="high"
+                    decoding="async"
+                    class="block h-32 w-32 rounded-full border border-line-strong bg-base-2 object-cover object-[50%_30%] sm:h-40 sm:w-40 lg:h-44 lg:w-44"
+                  />
+                </span>
+                <div>
+                  <h1 class="text-hero text-fg">Malte Lohrer</h1>
+                  <p class="mt-3 text-lg font-medium tracking-tight text-fg-2 md:text-2xl">
+                    I build and run
+                    <span class="mt-1 block md:mt-1.5"
+                      ><span
+                        class="inline-flex overflow-hidden border-b border-accent/40 pb-0.5 text-accent"
+                        ><span class="inline-block whitespace-nowrap">CI/CD platforms</span></span
+                      ></span
+                    >
+                  </p>
+                </div>
+              </div>
+              <p class="mt-8 max-w-2xl text-lead text-fg-2">
+                Over ten years in IT: four of them running the CI/CD platform behind
+                Mercedes-Benz&rsquo;s in-car UI development, most recently a business platform and
+                an agentic AI assistant in production. I ship systems that survive the day-to-day
+                &mdash; built, documented, operated.
               </p>
             </div>
           </div>

@@ -10,30 +10,26 @@ import {
   type MotionValue,
 } from 'motion/react'
 import Container from '../components/Container'
-import AvailabilityBadge from '../components/AvailabilityBadge'
-import { ButtonLink } from '../components/Button'
+import Portrait from '../components/Portrait'
+import { buttonClasses } from '../components/Button'
 import { ArrowRight } from '../components/doodles'
+import { RouteLink } from '../lib/router'
+import { useCopy } from '../lib/i18n'
 
-const ROTATING = [
-  'CI/CD-Plattformen',
-  'Business-Plattformen',
-  'LLM-Agenten',
-  'KI-Automatisierung',
-] as const
-
-function RotatingWord() {
+function RotatingWord({ words }: { words: readonly string[] }) {
   const reduced = useReducedMotion()
   const [index, setIndex] = useState(0)
 
   useEffect(() => {
+    setIndex(0)
     if (reduced) return
-    const id = window.setInterval(() => setIndex((i) => (i + 1) % ROTATING.length), 3200)
+    const id = window.setInterval(() => setIndex((i) => (i + 1) % words.length), 3200)
     return () => window.clearInterval(id)
-  }, [reduced])
+  }, [reduced, words])
 
-  const word = ROTATING[index]
+  const word = words[index % words.length]
   return (
-    <span className="inline-flex overflow-hidden border-b border-accent/40 pb-1 text-accent">
+    <span className="inline-flex overflow-hidden border-b border-accent/40 pb-0.5 text-accent">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={word}
@@ -258,7 +254,13 @@ function Flake({
   )
 }
 
+/**
+ * `$ whoami` landing hero: terminal prompt, circular portrait, name +
+ * rotating specialty, short bio, mono metadata, CTAs into the tabs.
+ * Mirrored by the static shell in index.html — keep classes in sync.
+ */
 export default function Hero() {
+  const t = useCopy()
   const reduced = useReducedMotion()
   const ref = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
@@ -282,6 +284,12 @@ export default function Hero() {
   const ruleY = useTransform(scrollYProgress, [0, 1], [0, -60])
   const contentY = useTransform(scrollYProgress, [0, 1], [0, 56])
   const cueOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+
+  const meta = [
+    { key: t.whoami.metaKeys.location, value: t.whoami.meta.location },
+    { key: t.whoami.metaKeys.availability, value: t.whoami.meta.availability },
+    { key: t.whoami.metaKeys.languages, value: t.whoami.meta.languages },
+  ]
 
   return (
     <section
@@ -319,7 +327,7 @@ export default function Hero() {
       <motion.div
         aria-hidden="true"
         style={reduced ? undefined : { y: ruleY }}
-        className="pointer-events-none absolute top-[38%] right-0 hidden h-px w-[26vw] bg-linear-to-r from-transparent to-accent/45 lg:block"
+        className="pointer-events-none absolute top-[30%] right-0 hidden h-px w-[26vw] bg-linear-to-r from-transparent to-accent/45 lg:block"
       />
 
       <motion.div
@@ -328,51 +336,61 @@ export default function Hero() {
       >
         <Container size="wide" className="flex flex-1 flex-col justify-center pb-24 md:pb-28">
           <div className="max-w-4xl">
-            <p className="mono-label">
-              Malte Lohrer
-              <span className="mx-2 opacity-40" aria-hidden="true">
-                /
-              </span>
-              DevOps, Platform &amp; AI Engineering
+            <p className="font-mono text-sm md:text-[0.9375rem]">
+              <span className="text-signal">malte@lohrer.dev</span>
+              <span className="text-fg-3">:~$</span>{' '}
+              <span className="text-fg">{t.whoami.prompt}</span>
+              <span
+                aria-hidden="true"
+                className="ml-1.5 inline-block h-[1.05em] w-[0.55em] translate-y-[0.18em] bg-accent motion-safe:animate-blink"
+              />
             </p>
 
-            <h1 className="mt-7 text-hero text-ink">
-              Ich baue und betreibe
-              <span className="mt-2 block">
-                <RotatingWord />
-              </span>
-            </h1>
-
-            <p className="mt-8 max-w-2xl text-lead text-ink-2">
-              Über zehn Jahre IT: vier Jahre CI/CD-Plattform für die In-Car-UI-Entwicklung von
-              Mercedes-Benz, zuletzt Business-Plattform und agentischer KI-Assistent in Produktion.
-              Ich liefere Systeme, die im Alltag bestehen – gebaut, dokumentiert, betrieben.
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <ButtonLink href="#kontakt" size="lg" className="group">
-                Projekt anfragen
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
-              </ButtonLink>
-              <ButtonLink variant="secondary" size="lg" href="#leistungen">
-                Leistungen ansehen
-              </ButtonLink>
+            <div className="mt-9 flex flex-col items-start gap-7 sm:flex-row sm:items-center sm:gap-10">
+              <Portrait />
+              <div>
+                <h1 className="text-hero text-fg">Malte Lohrer</h1>
+                <p className="mt-3 text-lg font-medium tracking-tight text-fg-2 md:text-2xl">
+                  {t.whoami.intro}{' '}
+                  <span className="mt-1 block md:mt-1.5">
+                    <RotatingWord words={t.whoami.rotating} />
+                  </span>
+                </p>
+              </div>
             </div>
 
-            {/* Desktop shows the badge persistently in the nav — avoid doubling it */}
-            <AvailabilityBadge className="mt-9 lg:hidden" />
+            <p className="mt-8 max-w-2xl text-lead text-fg-2">{t.whoami.lead}</p>
+
+            <ul className="mt-7 flex flex-wrap gap-x-7 gap-y-2 font-mono text-xs">
+              {meta.map((item) => (
+                <li key={item.key} className="whitespace-nowrap">
+                  <span className="text-fg-3">{item.key}:</span>{' '}
+                  <span className="text-fg-2">{item.value}</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-10 flex flex-wrap items-center gap-3">
+              <RouteLink to="/contact" className={buttonClasses('primary', 'lg', 'group')}>
+                {t.whoami.ctaContact}
+                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+              </RouteLink>
+              <RouteLink to="/projects" className={buttonClasses('secondary', 'lg')}>
+                {t.whoami.ctaProjects}
+              </RouteLink>
+            </div>
           </div>
         </Container>
       </motion.div>
 
       <motion.a
-        href="#leistungen"
-        aria-label="Weiter zu den Leistungen scrollen"
+        href="#trust"
+        aria-label={t.whoami.scrollCue}
         style={reduced ? undefined : { opacity: cueOpacity }}
         className="absolute bottom-8 left-5 z-10 hidden items-center gap-3 sm:left-8 md:flex"
       >
         <span aria-hidden="true" className="block h-px w-10 bg-line-strong" />
-        <span className="mono-label">Scrollen</span>
+        <span className="mono-label">{t.whoami.scrollCue}</span>
       </motion.a>
     </section>
   )

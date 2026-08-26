@@ -1,8 +1,12 @@
 import type { ComponentPropsWithoutRef } from 'react'
 
-export type ButtonVariant = 'primary' | 'secondary' | 'onInk' | 'onInkGhost'
+export type ButtonVariant = 'primary' | 'secondary'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
+/**
+ * Buttons read as commands: mono type, sharp corners, two variants only.
+ * Primary is a light fill on the dark ground; hover shifts to the accent.
+ */
 // eslint-disable-next-line react-refresh/only-export-components
 export function buttonClasses(
   variant: ButtonVariant = 'primary',
@@ -10,17 +14,15 @@ export function buttonClasses(
   className = '',
 ): string {
   const base =
-    'inline-flex items-center justify-center gap-2 font-medium select-none transition-colors duration-200 ease-out'
+    'inline-flex items-center justify-center gap-2 font-mono font-medium select-none transition-colors duration-200 ease-out'
   const variants: Record<ButtonVariant, string> = {
-    primary: 'bg-ink text-paper hover:bg-accent',
-    secondary: 'border border-line-strong text-ink hover:border-ink hover:bg-paper-alt',
-    onInk: 'on-ink bg-paper text-ink hover:bg-accent-on-dark',
-    onInkGhost: 'on-ink border border-ink-line text-paper hover:border-paper hover:bg-white/5',
+    primary: 'bg-fg text-base hover:bg-accent',
+    secondary: 'border border-line-strong text-fg hover:border-fg-3 hover:bg-base-2',
   }
   const sizes: Record<ButtonSize, string> = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-5 py-2.5 text-[0.9375rem]',
-    lg: 'px-6 py-3.5 text-base',
+    sm: 'px-4 py-2 text-[0.8125rem]',
+    md: 'px-5 py-2.5 text-sm',
+    lg: 'px-6 py-3.5 text-[0.9375rem]',
   }
   return `${base} ${variants[variant]} ${sizes[size]} ${className}`.trim()
 }

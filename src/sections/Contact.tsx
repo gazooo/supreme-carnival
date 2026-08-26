@@ -1,57 +1,45 @@
 import Container from '../components/Container'
 import Reveal from '../components/Reveal'
 import ContactForm from '../components/ContactForm'
-import { AVAILABILITY_DATE, EMAIL } from '../content/site'
-
-const FACTS = [
-  { title: `Verfügbar ab ${AVAILABILITY_DATE}`, detail: 'Projektstart planbar ab Oktober 2026.' },
-  { title: '100 % remote', detail: 'Einmaliger Kick-off im Raum Stuttgart möglich.' },
-  { title: 'Deutsch & Englisch', detail: 'Muttersprache bzw. verhandlungssicher.' },
-  { title: 'Freiberuflich', detail: 'Dienst- oder Werkvertrag – Konditionen auf Anfrage.' },
-]
+import { useCopy } from '../lib/i18n'
+import { EMAIL } from '../content/site'
 
 export default function Contact() {
+  const t = useCopy()
   return (
-    <section id="kontakt" className="bg-ink py-24 text-paper md:py-32">
+    <section id="kontakt" className="py-20 md:py-28">
       <Container size="wide">
         <Reveal>
           <div className="grid gap-x-10 gap-y-6 lg:grid-cols-[10rem_1fr]">
-            <p className="mono-label pt-2 text-ink-2-on-dark">
-              08
-              <span className="mx-2 opacity-40" aria-hidden="true">
-                /
+            <p className="mono-comment pt-3">
+              <span aria-hidden="true" className="text-accent">
+                {'// '}
               </span>
-              Kontakt
+              {t.contact.eyebrow}
             </p>
             <div>
-              <h2 className="max-w-3xl text-hero text-paper">
-                Projekt im <span className="border-b-2 border-accent-on-dark pb-0.5">Kopf</span>?
+              <h2 className="max-w-3xl text-hero text-fg">
+                {t.contact.titleA}{' '}
+                <span className="border-b-2 border-accent pb-0.5">{t.contact.titleMark}</span>
+                {t.contact.titleB}
               </h2>
-              <p className="mt-7 max-w-2xl text-lead text-ink-2-on-dark">
-                Erzählen Sie mir, was Sie bauen wollen – eine kurze Nachricht genügt. Antwort
-                innerhalb von 24 Stunden.
-              </p>
+              <p className="mt-7 max-w-2xl text-lead text-fg-2">{t.contact.lead}</p>
 
               <ContactForm />
 
-              <p className="mt-8 font-mono text-sm text-ink-2-on-dark">
-                Oder direkt an{' '}
-                <a
-                  href={`mailto:${EMAIL}`}
-                  className="on-ink text-paper underline decoration-accent-on-dark underline-offset-4"
-                >
+              <p className="mt-8 font-mono text-sm text-fg-2">
+                {t.contact.direct}{' '}
+                <a href={`mailto:${EMAIL}`} className="link-accent">
                   {EMAIL}
                 </a>
               </p>
 
               <div className="mt-14 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-                {FACTS.map((fact, index) => (
+                {t.contact.facts.map((fact, index) => (
                   <Reveal key={fact.title} delay={index * 0.06} className="h-full">
-                    <div className="group h-full border-t border-ink-line pt-4 transition-colors duration-300 hover:border-accent-on-dark/50">
-                      <p className="text-[0.9375rem] font-medium text-paper">{fact.title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-ink-2-on-dark">
-                        {fact.detail}
-                      </p>
+                    <div className="group h-full border-t border-line pt-4 transition-colors duration-300 hover:border-accent/50">
+                      <p className="text-[0.9375rem] font-medium text-fg">{fact.title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-fg-2">{fact.detail}</p>
                     </div>
                   </Reveal>
                 ))}

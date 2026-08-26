@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-export type ChipTone = 'default' | 'accent' | 'onDark'
+export type ChipTone = 'default' | 'accent'
 
 /**
  * Technical tag: mono type, hairline border, no fill. Used for stack items
@@ -16,9 +16,8 @@ export default function Chip({
   className?: string
 }) {
   const tones: Record<ChipTone, string> = {
-    default: 'border-line text-ink-2 hover:border-ink-2 hover:text-ink',
+    default: 'border-line text-fg-2 hover:border-fg-3 hover:text-fg',
     accent: 'border-accent/35 bg-accent-soft text-accent',
-    onDark: 'border-ink-line text-ink-2-on-dark hover:border-ink-2-on-dark',
   }
   return (
     <span

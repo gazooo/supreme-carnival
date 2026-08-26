@@ -8,14 +8,24 @@ import {
   type ReactNode,
 } from 'react'
 
-export type Route = '/' | '/impressum' | '/datenschutz'
+/** Tab routes plus the two (German) legal documents. */
+export type Route =
+  '/' | '/services' | '/projects' | '/career' | '/contact' | '/impressum' | '/datenschutz'
+
+const ROUTES: readonly Route[] = [
+  '/',
+  '/services',
+  '/projects',
+  '/career',
+  '/contact',
+  '/impressum',
+  '/datenschutz',
+]
 
 // eslint-disable-next-line react-refresh/only-export-components
 export function normalizeRoute(pathname: string): Route {
-  const p = pathname.replace(/\/+$/, '')
-  if (p === '/impressum') return '/impressum'
-  if (p === '/datenschutz') return '/datenschutz'
-  return '/'
+  const p = pathname.replace(/\/+$/, '') || '/'
+  return (ROUTES as readonly string[]).includes(p) ? (p as Route) : '/'
 }
 
 interface RouterValue {
@@ -55,19 +65,23 @@ export function RouteLink({
   to,
   className,
   children,
+  onClick,
+  ...rest
 }: {
   to: Route
   className?: string
   children: ReactNode
-}) {
+  onClick?: () => void
+} & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href' | 'onClick'>) {
   const { navigate } = useRouter()
-  const onClick = (event: MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    onClick?.()
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     event.preventDefault()
     navigate(to)
   }
   return (
-    <a href={to} className={className} onClick={onClick}>
+    <a href={to} className={className} onClick={handleClick} {...rest}>
       {children}
     </a>
   )

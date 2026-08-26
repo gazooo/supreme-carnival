@@ -4,48 +4,10 @@ import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
 import Chip from '../components/Chip'
 import Reveal from '../components/Reveal'
-
-const STATIONS = [
-  {
-    period: '2015 – 2020',
-    org: 'Daimler',
-    role: 'Werkstudent & Masterand',
-    desc: 'ELK-Monitoring der CI-Infrastruktur.',
-  },
-  {
-    period: 'Abschluss',
-    org: 'Hochschule der Medien Stuttgart',
-    role: 'M.Sc. Computer Science & Media',
-    desc: 'Abschlussnote 1,5.',
-  },
-  {
-    period: '02 – 07/2021',
-    org: 'Innenministerium Baden-Württemberg',
-    role: 'Mitaufbau der Cybersicherheitsagentur (CSBW)',
-    desc: 'Aufbau der neuen Cybersicherheitsagentur des Landes Baden-Württemberg.',
-  },
-  {
-    period: '11/2021 – 06/2025',
-    org: 'Mercedes-Benz',
-    role: 'CI/CD-Plattform der In-Car-UI-Entwicklung',
-    desc: 'GitLab CI und Jenkins inklusive Migration, Release-Automatisierung, Monitoring mit Grafana, Prometheus und ELK, Incident Management, Aufbau des SRE-Teams.',
-  },
-  {
-    period: '07/2025 – 06/2026',
-    org: 'Aremus Finance',
-    role: 'Betriebsplattform & agentischer KI-Assistent',
-    desc: 'Interne Betriebsplattform als einziger Entwickler – acht Dienste im Produktivbetrieb, KI-Assistent mit Tool-Zugriff auf Microsoft 365, SharePoint und CRM.',
-  },
-  {
-    period: 'ab 10/2026',
-    org: 'Ihr Projekt',
-    role: 'Verfügbar für neue Vorhaben',
-    desc: '100 % remote, einmaliger Kick-off im Raum Stuttgart möglich.',
-    final: true,
-  },
-]
+import { useCopy } from '../lib/i18n'
 
 export default function Timeline() {
+  const t = useCopy()
   const reduced = useReducedMotion()
   const listRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -59,10 +21,9 @@ export default function Timeline() {
       <Container size="wide">
         <Reveal>
           <SectionHeading
-            number="04"
-            eyebrow="Werdegang"
-            title="Stationen seit 2015"
-            description="Vom Werkstudenten am CI-Monitoring bis zum agentischen KI-Assistenten in Produktion."
+            eyebrow={t.career.eyebrow}
+            title={t.career.title}
+            description={t.career.description}
           />
         </Reveal>
 
@@ -76,32 +37,32 @@ export default function Timeline() {
           />
 
           <ol className="flex flex-col">
-            {STATIONS.map((station, index) => (
+            {t.career.stations.map((station, index) => (
               <li
                 key={station.org + station.period}
-                className="group relative border-b border-line py-7 pl-8 transition-colors duration-300 last:border-b-0 hover:bg-surface/70 md:grid md:grid-cols-[11rem_1fr] md:gap-10 md:pl-10"
+                className="group relative border-b border-line py-7 pl-8 transition-colors duration-300 last:border-b-0 hover:bg-base-2/70 md:grid md:grid-cols-[11rem_1fr] md:gap-10 md:pl-10"
               >
                 <span
                   aria-hidden="true"
                   className={`absolute top-[2.35rem] -left-[3.5px] h-2 w-2 rounded-full border transition-all duration-300 ${
                     station.final
                       ? 'border-accent bg-accent'
-                      : 'border-line-strong bg-paper group-hover:scale-125 group-hover:border-accent group-hover:bg-accent'
+                      : 'border-line-strong bg-base group-hover:scale-125 group-hover:border-accent group-hover:bg-accent'
                   }`}
                 />
                 <Reveal delay={index * 0.04}>
-                  <p className="font-mono text-xs text-ink-3 transition-colors duration-300 group-hover:text-ink">
+                  <p className="font-mono text-xs text-fg-3 transition-colors duration-300 group-hover:text-fg">
                     {station.period}
                   </p>
                 </Reveal>
                 <Reveal delay={index * 0.04}>
                   <div className="mt-2 max-w-2xl md:mt-0">
-                    <h3 className="flex flex-wrap items-center gap-3 text-title text-ink">
+                    <h3 className="flex flex-wrap items-center gap-3 text-title text-fg">
                       {station.org}
-                      {station.final ? <Chip tone="accent">verfügbar</Chip> : null}
+                      {station.final ? <Chip tone="accent">{t.career.availableChip}</Chip> : null}
                     </h3>
-                    <p className="mt-1 text-[0.9375rem] font-medium text-ink-2">{station.role}</p>
-                    <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-ink-3">
+                    <p className="mt-1 text-[0.9375rem] font-medium text-fg-2">{station.role}</p>
+                    <p className="mt-1.5 text-[0.9375rem] leading-relaxed text-fg-3">
                       {station.desc}
                     </p>
                   </div>

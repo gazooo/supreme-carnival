@@ -4,53 +4,22 @@ import Container from '../components/Container'
 import SectionHeading from '../components/SectionHeading'
 import Chip from '../components/Chip'
 import Reveal from '../components/Reveal'
+import { useCopy } from '../lib/i18n'
 import { PRIMARY_SKILLS } from '../content/site'
 
-const SECONDARY_GROUPS = [
-  {
-    label: 'Cloud & Infra',
-    items: ['AWS S3', 'Docker Compose', 'Grafana', 'Prometheus', 'ELK', 'Linux-Server-Betrieb'],
-  },
-  {
-    label: 'CI & Tooling',
-    items: [
-      'Pipeline-Optimierung',
-      'Release-Automatisierung',
-      'Rollback-Strategien',
-      'Incident Management',
-      'SRE',
-    ],
-  },
-  {
-    label: 'AI & Automation',
-    items: [
-      'RAG',
-      'MCP',
-      'LLM-Gateways',
-      'E-Mail-Triage',
-      'Agenten-Tooling',
-      'Microsoft-365-Integration',
-    ],
-  },
-  {
-    label: 'Web',
-    items: ['React', 'Node.js', 'PostgreSQL'],
-  },
-]
-
 export default function Skills() {
+  const t = useCopy()
   const reduced = useReducedMotion()
   const [hovered, setHovered] = useState<number | null>(null)
 
   return (
-    <section id="skills" className="border-t border-line bg-paper-alt py-20 md:py-28">
+    <section id="skills" className="border-t border-line bg-base-2 py-20 md:py-28">
       <Container size="wide">
         <Reveal>
           <SectionHeading
-            number="05"
-            eyebrow="Skills"
-            title="Womit ich arbeite"
-            description="Elf Werkzeuge im Kern – der Rest gruppiert sich darum."
+            eyebrow={t.skills.eyebrow}
+            title={t.skills.title}
+            description={t.skills.description}
           />
         </Reveal>
 
@@ -58,7 +27,7 @@ export default function Skills() {
           <ul className="flex max-w-4xl flex-wrap gap-2">
             {PRIMARY_SKILLS.map((skill) => (
               <li key={skill}>
-                <Chip className="bg-surface px-3.5 py-1.5 text-[0.8125rem]">{skill}</Chip>
+                <Chip className="bg-raise px-3.5 py-1.5 text-[0.8125rem]">{skill}</Chip>
               </li>
             ))}
           </ul>
@@ -72,14 +41,14 @@ export default function Skills() {
           className="mt-14 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4"
           onMouseLeave={() => setHovered(null)}
         >
-          {SECONDARY_GROUPS.map((group, index) => (
+          {t.skills.groups.map((group, index) => (
             <Reveal key={group.label} delay={index * 0.06} className="h-full">
               <div
                 className="group h-full border-t border-line-strong pt-4 transition-colors duration-300"
                 onMouseEnter={() => setHovered(index)}
               >
                 <h3 className="relative inline-flex flex-col">
-                  <span className="mono-label transition-colors duration-200 group-hover:text-ink">
+                  <span className="mono-label transition-colors duration-200 group-hover:text-fg">
                     {group.label}
                   </span>
                   <span className="relative mt-1.5 block h-0.5 w-full">
@@ -104,7 +73,7 @@ export default function Skills() {
                   {group.items.map((item) => (
                     <li
                       key={item}
-                      className="text-sm text-ink-2 transition-[color,translate] duration-200 hover:translate-x-1 hover:text-ink"
+                      className="text-sm text-fg-2 transition-[color,translate] duration-200 hover:translate-x-1 hover:text-fg"
                     >
                       {item}
                     </li>

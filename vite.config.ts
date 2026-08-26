@@ -6,9 +6,9 @@ import { copyFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 
 /**
- * Emits dist/impressum/index.html and dist/datenschutz/index.html as copies of
- * dist/index.html so the client-side legal routes work on any static host
- * without server-side rewrite rules.
+ * Emits dist/<route>/index.html as a copy of dist/index.html for every
+ * client-side route (tabs + legal pages) so deep links work on any static
+ * host without server-side rewrite rules.
  */
 function staticRouteFallback(routes: string[]): Plugin {
   let outDir = 'dist'
@@ -32,7 +32,11 @@ function staticRouteFallback(routes: string[]): Plugin {
 const contactProxy = { '/api': 'http://127.0.0.1:3081' }
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), staticRouteFallback(['impressum', 'datenschutz'])],
+  plugins: [
+    react(),
+    tailwindcss(),
+    staticRouteFallback(['services', 'projects', 'career', 'contact', 'impressum', 'datenschutz']),
+  ],
   server: { proxy: contactProxy },
   preview: { proxy: contactProxy },
   build: {

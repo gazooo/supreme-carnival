@@ -2,19 +2,21 @@ import { useState, type FormEvent } from 'react'
 import { Button } from './Button'
 import { ArrowRight } from './doodles'
 import { RouteLink } from '../lib/router'
+import { useCopy } from '../lib/i18n'
 import { CONTACT_ENDPOINT, EMAIL } from '../content/site'
 
 type Status = 'idle' | 'sending' | 'success' | 'error'
 
 const FIELD_CLASSES =
-  'w-full border-b border-ink-line bg-transparent px-0 py-2.5 text-paper placeholder:text-ink-2-on-dark/50 transition-colors duration-200 focus:border-accent-on-dark focus:outline-none'
+  'w-full border-b border-line-strong bg-transparent px-0 py-2.5 font-mono text-sm text-fg placeholder:text-fg-3/60 transition-colors duration-200 focus:border-accent focus:outline-none'
 
 /**
- * Posts to the same-origin contact relay (server/contact-relay.mjs behind
+ * Posts to the same-origin contact endpoint (server/site-server.mjs behind
  * Caddy), which forwards to the private mailserver API. Includes a honeypot
  * field; on failure it falls back to offering the plain e-mail address.
  */
 export default function ContactForm() {
+  const t = useCopy()
   const [status, setStatus] = useState<Status>('idle')
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
@@ -52,8 +54,8 @@ export default function ContactForm() {
     <form onSubmit={onSubmit} className="mt-10 max-w-2xl text-left">
       <div className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
         <div>
-          <label htmlFor="contact-name" className="mono-label text-ink-2-on-dark">
-            Name
+          <label htmlFor="contact-name" className="mono-label">
+            {t.contact.form.name}
           </label>
           <input
             id="contact-name"
@@ -62,13 +64,13 @@ export default function ContactForm() {
             required
             maxLength={200}
             autoComplete="name"
-            placeholder="Ihr Name"
+            placeholder={t.contact.form.namePlaceholder}
             className={FIELD_CLASSES}
           />
         </div>
         <div>
-          <label htmlFor="contact-email" className="mono-label text-ink-2-on-dark">
-            E-Mail
+          <label htmlFor="contact-email" className="mono-label">
+            {t.contact.form.email}
           </label>
           <input
             id="contact-email"
@@ -77,13 +79,13 @@ export default function ContactForm() {
             required
             maxLength={320}
             autoComplete="email"
-            placeholder="name@firma.de"
+            placeholder={t.contact.form.emailPlaceholder}
             className={FIELD_CLASSES}
           />
         </div>
         <div className="sm:col-span-2">
-          <label htmlFor="contact-message" className="mono-label text-ink-2-on-dark">
-            Nachricht
+          <label htmlFor="contact-message" className="mono-label">
+            {t.contact.form.message}
           </label>
           <textarea
             id="contact-message"
@@ -91,7 +93,7 @@ export default function ContactForm() {
             required
             maxLength={5000}
             rows={5}
-            placeholder="Worum geht es? Ein paar Sätze genügen."
+            placeholder={t.contact.form.messagePlaceholder}
             className={`${FIELD_CLASSES} resize-y`}
           />
         </div>
@@ -105,31 +107,27 @@ export default function ContactForm() {
       <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-4">
         <Button
           type="submit"
-          variant="onInk"
           size="lg"
           disabled={status === 'sending'}
           className="group disabled:opacity-60"
         >
-          {status === 'sending' ? 'Wird gesendet …' : 'Nachricht senden'}
+          {status === 'sending' ? t.contact.form.sending : t.contact.form.submit}
           <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
         </Button>
         <div aria-live="polite" className="text-sm">
           {status === 'success' ? (
-            <p className="flex items-center gap-2 text-paper">
+            <p className="flex items-center gap-2 text-fg">
               <span
                 aria-hidden="true"
                 className="h-1.5 w-1.5 rounded-full bg-signal ring-3 ring-signal/20"
               />
-              Danke für Ihre Nachricht – ich melde mich innerhalb von 24 Stunden.
+              {t.contact.form.success}
             </p>
           ) : null}
           {status === 'error' ? (
-            <p className="text-ink-2-on-dark">
-              Senden hat nicht geklappt. Schreiben Sie mir direkt:{' '}
-              <a
-                href={`mailto:${EMAIL}`}
-                className="on-ink text-paper underline decoration-accent-on-dark underline-offset-4"
-              >
+            <p className="text-fg-2">
+              {t.contact.form.errorPrefix}{' '}
+              <a href={`mailto:${EMAIL}`} className="link-accent">
                 {EMAIL}
               </a>
             </p>
@@ -137,15 +135,12 @@ export default function ContactForm() {
         </div>
       </div>
 
-      <p className="mt-5 text-xs leading-relaxed text-ink-2-on-dark">
-        Ihre Angaben werden ausschließlich zur Bearbeitung der Anfrage verarbeitet – Details in der{' '}
-        <RouteLink
-          to="/datenschutz"
-          className="on-ink underline underline-offset-2 hover:text-paper"
-        >
-          Datenschutzerklärung
+      <p className="mt-5 text-xs leading-relaxed text-fg-3">
+        {t.contact.form.privacyPrefix}
+        <RouteLink to="/datenschutz" className="underline underline-offset-2 hover:text-fg">
+          {t.contact.form.privacyLink}
         </RouteLink>
-        .
+        {t.contact.form.privacySuffix}
       </p>
     </form>
   )

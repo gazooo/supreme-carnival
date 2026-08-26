@@ -1,37 +1,47 @@
 import Container from '../components/Container'
 import { RouteLink } from '../lib/router'
+import { useCopy } from '../lib/i18n'
 
 export default function Footer() {
+  const t = useCopy()
   const year = new Date().getFullYear()
+  const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' })
+
   return (
-    <footer className="border-t border-ink-line bg-ink py-10 text-paper">
+    <footer className="border-t border-line bg-base-2 py-10">
       <Container size="wide">
         <div className="flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
           <div>
-            <p className="text-[0.9375rem] font-semibold tracking-tight">Malte Lohrer</p>
-            <p className="mt-1 font-mono text-xs text-ink-2-on-dark">© {year} Malte Lohrer</p>
+            <p className="font-mono text-[0.9375rem] font-semibold tracking-tight text-fg">
+              <span aria-hidden="true" className="text-signal">
+                ~
+              </span>
+              /lohrer.dev
+            </p>
+            <p className="mt-1 font-mono text-xs text-fg-3">© {year} Malte Lohrer</p>
           </div>
-          <nav aria-label="Rechtliches" className="flex items-center gap-6">
+          <nav aria-label={t.a11y.legalNav} className="flex items-center gap-6">
             <RouteLink
               to="/impressum"
-              className="on-ink text-sm text-ink-2-on-dark underline-offset-4 hover:text-paper hover:underline"
+              className="text-sm text-fg-2 underline-offset-4 hover:text-fg hover:underline"
             >
-              Impressum
+              {t.footer.imprint}
             </RouteLink>
             <RouteLink
               to="/datenschutz"
-              className="on-ink text-sm text-ink-2-on-dark underline-offset-4 hover:text-paper hover:underline"
+              className="text-sm text-fg-2 underline-offset-4 hover:text-fg hover:underline"
             >
-              Datenschutz
+              {t.footer.privacy}
             </RouteLink>
-            <a
-              href="#hero"
-              className="on-ink text-sm text-ink-2-on-dark underline-offset-4 hover:text-paper hover:underline"
+            <button
+              type="button"
+              onClick={scrollTop}
+              className="text-sm text-fg-2 underline-offset-4 hover:text-fg hover:underline"
             >
-              Nach oben ↑
-            </a>
+              {t.footer.top}
+            </button>
           </nav>
-          <p className="font-mono text-xs text-ink-2-on-dark">Made in Esslingen</p>
+          <p className="font-mono text-xs text-fg-3">{t.footer.madeIn}</p>
         </div>
       </Container>
     </footer>
