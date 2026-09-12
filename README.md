@@ -1,118 +1,119 @@
-# malte-lohrer-website
+# Malte Lohrer — persönliche Website
 
-Persönliche Freelancer-Website von Malte Lohrer — dunkles, editorial-technisches
-Design mit Coder-Flair: tiefblaugrauer Grund (bewusst nicht schwarz), Haarlinien,
-Mono-Akzente, `$ whoami`-Intro mit rundem Porträt, eine Akzentfarbe, zurückhaltende
-Animationen. Navigation über Tabs (whoami · services · projects · career · contact),
-Englisch als Default mit Deutsch-Umschalter in der Navbar. Plus Impressum und
-Datenschutzerklärung (deutsch).
+Website für die Vorstellung von Leistungen, Projekterfahrung und die erste
+Kontaktaufnahme. Deutsche Standardsprache, vollständige englische Fassung und
+gespeicherte Sprachwahl. Ruhige, helle Gestaltung mit Porträt, grüner Akzentfarbe,
+normaler Navigation und direktem Kontaktweg.
 
-## Stack
+Die redaktionellen Entscheidungen, Quellen und Regeln zur Pflege stehen in
+[CONTENT.md](CONTENT.md).
 
-| Bereich   | Technologie                                                                                           |
-| --------- | ----------------------------------------------------------------------------------------------------- |
-| Build     | [Vite 7](https://vite.dev) (statisches SPA-Build, kein SSR)                                           |
-| UI        | React 19 + TypeScript (strict)                                                                        |
-| Styling   | Tailwind CSS v4 (`@theme`-Design-Tokens in `src/styles/global.css`)                                   |
-| Animation | [Motion](https://motion.dev) (`motion/react`) — Reveals, Parallax, Count-ups                          |
-| Scrolling | [Lenis](https://lenis.darkroom.engineering) (Smooth Scroll, bei `prefers-reduced-motion` deaktiviert) |
-| Fonts     | Self-hosted via `@fontsource-variable` (Inter, JetBrains Mono) — keine externen Requests              |
-| Tests     | Vitest + Testing Library (Smoke-Tests: Render, Tabs, Sprachwechsel, Legal-Routen)                     |
-| Qualität  | ESLint (flat config) + Prettier                                                                       |
-
-**Datenschutz by design:** Die Seite macht null Third-Party-Requests — keine CDNs,
-keine Google Fonts, kein Tracking, keine Cookies. Das Kontaktformular postet
-same-origin an `server/site-server.mjs`, der die private Mailserver-API
-(github.com/gazooo/mailserver) aufruft — Setup in [DEPLOY.md](DEPLOY.md).
-
-## Kontaktformular lokal testen
-
-Das Formular postet an `/api/contact`. Lokal gibt es dahinter erst dann einen
-Dienst, wenn `server/site-server.mjs` läuft — ohne ihn zeigt das Formular den
-E-Mail-Fallback (erwartet, kein Bug). Test-Setup in zwei Terminals:
+## Lokal starten
 
 ```bash
-# Terminal 1: Dienst im Dry-Run (loggt statt zu senden, kein Token nötig)
-MAIL_DRY_RUN=1 node server/site-server.mjs
-# PowerShell:  $env:MAIL_DRY_RUN='1'; node server/site-server.mjs
-
-# Terminal 2: Dev-Server (proxied /api automatisch dorthin)
+npm install
 npm run dev
 ```
 
-Formular absenden → Erfolgsmeldung auf der Seite, geloggte Anfrage in
-Terminal 1. Echter Versand passiert nur auf dem VPS neben dem Mailserver —
-Produktions-Setup in [DEPLOY.md](DEPLOY.md).
+Die Vorschau läuft standardmäßig auf http://localhost:5173.
 
-## Befehle
+## Kontaktformular lokal testen
+
+Das Formular sendet an den eigenen Endpunkt `/api/contact`. Vite leitet ihn an
+den lokalen Dienst auf Port 3081 weiter. Ohne Dienst erscheint der E-Mail-Fallback.
+
+In einem zweiten Terminal den Dienst ohne echten Mailversand starten:
+
+```powershell
+$env:MAIL_DRY_RUN='1'
+node server/site-server.mjs
+```
+
+Unter bash: `MAIL_DRY_RUN=1 node server/site-server.mjs`.
+Testdaten werden in diesem Modus ausschließlich lokal protokolliert. Tokens
+sind dafür nicht notwendig. Einrichtung und echter Versand: [DEPLOY.md](DEPLOY.md).
+
+## Prüfungen
 
 ```bash
-npm install        # Abhängigkeiten installieren
-npm run dev        # Dev-Server (http://localhost:5173)
-npm run build      # Produktions-Build nach dist/
-npm run preview    # Produktions-Build lokal serven (http://localhost:4173)
-npm test           # Vitest-Smoke-Tests
-npm run lint       # ESLint
-npm run format     # Prettier (write)
+npm run build
+npm run lint
+npm test
+npm run format:check
+npm run preview
 ```
 
-## Struktur
+Die Tests prüfen Navigation, Seiteneinstiege, Sprachwechsel und gespeicherte
+Sprachwahl sowie Erfolg und Fehler des Kontaktformulars. Bei Änderungen am
+Layout zusätzlich im Browser prüfen: Desktop und Mobil, beide Sprachen,
+Menü per Tastatur, Projektlinks und Formular.
 
-```
-index.html              Meta/SEO/OG/JSON-LD (Person-Schema)
-public/                 robots.txt, sitemap.xml, Favicons, og.png
-src/
-  main.tsx              Einstieg (Fonts + CSS + App)
-  App.tsx               MotionConfig, Sprach-Provider, Router (Tab-Seiten lazy),
-                        Smooth-Scroll-Provider, Skip-Link, document.title
-  styles/global.css     Design-Tokens (@theme, dunkle Palette), Basisstile,
-                        Reduced-Motion-Killswitch
-  lib/
-    router.tsx          Mini-Router (History API): /, /services, /projects,
-                        /career, /contact, /impressum, /datenschutz
-    i18n.tsx            Sprachkontext: EN default, DE-Toggle, localStorage,
-                        setzt document.lang
-    scroll.tsx          Lenis-Integration + Anker-Scrolling mit Nav-Offset
-  components/           Button, Chip, Container, SectionHeading, Reveal, Marquee,
-                        Portrait, ContactForm, AvailabilityBadge, ScrollProgress,
-                        LegalLayout, …
-  sections/             Nav (Tabs + Sprach-Toggle), Hero ($ whoami), TrustBar,
-                        TechMarquee, Services, Approach, Projects, Timeline,
-                        Skills, Insights, Contact, Footer
-  pages/                Home (whoami + about + $ ls), ServicesPage, ProjectsPage,
-                        CareerPage, ContactPage, Impressum, Datenschutz
-  content/site.ts       Sprachunabhängige Fakten: E-Mail, Endpoint, Primär-Skills
-  content/i18n.ts       Gesamte UI-Copy EN + DE (ein Interface, beide Sprachen
-                        typsicher vollständig)
-server/site-server.mjs  Produktionsdienst: liefert dist/ aus + POST /api/contact
-deploy/                 Caddy-Snippet, systemd-Unit, Setup-/Publish-/Inspektions-
-                        skripte (publish.ps1 für Windows, publish.sh für bash)
-```
+## Technik und Struktur
 
-Alle Client-Routen funktionieren auf jedem statischen Host ohne Rewrites: ein
-Vite-Plugin (`vite.config.ts`) legt `dist/<route>/index.html` für jede Tab- und
-Legal-Route als Kopie der `index.html` an.
+React 19, TypeScript, Vite und Tailwind CSS. Inter wird lokal ausgeliefert.
+Die Seite verwendet native Browserfunktionen für Scrollen und das mobile
+Dialogmenü; keine Animations- oder Scroll-Bibliothek.
 
-**Performance-Architektur:** `index.html` enthält einen statischen Shell des
-`$ whoami`-Heros (englisch, inkl. Porträt), der vor der JS-Ausführung malt
-(FCP/LCP, CLS 0); React ersetzt ihn nahtlos. Jede weitere Tab-Seite lädt als
-eigener kleiner Lazy-Chunk.
+| Pfad                     | Aufgabe                                                              |
+| ------------------------ | -------------------------------------------------------------------- |
+| `src/content/i18n.ts`    | Alle Marketingtexte, Beschriftungen und Metadaten in DE und EN       |
+| `src/content/site.ts`    | Kontaktadresse und Formular-Endpunkt                                 |
+| `src/pages/`             | Startseite, Leistungen, Projekte, Über mich, Kontakt und Rechtliches |
+| `src/sections/`          | Wiederverwendbare Inhaltsabschnitte und Navigation                   |
+| `src/components/`        | Layout, Porträt, Formularelemente, Buttons                           |
+| `src/styles/global.css`  | Farben, Typografie, Abstände, Fokus und reduzierte Bewegung          |
+| `src/lib/router.tsx`     | Navigation mit History API; bestehende URLs bleiben erhalten         |
+| `src/lib/i18n.tsx`       | Sprachwahl; DE als Standard, Speicherung in localStorage             |
+| `src/prerender.tsx`      | Statisches HTML aus denselben React-Komponenten und Texten           |
+| `vite.config.ts`         | Build, lokale Formular-Weiterleitung und Ausgabe aller Routen        |
+| `index.html`             | Gemeinsame HTML-Vorlage und strukturierte Personendaten              |
+| `server/site-server.mjs` | Statische Auslieferung und Kontaktformular                           |
+| `public/`                | Porträt, Favicons, Linkvorschau, Sitemap und robots.txt              |
 
-## Barrierefreiheit & Motion
+Die Startseite fasst Leistungen, Projekte, Zusammenarbeit und Person zusammen.
+Die vorhandenen Routen `/services`, `/projects`, `/career` und `/contact`
+führen zu den Details. `/career` wird als „Über mich“ angezeigt.
 
-- `prefers-reduced-motion` deaktiviert sämtliche nicht-essenzielle Bewegung
-  (JS-seitig über `useReducedMotion`, CSS-seitig über einen globalen Killswitch;
-  Lenis wird gar nicht erst initialisiert).
-- Skip-Link, sichtbare Fokus-Stile, Dialog-Semantik + Fokus-Falle im mobilen Menü,
-  ein `h1`, semantische Landmarken; Fokus wandert beim Tab-Wechsel auf den Inhalt.
-- `lang` folgt der gewählten Sprache (EN default); die Legal-Dokumente bleiben
-  `lang="de"`, der Sprach-Umschalter trägt `aria-pressed`.
-- Alle Farbkombinationen erfüllen WCAG AA ≥ 4,5:1 (geprüft; die meisten Paarungen AAA).
+## Statische Seiten und Metadaten
 
-## Deployment
+Beim Build erhält jede Route eine eigene `dist/<route>/index.html` mit ihrem
+vollständigen deutschen Inhalt, einem passenden Titel, einer Beschreibung und
+der richtigen kanonischen URL. Es wird derselbe React-Code wie im Browser
+verwendet; eine separat gepflegte Startseiten-Kopie entfällt.
 
-Produktionsziel ist **https://lohrer.dev** auf dem eigenen VPS: ein
-systemd-Dienst liefert Website und `/api/contact` aus, der dort bereits
-laufende Caddy-Container proxied davor. Architektur, Einrichtung und Rollback
-in [DEPLOY.md](DEPLOY.md). Offene Platzhalter (Social-Links, USt-IdNr.,
-Essay-URL, Domain-Postfach) sind im Code als `TODO` markiert.
+Der Browser aktiviert das vorbereitete HTML mit React-Hydration. Bei zuvor
+gewähltem Englisch rendert er die englische Fassung direkt. Weitere Seiten
+werden bei Bedarf geladen. Navigation und Sprachwechsel aktualisieren Titel,
+Beschreibung und Social-Metadaten. Die öffentlich abrufbaren statischen
+Metadaten sind deutsch; Englisch hat keine separaten URLs.
+
+Es wird kein Rendering-Dienst in Produktion benötigt. Der bestehende statische
+Host und Kontaktformular-Dienst können die Ausgabe weiterhin ausliefern.
+
+## Zugänglichkeit und Datenschutz
+
+Jede Seite hat genau eine Hauptüberschrift. Die Website bietet sichtbare
+Tastaturfokusse, einen Sprunglink zum Inhalt, beschriftete Formularfelder und
+Statusmeldungen. Das mobile Menü nutzt einen nativen modalen Dialog mit
+Fokusbegrenzung und Escape zum Schließen. Reduzierte Bewegung wird respektiert.
+
+Keine externen Schriften, Tracking-Skripte oder Drittanbieter-Anfragen aus der
+Website. Kontaktanfragen gehen an den eigenen Server. Impressum und
+Datenschutzerklärung sind auf Deutsch verfügbar.
+
+## Veröffentlichung
+
+Die lokale Überarbeitung veröffentlicht keine Änderungen. Build und
+Veröffentlichung auf lohrer.dev sind in [DEPLOY.md](DEPLOY.md) beschrieben.
+
+Die Kontaktadresse steht in `src/content/site.ts` und in den strukturierten
+Personendaten in `index.html`. Ein Domain-Postfach sowie eine erteilte
+USt-IdNr. dürfen erst nach Vorliegen der tatsächlichen Angaben ergänzt werden.
+
+## Bildmarken und Linkvorschau
+
+Die bearbeitbaren Vorlagen liegen in `public/favicon.svg` und `public/og.svg`.
+Die PNG-Dateien werden daraus gerendert: Favicon 32 × 32, Apple-Touch-Icon
+180 × 180, weitere Icons 192 × 192 und 512 × 512, Linkvorschau 1200 × 630.
+Bei einer Änderung der Vorlagen die entsprechenden PNG-Dateien ebenfalls
+aktualisieren. Das vorhandene Porträt wird ausschließlich per CSS dargestellt.

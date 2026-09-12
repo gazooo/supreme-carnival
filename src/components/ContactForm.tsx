@@ -8,7 +8,7 @@ import { CONTACT_ENDPOINT, EMAIL } from '../content/site'
 type Status = 'idle' | 'sending' | 'success' | 'error'
 
 const FIELD_CLASSES =
-  'w-full border-b border-line-strong bg-transparent px-0 py-2.5 font-mono text-sm text-fg placeholder:text-fg-3/60 transition-colors duration-200 focus:border-accent focus:outline-none'
+  'mt-2 w-full rounded-md border border-line-strong bg-raise px-3 py-3 text-sm leading-relaxed text-fg placeholder:text-fg-3 focus:border-accent'
 
 /**
  * Posts to the same-origin contact endpoint (server/site-server.mjs behind
@@ -51,10 +51,10 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="mt-10 max-w-2xl text-left">
-      <div className="grid gap-x-8 gap-y-7 sm:grid-cols-2">
+    <form onSubmit={onSubmit} className="text-left">
+      <div className="grid gap-y-6">
         <div>
-          <label htmlFor="contact-name" className="mono-label">
+          <label htmlFor="contact-name" className="text-sm font-medium">
             {t.contact.form.name}
           </label>
           <input
@@ -69,7 +69,7 @@ export default function ContactForm() {
           />
         </div>
         <div>
-          <label htmlFor="contact-email" className="mono-label">
+          <label htmlFor="contact-email" className="text-sm font-medium">
             {t.contact.form.email}
           </label>
           <input
@@ -83,8 +83,8 @@ export default function ContactForm() {
             className={FIELD_CLASSES}
           />
         </div>
-        <div className="sm:col-span-2">
-          <label htmlFor="contact-message" className="mono-label">
+        <div>
+          <label htmlFor="contact-message" className="text-sm font-medium">
             {t.contact.form.message}
           </label>
           <textarea

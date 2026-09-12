@@ -174,3 +174,32 @@ Caddy-Container um Port 80/443 konkurrieren. Der Zustand ist korrekt so.
 `grep -rn "TODO" src/ index.html` — GitHub-/LinkedIn-URLs (`sameAs` und
 Social-Icons), USt-IdNr. im Impressum, Publikations-URL des Essays, sowie die
 E-Mail-Adresse, sobald ein @lohrer.dev-Postfach existiert.
+
+## Ausgabe des Website-Builds
+
+`npm run build` erzeugt für jede bestehende öffentliche Route ein eigenes
+`index.html` mit vollständigem deutschem Inhalt und passenden Metadaten.
+Die Texte und das HTML werden aus den React-Komponenten erzeugt. Es wird
+weiterhin nur `dist/` veröffentlicht; ein zusätzlicher Rendering-Dienst auf
+dem VPS ist nicht erforderlich. Vor Veröffentlichung die Verfügbarkeit und
+Kontaktangaben prüfen. Die englische Fassung wird im Browser umgeschaltet.
+
+## Geprüfte Veröffentlichung am 12. September 2026
+
+Die überarbeitete Website wurde unter `https://lohrer.dev` veröffentlicht.
+Alle sieben öffentlichen Seiten stimmen mit dem lokalen Produktionsbuild
+überein; die eingebundenen Dateien sind erreichbar. Navigation und Sprachwechsel
+wurden im Live-Browser geprüft. `www.lohrer.dev` leitet mit HTTP 301 auf die
+Hauptdomain weiter; `zoinkr.com` bleibt erreichbar.
+
+Aktive Dateien: `/var/www/lohrer.dev/dist`. Die unmittelbar vorherige Fassung
+liegt in `/var/www/lohrer.dev/dist.prev`; die ältere Sicherung wurde als
+`/var/www/lohrer.dev/dist.prev.20260912T111420Z` erhalten. Vorhandene Dateien aus
+`assets/` wurden zusätzlich übernommen, damit bereits geöffnete Seiten ihre
+bisherigen Dateien weiterhin laden können. Dienst und Proxy-Konfiguration
+wurden nicht geändert; ein Neustart war nicht erforderlich.
+
+Der Kontakt-Endpunkt ist für echten Versand konfiguriert. Eine leere Anfrage
+wurde erwartungsgemäß mit HTTP 400 abgewiesen. Eine Test-E-Mail wurde bei dieser
+Veröffentlichung nicht versendet; die Zustellung ins Postfach ist damit nicht
+erneut bestätigt.

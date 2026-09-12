@@ -18,26 +18,16 @@ if (typeof window !== 'undefined') {
   window.scrollTo = (() => {}) as typeof window.scrollTo
 }
 
-// jsdom lacks ResizeObserver (needed by Lenis)
-if (typeof globalThis.ResizeObserver === 'undefined') {
-  globalThis.ResizeObserver = class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
+// jsdom has no native dialog methods. Focus and Escape are checked in a browser.
+if (
+  typeof HTMLDialogElement !== 'undefined' &&
+  typeof HTMLDialogElement.prototype.close !== 'function'
+) {
+  HTMLDialogElement.prototype.close = function () {
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('close'))
   }
-}
-
-// jsdom lacks IntersectionObserver (needed by Motion whileInView/useInView)
-if (typeof globalThis.IntersectionObserver === 'undefined') {
-  globalThis.IntersectionObserver = class {
-    root = null
-    rootMargin = ''
-    thresholds = []
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-    takeRecords() {
-      return []
-    }
-  } as unknown as typeof IntersectionObserver
+  HTMLDialogElement.prototype.showModal = function () {
+    this.setAttribute('open', '')
+  }
 }

@@ -1,47 +1,65 @@
 /// <reference types="vitest/config" />
-import { defineConfig, type Plugin } from 'vite'
+import { createServer, defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { copyFile, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 
-/**
- * Emits dist/<route>/index.html as a copy of dist/index.html for every
- * client-side route (tabs + legal pages) so deep links work on any static
- * host without server-side rewrite rules.
- */
-function staticRouteFallback(routes: string[]): Plugin {
+/** Render every public route from the same React components and German copy. */
+function staticPages(): Plugin {
   let outDir = 'dist'
+  let build = false
   return {
-    name: 'static-route-fallback',
-    apply: 'build',
+    name: 'static-pages',
     configResolved(config) {
       outDir = path.resolve(config.root, config.build.outDir)
+      build = config.command === 'build'
+    },
+    async transformIndexHtml(html, context) {
+      if (!context.server) return html
+      const { renderDocument } = await context.server.ssrLoadModule('/src/prerender.tsx')
+      const pathname = new URL(context.originalUrl ?? context.path, 'http://localhost').pathname
+      return renderDocument(html, pathname)
+    },
+    configurePreviewServer(server) {
+      // Vite otherwise serves the homepage for extensionless directory URLs.
+      // Keep the public URL while selecting the matching prerendered document.
+      server.middlewares.use((request, _response, next) => {
+        const url = new URL(request.url ?? '/', 'http://localhost')
+        if (/^\/(services|projects|career|contact|impressum|datenschutz)\/?$/.test(url.pathname)) {
+          request.url = url.pathname.replace(/\/$/, '') + '/index.html' + url.search
+        }
+        next()
+      })
     },
     async closeBundle() {
-      for (const route of routes) {
-        const dir = path.join(outDir, route)
-        await mkdir(dir, { recursive: true })
-        await copyFile(path.join(outDir, 'index.html'), path.join(dir, 'index.html'))
+      if (!build) return
+      const server = await createServer({
+        configFile: false,
+        plugins: [react()],
+        server: { middlewareMode: true },
+        appType: 'custom',
+      })
+      try {
+        const { renderDocument, routes } = await server.ssrLoadModule('/src/prerender.tsx')
+        const template = await readFile(path.join(outDir, 'index.html'), 'utf8')
+        for (const route of routes) {
+          const directory = path.join(outDir, route.slice(1))
+          await mkdir(directory, { recursive: true })
+          await writeFile(path.join(directory, 'index.html'), renderDocument(template, route))
+        }
+      } finally {
+        await server.close()
       }
     },
   }
 }
-
-/** Lokaler Formular-Test: /api → contact-relay (siehe README „Kontaktformular lokal testen") */
 const contactProxy = { '/api': 'http://127.0.0.1:3081' }
-
 export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    staticRouteFallback(['services', 'projects', 'career', 'contact', 'impressum', 'datenschutz']),
-  ],
+  plugins: [react(), tailwindcss(), staticPages()],
   server: { proxy: contactProxy },
   preview: { proxy: contactProxy },
-  build: {
-    target: 'es2022',
-  },
+  build: { target: 'es2022' },
   test: {
     environment: 'jsdom',
     globals: false,

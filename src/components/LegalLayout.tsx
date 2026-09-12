@@ -16,14 +16,8 @@ export default function LegalLayout({ title, children }: { title: string; childr
     <div className="min-h-svh">
       <header className="border-b border-line print:hidden">
         <Container size="wide" className="flex h-16 items-center justify-between md:h-18">
-          <RouteLink
-            to="/"
-            className="font-mono text-[0.9375rem] font-semibold tracking-tight text-fg"
-          >
-            <span aria-hidden="true" className="text-signal">
-              ~
-            </span>
-            /lohrer.dev
+          <RouteLink to="/" className="text-lg font-semibold tracking-tight text-fg">
+            Malte Lohrer
           </RouteLink>
           <RouteLink
             to="/"
@@ -34,7 +28,7 @@ export default function LegalLayout({ title, children }: { title: string; childr
           </RouteLink>
         </Container>
       </header>
-      <main id="main" lang="de" className="pt-12 pb-24 print:pt-0">
+      <main id="main" tabIndex={-1} lang="de" className="pt-12 pb-24 outline-none print:pt-0">
         <Container size="narrow">
           <h1 className="text-display text-fg">{title}</h1>
           {t.legal.note ? (

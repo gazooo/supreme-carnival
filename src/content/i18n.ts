@@ -1,45 +1,9 @@
-/**
- * All UI copy in both languages. One shared interface keeps EN and DE in
- * lockstep at compile time — a missing translation is a type error, so the
- * layout can rely on every string existing in both languages.
- *
- * English is the default; German is offered via the toggle in the nav.
- * Proper nouns (tools, employers, the 11 primary skills) stay untranslated.
- */
+/** Customer-facing copy. German is the default; both languages share one contract. */
 import type { Route } from '../lib/router'
-
-export type Lang = 'en' | 'de'
-
-interface ServiceCopy {
-  title: string
-  bullets: readonly string[]
-  chips: readonly string[]
-  footnote?: string
-}
-
-interface CaseStudyCopy {
-  id: string
-  client: string
-  period: string
-  title: string
-  context: string
-  built: readonly string[]
-  result: string
-  metrics: readonly { value: string; label: string }[]
-  chips: readonly string[]
-}
-
-interface StationCopy {
-  period: string
-  org: string
-  role: string
-  desc: string
-  final?: boolean
-}
-
+export type Lang = 'de' | 'en'
 export interface Copy {
-  /** Document titles per route (document.title). */
   titles: Record<Route, string>
+  descriptions: Record<Route, string>
   a11y: {
     skipLink: string
     mainNav: string
@@ -52,38 +16,26 @@ export interface Copy {
     portraitAlt: string
     portraitFallback: string
   }
-  nav: {
-    tabs: readonly { route: Route; label: string }[]
-    availability: string
-  }
-  whoami: {
-    /** `$ whoami` stays a command in both languages. */
-    prompt: string
-    intro: string
-    rotating: readonly string[]
+  nav: { tabs: readonly { route: Route; label: string }[]; availability: string; cta: string }
+  hero: {
+    eyebrow: string
+    title: string
+    titleAccent: string
     lead: string
-    metaKeys: { location: string; availability: string; languages: string }
-    meta: { location: string; availability: string; languages: string }
+    experience: string
     ctaContact: string
     ctaProjects: string
-    scrollCue: string
-    about: {
-      eyebrow: string
-      heading: string
-      paragraphs: readonly string[]
-    }
-    explore: {
-      heading: string
-      entries: readonly { route: Route; name: string; desc: string }[]
-    }
+    location: string
+    caption: string
   }
   trust: { label: string; names: readonly string[] }
-  marqueeLabel: string
   services: {
     eyebrow: string
     title: string
     description: string
-    items: readonly ServiceCopy[]
+    more: string
+    items: readonly { title: string; description: string; bullets: readonly string[] }[]
+    note: string
   }
   approach: {
     eyebrow: string
@@ -95,41 +47,44 @@ export interface Copy {
     eyebrow: string
     title: string
     description: string
-    labels: { context: string; built: string; result: string }
-    cases: readonly CaseStudyCopy[]
+    more: string
+    labels: { context: string; built: string; result: string; role: string }
+    cases: readonly {
+      id: string
+      client: string
+      period: string
+      category: string
+      title: string
+      summary: string
+      context: string
+      role: string
+      built: readonly string[]
+      result: string
+    }[]
   }
-  insights: {
+  about: {
     eyebrow: string
     title: string
-    description: string
-    essay: {
-      tag: string
-      title: string
-      teaser: string
-      linkLabel: string
-      pending: string
-    }
+    homeTitle: string
+    homeBody: string
+    more: string
+    paragraphs: readonly string[]
+    facts: readonly { title: string; detail: string }[]
   }
   career: {
-    eyebrow: string
     title: string
-    description: string
-    availableChip: string
-    stations: readonly StationCopy[]
-  }
-  skills: {
-    eyebrow: string
-    title: string
-    description: string
-    groups: readonly { label: string; items: readonly string[] }[]
+    stations: readonly { period: string; org: string; role: string; desc: string }[]
   }
   contact: {
     eyebrow: string
-    titleA: string
-    titleMark: string
-    titleB: string
+    title: string
     lead: string
     direct: string
+    nextTitle: string
+    nextBody: string
+    ctaTitle: string
+    ctaBody: string
+    ctaButton: string
     facts: readonly { title: string; detail: string }[]
     form: {
       name: string
@@ -147,358 +102,31 @@ export interface Copy {
       privacySuffix: string
     }
   }
-  footer: {
-    imprint: string
-    privacy: string
-    top: string
-    madeIn: string
-  }
+  footer: { imprint: string; privacy: string; top: string; tagline: string }
   legal: { backHome: string; home: string; note: string }
 }
-
-const en: Copy = {
-  titles: {
-    '/': 'Malte Lohrer · DevOps, Platform & AI Engineer',
-    '/services': 'Services · Malte Lohrer',
-    '/projects': 'Projects · Malte Lohrer',
-    '/career': 'Career · Malte Lohrer',
-    '/contact': 'Contact · Malte Lohrer',
-    '/impressum': 'Impressum · Malte Lohrer',
-    '/datenschutz': 'Datenschutzerklärung · Malte Lohrer',
-  },
-  a11y: {
-    skipLink: 'Skip to content',
-    mainNav: 'Main navigation',
-    langSwitch: 'Language',
-    home: 'Malte Lohrer — home',
-    menu: 'Menu',
-    menuOpen: 'Open menu',
-    menuClose: 'Close menu',
-    legalNav: 'Legal',
-    portraitAlt: 'Portrait of Malte Lohrer',
-    portraitFallback: 'Monogram of Malte Lohrer — portrait photo to follow',
-  },
-  nav: {
-    tabs: [
-      { route: '/', label: 'whoami' },
-      { route: '/services', label: 'services' },
-      { route: '/projects', label: 'projects' },
-      { route: '/career', label: 'career' },
-      { route: '/contact', label: 'contact' },
-    ],
-    availability: 'available from 10/2026',
-  },
-  whoami: {
-    prompt: 'whoami',
-    intro: 'I build and run',
-    rotating: ['CI/CD platforms', 'business platforms', 'LLM agents', 'AI automation'],
-    lead: 'Over ten years in IT: four of them running the CI/CD platform behind Mercedes-Benz’s in-car UI development, most recently a business platform and an agentic AI assistant in production. I ship systems that survive the day-to-day — built, documented, operated.',
-    metaKeys: { location: 'location', availability: 'availability', languages: 'languages' },
-    meta: {
-      location: 'Esslingen am Neckar · near Stuttgart',
-      availability: 'from Oct 2026',
-      languages: 'German · English',
-    },
-    ctaContact: 'Get in touch',
-    ctaProjects: 'View projects',
-    scrollCue: 'Scroll',
-    about: {
-      eyebrow: 'about',
-      heading: 'A bit more about me',
-      paragraphs: [
-        'M.Sc. in Computer Science & Media from Stuttgart Media University (grade 1.5), in IT since 2015 — from Daimler and the Ministry of the Interior of Baden-Württemberg to Mercedes-Benz and Aremus Finance. At home in Esslingen am Neckar.',
-        'I work remotely, directly, and without translation loss: one person for concept, implementation, and operations. I put decisions in writing, and results are verifiable — when in doubt, what runs in production counts.',
-        'And after hours the building continues anyway: hardware and maker projects — just with a soldering iron instead of a pipeline.',
-      ],
-    },
-    explore: {
-      heading: 'Where to next',
-      entries: [
-        { route: '/services', name: 'services/', desc: 'what I do, and how I work' },
-        { route: '/projects', name: 'projects/', desc: 'case studies with real numbers' },
-        { route: '/career', name: 'career/', desc: 'stations since 2015, plus the toolset' },
-        { route: '/contact', name: 'contact/', desc: 'form, e-mail, availability' },
-      ],
-    },
-  },
-  trust: {
-    label: 'Worked for',
-    names: ['Mercedes-Benz', 'Aremus Finance', 'Ministry of the Interior BW', 'Daimler'],
-  },
-  marqueeLabel: 'Tech stack',
-  services: {
-    eyebrow: 'services',
-    title: 'What you get',
-    description: 'Four areas, one standard: systems that run in production — not just in the demo.',
-    items: [
-      {
-        title: 'Applied AI Engineering',
-        bullets: [
-          'LLM integration into existing business processes',
-          'Agentic assistants with tool access to Microsoft 365, SharePoint, and CRM',
-          'AI automation with n8n',
-          'RAG pipelines and MCP tooling',
-        ],
-        chips: ['LLM integration', 'n8n', 'RAG', 'MCP'],
-      },
-      {
-        title: 'Business platforms',
-        bullets: [
-          'Internal platforms and web apps: React, Node.js, PostgreSQL',
-          'Frontend, backend, and database from a single pair of hands — one point of contact',
-          'Integrations: Microsoft 365, SharePoint, CRM, e-mail',
-          'Eight services in production at Aremus Finance',
-        ],
-        chips: ['React', 'Node.js', 'PostgreSQL'],
-      },
-      {
-        title: 'CI/CD & Platform Engineering',
-        bullets: [
-          'CI/CD platforms: design, build-out, and migration',
-          'Pipeline performance through parallelization and caching',
-          'Release automation: tagging, changelogs, rollbacks',
-          'Docker and Kubernetes workloads',
-        ],
-        chips: ['GitLab CI', 'Jenkins', 'GitHub Actions', 'Kubernetes'],
-      },
-      {
-        title: 'Operations & Infrastructure',
-        bullets: [
-          'Docker stacks in production — on a dedicated server or in AWS',
-          'Monitoring and alerting with Grafana, Prometheus, and ELK',
-          'Encrypted offsite backups (AWS S3)',
-          'Incident management and SRE practices',
-        ],
-        chips: ['Docker', 'AWS', 'Linux', 'Grafana'],
-        footnote: 'I operate what I build.',
-      },
-    ],
-  },
-  approach: {
-    eyebrow: 'how I work',
-    title: 'Three principles, no platitudes',
-    description:
-      'What to expect from working with me — derived from real projects, not from a mission statement.',
-    principles: [
-      {
-        title: 'The model classifies, the code decides.',
-        body: 'LLMs do what they are good at: understanding, classifying, suggesting. Critical decisions run through deterministic, testable control flow.',
-      },
-      {
-        title: 'Built for operations, not for the demo.',
-        body: 'Monitoring, backups, and rollbacks are part of the design, not an afterthought. I build what survives the day-to-day — not what shines on stage.',
-      },
-      {
-        title: 'Documentation is part of the job.',
-        body: '195 documentation files in a single project: architecture, runbooks, decisions. Handover without a knowledge monopoly.',
-      },
-    ],
-  },
-  projects: {
-    eyebrow: 'projects',
-    title: 'Two projects that show how I work',
-    description: 'Context, build, result — with real numbers instead of adjectives.',
-    labels: { context: 'Context', built: 'What I built', result: 'Result' },
-    cases: [
-      {
-        id: 'aremus',
-        client: 'Aremus Finance',
-        period: '07/2025 – 06/2026',
-        title: 'Agentic AI assistant & operations platform',
-        context:
-          'Internal operations platform for a financial services firm — sole developer, from the first line of code to production.',
-        built: [
-          'Agentic AI assistant in production, with tool access to Microsoft 365, SharePoint, and CRM',
-          'Self-hosted LLM gateway and LLM e-mail triage with deterministic control flow',
-          'React + Node + PostgreSQL, an 8-service Docker Compose stack on a dedicated server',
-          '7 CI workflows and encrypted offsite backups (AWS S3)',
-        ],
-        result:
-          'Roughly 172,000 lines of code as a solo developer — documented, tested, and in daily use.',
-        metrics: [
-          { value: '≈ 172,000', label: 'lines of code' },
-          { value: '79', label: 'test files' },
-          { value: '195', label: 'documentation files' },
-          { value: '1,956', label: 'commits in 10 weeks' },
-        ],
-        chips: ['React', 'Node.js', 'PostgreSQL', 'Docker', 'AWS S3', 'LLM integration'],
-      },
-      {
-        id: 'mercedes',
-        client: 'Mercedes-Benz',
-        period: '11/2021 – 06/2025',
-        title: 'CI/CD platform for in-car UI development',
-        context:
-          'The central CI/CD platform on which all of Mercedes-Benz’s in-car UI development builds, tests, and ships.',
-        built: [
-          'GitLab CI and Jenkins pipelines, including the migration between the two',
-          'Pipeline performance: parallelization and caching',
-          'Release automation: tagging, changelogs, rollbacks',
-          'Monitoring with Grafana, Prometheus, and ELK; incident management and helping build up the SRE team',
-        ],
-        result:
-          'Four years of platform ownership for all of in-car UI development — from commit to release.',
-        metrics: [
-          { value: '4', label: 'years of platform ownership' },
-          { value: 'GitLab CI ← Jenkins', label: 'migration owned' },
-          { value: 'SRE team', label: 'co-built' },
-        ],
-        chips: ['GitLab CI', 'Jenkins', 'Docker', 'Kubernetes', 'Grafana', 'Prometheus'],
-      },
-    ],
-  },
-  insights: {
-    eyebrow: 'insights',
-    title: 'From the engine room',
-    description: 'Lessons from real systems — written down so others can use them.',
-    essay: {
-      tag: 'Essay',
-      title: 'Running an LLM email triage in production',
-      teaser:
-        'What happens when an LLM sorts the real e-mail of a financial services firm? Field notes from production: architecture, failure modes — and why deterministic control flow makes the difference.',
-      linkLabel: 'Read the essay',
-      pending: 'publication pending',
-    },
-  },
-  career: {
-    eyebrow: 'career',
-    title: 'Stations since 2015',
-    description: 'From student CI monitoring to an agentic AI assistant in production.',
-    availableChip: 'available',
-    stations: [
-      {
-        period: '2015 – 2020',
-        org: 'Daimler',
-        role: 'Working student & master’s thesis',
-        desc: 'ELK monitoring for the CI infrastructure.',
-      },
-      {
-        period: 'Degree',
-        org: 'Stuttgart Media University',
-        role: 'M.Sc. Computer Science & Media',
-        desc: 'Final grade 1.5.',
-      },
-      {
-        period: '02 – 07/2021',
-        org: 'Ministry of the Interior BW',
-        role: 'Helped establish the state’s Cybersecurity Agency (CSBW)',
-        desc: 'Set-up of Baden-Württemberg’s new cybersecurity agency.',
-      },
-      {
-        period: '11/2021 – 06/2025',
-        org: 'Mercedes-Benz',
-        role: 'CI/CD platform for in-car UI development',
-        desc: 'GitLab CI and Jenkins including the migration, release automation, monitoring with Grafana, Prometheus, and ELK, incident management, helping build up the SRE team.',
-      },
-      {
-        period: '07/2025 – 06/2026',
-        org: 'Aremus Finance',
-        role: 'Operations platform & agentic AI assistant',
-        desc: 'Internal operations platform as the sole developer — eight services in production, an AI assistant with tool access to Microsoft 365, SharePoint, and CRM.',
-      },
-      {
-        period: 'from 10/2026',
-        org: 'Your project',
-        role: 'Available for new engagements',
-        desc: '100% remote; a one-time kick-off in the Stuttgart area is possible.',
-        final: true,
-      },
-    ],
-  },
-  skills: {
-    eyebrow: 'skills',
-    title: 'What I work with',
-    description: 'Eleven tools at the core — the rest clusters around them.',
-    groups: [
-      {
-        label: 'Cloud & Infra',
-        items: [
-          'AWS S3',
-          'Docker Compose',
-          'Grafana',
-          'Prometheus',
-          'ELK',
-          'Linux server operations',
-        ],
-      },
-      {
-        label: 'CI & Tooling',
-        items: [
-          'Pipeline optimization',
-          'Release automation',
-          'Rollback strategies',
-          'Incident management',
-          'SRE',
-        ],
-      },
-      {
-        label: 'AI & Automation',
-        items: [
-          'RAG',
-          'MCP',
-          'LLM gateways',
-          'E-mail triage',
-          'Agent tooling',
-          'Microsoft 365 integration',
-        ],
-      },
-      { label: 'Web', items: ['React', 'Node.js', 'PostgreSQL'] },
-    ],
-  },
-  contact: {
-    eyebrow: 'contact',
-    titleA: 'Got a project in',
-    titleMark: 'mind',
-    titleB: '?',
-    lead: 'Tell me what you want to build — a short message is enough. I reply within 24 hours.',
-    direct: 'Or write directly to',
-    facts: [
-      {
-        title: 'Available from Oct 1, 2026',
-        detail: 'Project start can be planned from October 2026.',
-      },
-      { title: '100% remote', detail: 'A one-time kick-off in the Stuttgart area is possible.' },
-      { title: 'German & English', detail: 'Native and business fluent, respectively.' },
-      { title: 'Freelance', detail: 'Contract for services or for work — terms on request.' },
-    ],
-    form: {
-      name: 'Name',
-      email: 'E-mail',
-      message: 'Message',
-      namePlaceholder: 'Your name',
-      emailPlaceholder: 'name@company.com',
-      messagePlaceholder: 'What is it about? A few sentences are enough.',
-      submit: 'Send message',
-      sending: 'Sending …',
-      success: 'Thanks for your message — I will get back to you within 24 hours.',
-      errorPrefix: 'That did not go through. Write to me directly:',
-      privacyPrefix: 'Your details are used solely to handle your inquiry — see the ',
-      privacyLink: 'privacy policy',
-      privacySuffix: ' (German).',
-    },
-  },
-  footer: {
-    imprint: 'Legal notice',
-    privacy: 'Privacy',
-    top: 'Back to top ↑',
-    madeIn: 'Made in Esslingen',
-  },
-  legal: {
-    backHome: 'Back to home',
-    home: 'Home',
-    note: 'This page is provided in German — it is the legally required version for a business based in Germany.',
-  },
-}
-
 const de: Copy = {
   titles: {
-    '/': 'Malte Lohrer · DevOps, Platform & AI Engineer',
-    '/services': 'Leistungen · Malte Lohrer',
-    '/projects': 'Projekte · Malte Lohrer',
-    '/career': 'Werdegang · Malte Lohrer',
-    '/contact': 'Kontakt · Malte Lohrer',
+    '/': 'Malte Lohrer · Softwareentwicklung & IT-Beratung',
+    '/services': 'Leistungen · Software, Automatisierung & IT-Betrieb · Malte Lohrer',
+    '/projects': 'Ausgewählte Projekte · Malte Lohrer',
+    '/career': 'Über mich · Malte Lohrer',
+    '/contact': 'Kontakt & Projektanfrage · Malte Lohrer',
     '/impressum': 'Impressum · Malte Lohrer',
     '/datenschutz': 'Datenschutzerklärung · Malte Lohrer',
+  },
+  descriptions: {
+    '/': 'Freiberuflicher Softwareentwickler und IT-Berater aus Esslingen: individuelle Anwendungen, Automatisierung, KI und zuverlässiger Betrieb. Lernen wir uns kennen.',
+    '/services':
+      'Individuelle Software entwickeln, Abläufe automatisieren, Entwicklungsteams unterstützen und Anwendungen betreiben. Leistungen von Malte Lohrer.',
+    '/projects':
+      'Einblicke in meine Arbeit: eine interne Plattform mit KI-Assistent bei Aremus Finance und Softwarebereitstellung bei Mercedes-Benz.',
+    '/career':
+      'Malte Lohrer, Softwareentwickler und IT-Berater aus Esslingen. Seit 2015 in der IT, mit Erfahrung bei Mercedes-Benz, Aremus Finance und im öffentlichen Sektor.',
+    '/contact':
+      'Sie suchen Unterstützung für ein Softwareprojekt? Schildern Sie mir Ihr Vorhaben. Remote-Zusammenarbeit, Deutsch und Englisch, Projektstart ab Oktober 2026.',
+    '/impressum': 'Anbieterkennzeichnung und Kontaktdaten von Malte Lohrer.',
+    '/datenschutz': 'Informationen zur Verarbeitung personenbezogener Daten auf lohrer.dev.',
   },
   a11y: {
     skipLink: 'Zum Inhalt springen',
@@ -509,302 +137,254 @@ const de: Copy = {
     menuOpen: 'Menü öffnen',
     menuClose: 'Menü schließen',
     legalNav: 'Rechtliches',
-    portraitAlt: 'Porträt von Malte Lohrer',
-    portraitFallback: 'Monogramm von Malte Lohrer – Porträtfoto folgt',
+    portraitAlt: 'Malte Lohrer',
+    portraitFallback: 'Initialen von Malte Lohrer',
   },
   nav: {
     tabs: [
-      { route: '/', label: 'whoami' },
-      { route: '/services', label: 'leistungen' },
-      { route: '/projects', label: 'projekte' },
-      { route: '/career', label: 'werdegang' },
-      { route: '/contact', label: 'kontakt' },
+      { route: '/services', label: 'Leistungen' },
+      { route: '/projects', label: 'Projekte' },
+      { route: '/career', label: 'Über mich' },
+      { route: '/contact', label: 'Kontakt' },
     ],
-    availability: 'verfügbar ab 10/2026',
+    availability: 'Verfügbar ab Oktober 2026',
+    cta: 'Projekt besprechen',
   },
-  whoami: {
-    prompt: 'whoami',
-    intro: 'Ich baue und betreibe',
-    rotating: ['CI/CD-Plattformen', 'Business-Plattformen', 'LLM-Agenten', 'KI-Automatisierung'],
-    lead: 'Über zehn Jahre IT: vier Jahre CI/CD-Plattform für die In-Car-UI-Entwicklung von Mercedes-Benz, zuletzt Business-Plattform und agentischer KI-Assistent in Produktion. Ich liefere Systeme, die im Alltag bestehen – gebaut, dokumentiert, betrieben.',
-    metaKeys: { location: 'standort', availability: 'verfügbar', languages: 'sprachen' },
-    meta: {
-      location: 'Esslingen am Neckar · Raum Stuttgart',
-      availability: 'ab Okt. 2026',
-      languages: 'Deutsch · Englisch',
-    },
-    ctaContact: 'Projekt anfragen',
+  hero: {
+    eyebrow: 'Freiberuflicher Softwareentwickler & IT-Berater',
+    title: 'Software entwickeln.',
+    titleAccent: 'Abläufe vereinfachen.',
+    lead: 'Ich unterstütze Unternehmen dabei, eigene Anwendungen zu entwickeln, wiederkehrende Aufgaben zu automatisieren und bestehende Systeme weiterzuentwickeln. Von der ersten Idee bis zum laufenden Betrieb.',
+    experience:
+      'Seit 2015 in der IT. Ein direkter Ansprechpartner für Planung, Entwicklung und Betrieb.',
+    ctaContact: 'Projekt besprechen',
     ctaProjects: 'Projekte ansehen',
-    scrollCue: 'Scrollen',
-    about: {
-      eyebrow: 'über mich',
-      heading: 'Etwas mehr über mich',
-      paragraphs: [
-        'M.Sc. Computer Science & Media an der Hochschule der Medien Stuttgart (Note 1,5), seit 2015 in der IT – von Daimler über das Innenministerium Baden-Württemberg bis zu Mercedes-Benz und Aremus Finance. Zuhause in Esslingen am Neckar.',
-        'Ich arbeite remote, direkt und ohne Übersetzungsverlust: ein Ansprechpartner für Konzept, Umsetzung und Betrieb. Entscheidungen begründe ich schriftlich, Ergebnisse sind belegbar – im Zweifel zählt, was in Produktion läuft.',
-        'Und nach Feierabend wird trotzdem gebaut: Hardware- und Maker-Projekte, nur mit Lötkolben statt Pipeline.',
-      ],
-    },
-    explore: {
-      heading: 'Wohin als Nächstes',
-      entries: [
-        { route: '/services', name: 'leistungen/', desc: 'was ich mache – und wie ich arbeite' },
-        { route: '/projects', name: 'projekte/', desc: 'Fallstudien mit echten Zahlen' },
-        {
-          route: '/career',
-          name: 'werdegang/',
-          desc: 'Stationen seit 2015, dazu der Werkzeugkasten',
-        },
-        { route: '/contact', name: 'kontakt/', desc: 'Formular, E-Mail, Verfügbarkeit' },
-      ],
-    },
+    location: 'Esslingen am Neckar · Zusammenarbeit remote',
+    caption: 'Ihr Ansprechpartner: Malte Lohrer',
   },
   trust: {
-    label: 'Gearbeitet für',
-    names: ['Mercedes-Benz', 'Aremus Finance', 'Innenministerium BW', 'Daimler'],
+    label: 'Erfahrung aus Projekten und Tätigkeiten bei',
+    names: ['Mercedes-Benz', 'Aremus Finance', 'Innenministerium Baden-Württemberg', 'Daimler'],
   },
-  marqueeLabel: 'Tech-Stack',
   services: {
-    eyebrow: 'leistungen',
-    title: 'Was Sie bei mir bekommen',
+    eyebrow: 'Leistungen',
+    title: 'Wobei ich Sie unterstütze',
     description:
-      'Vier Bereiche, ein Anspruch: Systeme, die produktiv laufen – nicht nur in der Demo.',
+      'Sie möchten einen Ablauf vereinfachen, eine Anwendung entwickeln oder Ihr Team bei einem technischen Vorhaben unterstützen? Hier kann ich ansetzen.',
+    more: 'Alle Leistungen ansehen',
     items: [
       {
-        title: 'Applied AI Engineering',
+        title: 'Individuelle Software',
+        description:
+          'Interne Anwendungen und Web-Plattformen, die zu Ihren Abläufen passen und Informationen an einem Ort zusammenbringen.',
         bullets: [
-          'LLM-Integration in bestehende Geschäftsprozesse',
-          'Agentische Assistenten mit Tool-Zugriff auf Microsoft 365, SharePoint und CRM',
-          'KI-Automatisierung mit n8n',
-          'RAG-Pipelines und MCP-Tooling',
+          'Anforderungen gemeinsam klären und eine passende Lösung planen',
+          'Anwendungen entwickeln, die Ihr Team im Browser nutzen kann',
+          'Bestehende Systeme verbinden, etwa Microsoft 365 und SharePoint',
+          'Vorhandene Anwendungen erweitern und weiterentwickeln',
         ],
-        chips: ['LLM-Integration', 'n8n', 'RAG', 'MCP'],
       },
       {
-        title: 'Business-Plattformen',
+        title: 'Automatisierung & KI',
+        description:
+          'Wiederkehrende Arbeit reduzieren: Informationen verarbeiten, Anwendungen verbinden und KI gezielt in Ihre Abläufe einbinden.',
         bullets: [
-          'Interne Plattformen und Web-Apps: React, Node.js, PostgreSQL',
-          'Frontend, Backend und Datenbank aus einer Hand – ein Ansprechpartner',
-          'Integrationen: Microsoft 365, SharePoint, CRM, E-Mail',
-          'Acht Dienste im Produktivbetrieb bei Aremus Finance',
+          'Wiederkehrende Aufgaben automatisieren, zum Beispiel mit n8n',
+          'KI-Assistenten an Unternehmenswissen und Anwendungen anbinden',
+          'Eingehende Nachrichten einordnen und die Bearbeitung vorbereiten',
+          'Gemeinsam festlegen, welche Schritte eine menschliche Freigabe benötigen',
         ],
-        chips: ['React', 'Node.js', 'PostgreSQL'],
       },
       {
-        title: 'CI/CD & Platform Engineering',
+        title: 'Entwicklungsteams unterstützen',
+        description:
+          'Software automatisiert prüfen und veröffentlichen – damit Ihr Team Änderungen nachvollziehbar und zuverlässig ausliefern kann.',
         bullets: [
-          'CI/CD-Plattformen: Konzeption, Aufbau und Migration',
-          'Pipeline-Performance durch Parallelisierung und Caching',
-          'Release-Automatisierung: Tagging, Changelogs, Rollbacks',
-          'Docker- und Kubernetes-Workloads',
+          'Automatische Abläufe für Softwaretests und Veröffentlichungen aufbauen',
+          'Bestehende Entwicklungsplattformen verbessern oder umziehen',
+          'Lange Durchlaufzeiten untersuchen und verkürzen',
+          'Softwarestände nachvollziehbar verwalten und bei Bedarf zurücksetzen',
         ],
-        chips: ['GitLab CI', 'Jenkins', 'GitHub Actions', 'Kubernetes'],
       },
       {
-        title: 'Betrieb & Infrastruktur',
+        title: 'Betrieb & Weiterentwicklung',
+        description:
+          'Anwendungen nach der Einführung betreuen, Störungen erkennen und die Grundlage für weitere Entwicklung schaffen.',
         bullets: [
-          'Docker-Stacks im Produktivbetrieb – auf eigenem Server oder in AWS',
-          'Monitoring und Alerting mit Grafana, Prometheus und ELK',
-          'Verschlüsselte Offsite-Backups (AWS S3)',
-          'Incident Management und SRE-Praktiken',
+          'Anwendungen auf eigenen Servern oder in einer passenden Cloud betreiben',
+          'Den Betrieb überwachen und bei Störungen benachrichtigen lassen',
+          'Verschlüsselte Datensicherungen getrennt vom laufenden System einrichten',
+          'Fehler untersuchen, beheben und die Lösung verständlich dokumentieren',
         ],
-        chips: ['Docker', 'AWS', 'Linux', 'Grafana'],
-        footnote: 'Ich betreibe, was ich baue.',
       },
     ],
+    note: 'Welche Anwendungen und Technologien sinnvoll sind, klären wir anhand Ihrer Anforderungen und der Systeme, die Sie bereits nutzen.',
   },
   approach: {
-    eyebrow: 'arbeitsweise',
-    title: 'Drei Prinzipien, keine Floskeln',
+    eyebrow: 'Zusammenarbeit',
+    title: 'So läuft ein Projekt mit mir ab',
     description:
-      'Was Sie von der Zusammenarbeit erwarten können – abgeleitet aus realen Projekten, nicht aus einem Leitbild.',
+      'Sie sprechen direkt mit mir – von der ersten Abstimmung bis zur Einführung und Betreuung.',
     principles: [
       {
-        title: 'Das Modell klassifiziert, der Code entscheidet.',
-        body: 'LLMs übernehmen, was sie gut können: verstehen, einordnen, vorschlagen. Kritische Entscheidungen laufen durch deterministischen, testbaren Kontrollfluss.',
+        title: 'Ziel und Umfang klären',
+        body: 'Wir schauen auf Ihre Abläufe und besprechen, was einfacher werden soll. Daraus entsteht ein konkreter Vorschlag mit nachvollziehbarem Umfang, Aufwand und nächsten Schritten.',
       },
       {
-        title: 'Betriebsblick statt Prototyp.',
-        body: 'Monitoring, Backups und Rollbacks sind Teil des Designs, nicht ein Nachtrag. Gebaut wird, was den Alltag übersteht – nicht, was in der Demo glänzt.',
+        title: 'Früh ausprobieren',
+        body: 'Sie erhalten früh eine erste nutzbare Version und können sie an echten Aufgaben ausprobieren. Wir besprechen regelmäßig den Fortschritt und passen die nächsten Schritte anhand Ihres Feedbacks an.',
       },
       {
-        title: 'Dokumentation ist Teil der Arbeit.',
-        body: '195 Doku-Dateien in einem einzigen Projekt: Architektur, Runbooks, Entscheidungen. Übergabe ohne Kopfmonopol.',
+        title: 'Einführen und übergeben',
+        body: 'Ich begleite den Start und zeige Ihrem Team die Anwendung. Einrichtung, Betrieb und wichtige Entscheidungen dokumentiere ich so, dass andere darauf aufbauen können. Bei Bedarf betreue ich die Lösung weiter.',
       },
     ],
   },
   projects: {
-    eyebrow: 'projekte',
-    title: 'Zwei Projekte, die zeigen, wie ich arbeite',
-    description: 'Kontext, Umsetzung, Ergebnis – mit echten Zahlen statt Adjektiven.',
-    labels: { context: 'Kontext', built: 'Was ich gebaut habe', result: 'Ergebnis' },
+    eyebrow: 'Ausgewählte Projekte',
+    title: 'Einblicke in meine Arbeit',
+    description:
+      'Zwei Beispiele aus unterschiedlichen Umgebungen: eine interne Unternehmensplattform und die Unterstützung einer großen Softwareentwicklung.',
+    more: 'Projekt im Detail ansehen',
+    labels: {
+      context: 'Die Aufgabe',
+      built: 'Mein Beitrag',
+      result: 'Das Ergebnis',
+      role: 'Meine Rolle',
+    },
     cases: [
       {
         id: 'aremus',
         client: 'Aremus Finance',
         period: '07/2025 – 06/2026',
-        title: 'Agentischer KI-Assistent & Betriebsplattform',
+        category: 'Individuelle Software & KI',
+        title: 'Eine interne Plattform mit KI-Unterstützung',
+        summary:
+          'Entwicklung und Betrieb einer Unternehmensplattform mit einem KI-Assistenten, der auf bestehende Anwendungen und Informationen zugreifen kann.',
         context:
-          'Interne Betriebsplattform für einen Finanzdienstleister – als einziger Entwickler verantwortlich, von der ersten Zeile bis zum Produktivbetrieb.',
+          'Für einen Finanzdienstleister entstand eine interne Plattform zur Unterstützung des Tagesgeschäfts. Dazu gehörten ein KI-Assistent und die automatisierte Einordnung eingehender E-Mails.',
+        role: 'Alleiniger Entwickler – von der Konzeption bis zum Betrieb.',
         built: [
-          'Agentischer KI-Assistent in Produktion, mit Tool-Zugriff auf Microsoft 365, SharePoint und CRM',
-          'Selbst betriebener LLM-Gateway und LLM-E-Mail-Triage mit deterministischem Kontrollfluss',
-          'React + Node + PostgreSQL, 8-Dienste-Docker-Compose-Stack auf eigenem Server',
-          '7 CI-Workflows und verschlüsselte Offsite-Backups (AWS S3)',
+          'Die Plattform als zusammenhängende Anwendung geplant und entwickelt',
+          'Einen KI-Assistenten mit Zugriff auf Microsoft 365, SharePoint und die Kundenverwaltung eingebunden',
+          'Die Einordnung eingehender E-Mails mit KI unterstützt und die weitere Verarbeitung durch feste Regeln gesteuert',
+          'Automatische Tests und Veröffentlichungen sowie verschlüsselte, getrennt gespeicherte Datensicherungen eingerichtet',
         ],
         result:
-          'Rund 172.000 Zeilen Code als Solo-Entwickler – dokumentiert, getestet und im täglichen Betrieb.',
-        metrics: [
-          { value: '≈ 172.000', label: 'Zeilen Code' },
-          { value: '79', label: 'Testdateien' },
-          { value: '195', label: 'Doku-Dateien' },
-          { value: '1.956', label: 'Commits in 10 Wochen' },
-        ],
-        chips: ['React', 'Node.js', 'PostgreSQL', 'Docker', 'AWS S3', 'LLM-Integration'],
+          'Die Plattform und der KI-Assistent wurden im täglichen Betrieb eingesetzt. Entwicklung, technische Dokumentation und laufender Betrieb lagen in einer Hand.',
       },
       {
         id: 'mercedes',
         client: 'Mercedes-Benz',
         period: '11/2021 – 06/2025',
-        title: 'CI/CD-Plattform für die In-Car-UI-Entwicklung',
+        category: 'Entwicklungsplattform & Betrieb',
+        title: 'Software für die Fahrzeugbedienung bereitstellen',
+        summary:
+          'Verantwortung für die zentrale Plattform, über die die Entwicklung der Fahrzeugbedienung ihre Software baut, testet und veröffentlicht.',
         context:
-          'Die zentrale CI/CD-Plattform, auf der die gesamte In-Car-UI-Entwicklung von Mercedes-Benz baut, testet und ausliefert.',
+          'Die Entwicklung von Bedienoberflächen im Fahrzeug benötigte eine verlässliche Plattform für automatische Tests und die Bereitstellung neuer Softwarestände.',
+        role: 'Verantwortung für die Entwicklungsplattform über knapp vier Jahre.',
         built: [
-          'GitLab-CI- und Jenkins-Pipelines, inklusive Migration zwischen den Systemen',
-          'Pipeline-Performance: Parallelisierung und Caching',
-          'Release-Automatisierung: Tagging, Changelogs, Rollbacks',
-          'Monitoring mit Grafana, Prometheus und ELK; Incident Management und Aufbau des SRE-Teams',
+          'Automatische Test- und Veröffentlichungsabläufe entwickelt und betreut',
+          'Den Wechsel zwischen zwei Entwicklungsplattformen verantwortet',
+          'Durchlaufzeiten durch parallele Verarbeitung und die Wiederverwendung von Zwischenergebnissen optimiert',
+          'Die Betriebsüberwachung ausgebaut, Störungen bearbeitet und beim Aufbau des Teams für zuverlässigen Betrieb mitgewirkt',
         ],
         result:
-          'Vier Jahre Plattformverantwortung für die gesamte In-Car-UI-Entwicklung – vom Commit bis zum Release.',
-        metrics: [
-          { value: '4', label: 'Jahre Plattformverantwortung' },
-          { value: 'GitLab CI ← Jenkins', label: 'Migration verantwortet' },
-          { value: 'SRE-Team', label: 'mit aufgebaut' },
-        ],
-        chips: ['GitLab CI', 'Jenkins', 'Docker', 'Kubernetes', 'Grafana', 'Prometheus'],
+          'Die zentrale Plattform unterstützte die gesamte Entwicklung der Fahrzeugbedienung bei der Prüfung und Bereitstellung ihrer Software. Auch die Migration und der laufende Betrieb gehörten zu meinem Verantwortungsbereich.',
       },
     ],
   },
-  insights: {
-    eyebrow: 'insights',
-    title: 'Aus dem Maschinenraum',
-    description:
-      'Erfahrungen aus echten Systemen – aufgeschrieben, damit andere sie nutzen können.',
-    essay: {
-      tag: 'Essay',
-      title: 'Running an LLM email triage in production',
-      teaser:
-        'Was passiert, wenn ein LLM echte E-Mails eines Finanzdienstleisters sortiert? Ein Erfahrungsbericht aus dem Produktivbetrieb: Architektur, Fehlerfälle – und warum deterministischer Kontrollfluss den Unterschied macht.',
-      linkLabel: 'Zum Essay',
-      pending: 'Veröffentlichung folgt',
-    },
+  about: {
+    eyebrow: 'Über mich',
+    title: 'Hallo, ich bin Malte.',
+    homeTitle: 'Ein direkter Ansprechpartner für Ihr Projekt.',
+    homeBody:
+      'Ich bin freiberuflicher Softwareentwickler und IT-Berater aus Esslingen am Neckar. Seit 2015 arbeite ich in der IT – von der öffentlichen Verwaltung über die Automobilbranche bis zu Finanzdienstleistungen. Ich übernehme sowohl die Entwicklung neuer Anwendungen als auch die Arbeit an bestehenden Systemen.',
+    more: 'Mehr über mich',
+    paragraphs: [
+      'Ich entwickle Software, automatisiere Abläufe und kümmere mich darum, dass Anwendungen zuverlässig betrieben werden können. Besonders gern arbeite ich an Vorhaben, bei denen ich die fachliche Aufgabe verstehen und die Lösung von Anfang bis Ende begleiten kann.',
+      'Meine Erfahrung reicht von großen Entwicklungsumgebungen bei Mercedes-Benz bis zur eigenständigen Umsetzung einer Unternehmensplattform bei Aremus Finance. Dadurch kenne ich sowohl die Zusammenarbeit in bestehenden Teams als auch die Verantwortung für ein komplettes Projekt.',
+      'Ich arbeite remote aus Esslingen am Neckar. Für den gemeinsamen Projektstart ist ein einmaliges Treffen im Raum Stuttgart möglich. Die Zusammenarbeit kann auf Deutsch oder Englisch stattfinden.',
+      'Auch abseits der Arbeit beschäftige ich mich gern mit Technik – unter anderem mit eigenen Hardware- und Maker-Projekten.',
+    ],
+    facts: [
+      {
+        title: 'Seit 2015 in der IT',
+        detail: 'Erfahrung in Unternehmen und im öffentlichen Sektor',
+      },
+      { title: 'M.Sc. Computer Science & Media', detail: 'Hochschule der Medien Stuttgart' },
+      { title: 'Esslingen am Neckar', detail: 'Remote-Zusammenarbeit auf Deutsch und Englisch' },
+    ],
   },
   career: {
-    eyebrow: 'werdegang',
-    title: 'Stationen seit 2015',
-    description:
-      'Vom Werkstudenten am CI-Monitoring bis zum agentischen KI-Assistenten in Produktion.',
-    availableChip: 'verfügbar',
+    title: 'Mein beruflicher Hintergrund',
     stations: [
       {
-        period: '2015 – 2020',
-        org: 'Daimler',
-        role: 'Werkstudent & Masterand',
-        desc: 'ELK-Monitoring der CI-Infrastruktur.',
-      },
-      {
-        period: 'Abschluss',
-        org: 'Hochschule der Medien Stuttgart',
-        role: 'M.Sc. Computer Science & Media',
-        desc: 'Abschlussnote 1,5.',
-      },
-      {
-        period: '02 – 07/2021',
-        org: 'Innenministerium Baden-Württemberg',
-        role: 'Mitaufbau der Cybersicherheitsagentur (CSBW)',
-        desc: 'Aufbau der neuen Cybersicherheitsagentur des Landes Baden-Württemberg.',
+        period: '07/2025 – 06/2026',
+        org: 'Aremus Finance',
+        role: 'Softwareentwicklung & KI',
+        desc: 'Eigenständige Entwicklung und Betrieb einer internen Unternehmensplattform mit KI-Assistent und Anbindung bestehender Anwendungen.',
       },
       {
         period: '11/2021 – 06/2025',
         org: 'Mercedes-Benz',
-        role: 'CI/CD-Plattform der In-Car-UI-Entwicklung',
-        desc: 'GitLab CI und Jenkins inklusive Migration, Release-Automatisierung, Monitoring mit Grafana, Prometheus und ELK, Incident Management, Aufbau des SRE-Teams.',
+        role: 'Entwicklungsplattform & Betrieb',
+        desc: 'Verantwortung für automatische Tests und Softwarebereitstellung in der Entwicklung von Bedienoberflächen im Fahrzeug, einschließlich Plattformwechsel und Betriebsüberwachung.',
       },
       {
-        period: '07/2025 – 06/2026',
-        org: 'Aremus Finance',
-        role: 'Betriebsplattform & agentischer KI-Assistent',
-        desc: 'Interne Betriebsplattform als einziger Entwickler – acht Dienste im Produktivbetrieb, KI-Assistent mit Tool-Zugriff auf Microsoft 365, SharePoint und CRM.',
+        period: '02 – 07/2021',
+        org: 'Innenministerium Baden-Württemberg',
+        role: 'Aufbau der Cybersicherheitsagentur',
+        desc: 'Mitwirkung beim Aufbau der neuen Cybersicherheitsagentur des Landes Baden-Württemberg.',
       },
       {
-        period: 'ab 10/2026',
-        org: 'Ihr Projekt',
-        role: 'Verfügbar für neue Vorhaben',
-        desc: '100 % remote, einmaliger Kick-off im Raum Stuttgart möglich.',
-        final: true,
+        period: '2015 – 2020',
+        org: 'Daimler',
+        role: 'Werkstudent & Masterand',
+        desc: 'Überwachung der technischen Infrastruktur für automatische Softwaretests und Entwicklungsabläufe.',
       },
-    ],
-  },
-  skills: {
-    eyebrow: 'skills',
-    title: 'Womit ich arbeite',
-    description: 'Elf Werkzeuge im Kern – der Rest gruppiert sich darum.',
-    groups: [
-      {
-        label: 'Cloud & Infra',
-        items: ['AWS S3', 'Docker Compose', 'Grafana', 'Prometheus', 'ELK', 'Linux-Server-Betrieb'],
-      },
-      {
-        label: 'CI & Tooling',
-        items: [
-          'Pipeline-Optimierung',
-          'Release-Automatisierung',
-          'Rollback-Strategien',
-          'Incident Management',
-          'SRE',
-        ],
-      },
-      {
-        label: 'AI & Automation',
-        items: [
-          'RAG',
-          'MCP',
-          'LLM-Gateways',
-          'E-Mail-Triage',
-          'Agenten-Tooling',
-          'Microsoft-365-Integration',
-        ],
-      },
-      { label: 'Web', items: ['React', 'Node.js', 'PostgreSQL'] },
     ],
   },
   contact: {
-    eyebrow: 'kontakt',
-    titleA: 'Projekt im',
-    titleMark: 'Kopf',
-    titleB: '?',
-    lead: 'Erzählen Sie mir, was Sie bauen wollen – eine kurze Nachricht genügt. Antwort innerhalb von 24 Stunden.',
-    direct: 'Oder direkt an',
+    eyebrow: 'Kontakt',
+    title: 'Lassen Sie uns Ihr Vorhaben besprechen.',
+    lead: 'Sie haben eine konkrete Aufgabe oder möchten erst klären, was möglich ist? Schreiben Sie mir, worum es geht. Ein paar Sätze zu Ihrer Ausgangslage reichen für den Anfang.',
+    direct: 'Lieber direkt per E-Mail?',
+    nextTitle: 'Wie geht es danach weiter?',
+    nextBody:
+      'Ich melde mich bei Ihnen, um die offenen Fragen und einen passenden nächsten Schritt zu besprechen. Ein fertiges Konzept brauchen Sie dafür noch nicht.',
+    ctaTitle: 'Was möchten Sie angehen?',
+    ctaBody:
+      'Eine neue Anwendung, weniger manuelle Arbeit oder Unterstützung für Ihr Team: Erzählen Sie mir kurz von Ihrem Vorhaben.',
+    ctaButton: 'Kontakt aufnehmen',
     facts: [
-      { title: 'Verfügbar ab 01.10.2026', detail: 'Projektstart planbar ab Oktober 2026.' },
-      { title: '100 % remote', detail: 'Einmaliger Kick-off im Raum Stuttgart möglich.' },
-      { title: 'Deutsch & Englisch', detail: 'Muttersprache bzw. verhandlungssicher.' },
-      { title: 'Freiberuflich', detail: 'Dienst- oder Werkvertrag – Konditionen auf Anfrage.' },
+      {
+        title: 'Projektstart ab Oktober 2026',
+        detail: 'Anfragen und erste Gespräche sind schon jetzt möglich.',
+      },
+      {
+        title: 'Zusammenarbeit remote',
+        detail: 'Einmaliges Auftakttreffen im Raum Stuttgart möglich.',
+      },
+      {
+        title: 'Deutsch & Englisch',
+        detail: 'Abstimmung und Dokumentation in der passenden Sprache.',
+      },
     ],
     form: {
-      name: 'Name',
-      email: 'E-Mail',
-      message: 'Nachricht',
-      namePlaceholder: 'Ihr Name',
-      emailPlaceholder: 'name@firma.de',
-      messagePlaceholder: 'Worum geht es? Ein paar Sätze genügen.',
-      submit: 'Nachricht senden',
+      name: 'Ihr Name',
+      email: 'Ihre E-Mail-Adresse',
+      message: 'Worum geht es?',
+      namePlaceholder: 'Vor- und Nachname',
+      emailPlaceholder: 'name@unternehmen.de',
+      messagePlaceholder:
+        'Was möchten Sie verbessern oder umsetzen? Gibt es bereits einen Zeitrahmen?',
+      submit: 'Anfrage senden',
       sending: 'Wird gesendet …',
-      success: 'Danke für Ihre Nachricht – ich melde mich innerhalb von 24 Stunden.',
-      errorPrefix: 'Senden hat nicht geklappt. Schreiben Sie mir direkt:',
-      privacyPrefix:
-        'Ihre Angaben werden ausschließlich zur Bearbeitung der Anfrage verarbeitet – Details in der ',
+      success: 'Vielen Dank für Ihre Anfrage. Ich melde mich bei Ihnen.',
+      errorPrefix: 'Ihre Anfrage konnte nicht gesendet werden. Schreiben Sie mir direkt an:',
+      privacyPrefix: 'Ihre Angaben verwende ich zur Bearbeitung Ihrer Anfrage. Mehr dazu in der ',
       privacyLink: 'Datenschutzerklärung',
       privacySuffix: '.',
     },
@@ -812,10 +392,309 @@ const de: Copy = {
   footer: {
     imprint: 'Impressum',
     privacy: 'Datenschutz',
-    top: 'Nach oben ↑',
-    madeIn: 'Made in Esslingen',
+    top: 'Nach oben',
+    tagline: 'Softwareentwicklung & IT-Beratung · Esslingen am Neckar',
   },
-  legal: { backHome: 'Zurück zur Startseite', home: 'Startseite', note: '' },
+  legal: { backHome: 'Zur Startseite', home: 'Startseite', note: '' },
 }
-
-export const COPY: Record<Lang, Copy> = { en, de }
+const en: Copy = {
+  titles: {
+    '/': 'Malte Lohrer · Software Development & IT Consulting',
+    '/services': 'Services · Software, Automation & Operations · Malte Lohrer',
+    '/projects': 'Selected Projects · Malte Lohrer',
+    '/career': 'About Me · Malte Lohrer',
+    '/contact': 'Contact & Project Enquiries · Malte Lohrer',
+    '/impressum': 'Legal Notice · Malte Lohrer',
+    '/datenschutz': 'Privacy Policy · Malte Lohrer',
+  },
+  descriptions: {
+    '/': 'Freelance software developer and IT consultant in Esslingen, Germany. Custom applications, automation, AI and reliable operations. Let’s discuss your project.',
+    '/services':
+      'Custom software, workflow automation, support for development teams and application operations. Services by Malte Lohrer.',
+    '/projects':
+      'Examples of my work: an internal platform with an AI assistant at Aremus Finance and software delivery at Mercedes-Benz.',
+    '/career':
+      'Malte Lohrer, software developer and IT consultant in Esslingen. Working in IT since 2015, with experience at Mercedes-Benz, Aremus Finance and in the public sector.',
+    '/contact':
+      'Need support with a software project? Tell me what you have in mind. Remote collaboration in German and English, available from October 2026.',
+    '/impressum': 'Legal notice and contact details for Malte Lohrer.',
+    '/datenschutz': 'Information about the processing of personal data on lohrer.dev.',
+  },
+  a11y: {
+    skipLink: 'Skip to content',
+    mainNav: 'Main navigation',
+    langSwitch: 'Language',
+    home: 'Malte Lohrer — home',
+    menu: 'Menu',
+    menuOpen: 'Open menu',
+    menuClose: 'Close menu',
+    legalNav: 'Legal',
+    portraitAlt: 'Malte Lohrer',
+    portraitFallback: 'Initials of Malte Lohrer',
+  },
+  nav: {
+    tabs: [
+      { route: '/services', label: 'Services' },
+      { route: '/projects', label: 'Projects' },
+      { route: '/career', label: 'About me' },
+      { route: '/contact', label: 'Contact' },
+    ],
+    availability: 'Available from October 2026',
+    cta: 'Discuss a project',
+  },
+  hero: {
+    eyebrow: 'Freelance Software Developer & IT Consultant',
+    title: 'Build software.',
+    titleAccent: 'Simplify everyday work.',
+    lead: 'I help companies develop their own applications, automate recurring tasks and improve existing systems. From the first idea through to day-to-day operations.',
+    experience:
+      'Working in IT since 2015. One direct contact for planning, development and operations.',
+    ctaContact: 'Discuss a project',
+    ctaProjects: 'View projects',
+    location: 'Esslingen, Germany · Working remotely',
+    caption: 'Your point of contact: Malte Lohrer',
+  },
+  trust: {
+    label: 'Experience from projects and roles at',
+    names: [
+      'Mercedes-Benz',
+      'Aremus Finance',
+      'Ministry of the Interior Baden-Württemberg',
+      'Daimler',
+    ],
+  },
+  services: {
+    eyebrow: 'Services',
+    title: 'Where I can help',
+    description:
+      'Looking to simplify a workflow, build an application or support your team with a technical project? These are the areas I work in.',
+    more: 'Explore all services',
+    items: [
+      {
+        title: 'Custom software',
+        description:
+          'Internal applications and web platforms that fit your workflows and bring information together in one place.',
+        bullets: [
+          'Clarify requirements together and plan a suitable solution',
+          'Build applications your team can use in the browser',
+          'Connect existing systems, such as Microsoft 365 and SharePoint',
+          'Extend and improve applications you already use',
+        ],
+      },
+      {
+        title: 'Automation & AI',
+        description:
+          'Reduce repetitive work: process information, connect applications and introduce AI into specific workflows.',
+        bullets: [
+          'Automate recurring tasks, for example with n8n',
+          'Connect AI assistants to company knowledge and applications',
+          'Classify incoming messages and prepare them for processing',
+          'Agree which steps require human approval',
+        ],
+      },
+      {
+        title: 'Support for development teams',
+        description:
+          'Automate software testing and delivery so your team can release changes reliably and keep track of what ships.',
+        bullets: [
+          'Set up automated software testing and release processes',
+          'Improve or migrate existing development platforms',
+          'Investigate and reduce long processing times',
+          'Keep releases traceable and make it possible to restore earlier versions',
+        ],
+      },
+      {
+        title: 'Operations & ongoing development',
+        description:
+          'Look after applications after launch, detect issues and prepare the ground for further development.',
+        bullets: [
+          'Run applications on your own servers or with a suitable cloud provider',
+          'Monitor operations and set up alerts for problems',
+          'Set up encrypted backups stored separately from the running system',
+          'Investigate and resolve faults, and document the solution clearly',
+        ],
+      },
+    ],
+    note: 'We choose applications and technologies based on your requirements and the systems you already use.',
+  },
+  approach: {
+    eyebrow: 'Working together',
+    title: 'What to expect from a project',
+    description:
+      'You work directly with me, from our first conversation through to launch and ongoing support.',
+    principles: [
+      {
+        title: 'Agree on the goal and scope',
+        body: 'We look at your workflows and discuss what you want to improve. I turn that into a concrete proposal with a clear scope, an estimate of the work involved and the next steps.',
+      },
+      {
+        title: 'Try it early',
+        body: 'You receive an initial working version early on and can try it with real tasks. We regularly review progress and use your feedback to shape the next steps.',
+      },
+      {
+        title: 'Launch and hand over',
+        body: 'I help introduce the application and show your team how to use it. I document setup, operations and key decisions so others can build on the work. Ongoing support is available if needed.',
+      },
+    ],
+  },
+  projects: {
+    eyebrow: 'Selected projects',
+    title: 'A closer look at my work',
+    description:
+      'Two examples from different environments: an internal business platform and support for a large software development organisation.',
+    more: 'View project details',
+    labels: {
+      context: 'The task',
+      built: 'My contribution',
+      result: 'The result',
+      role: 'My role',
+    },
+    cases: [
+      {
+        id: 'aremus',
+        client: 'Aremus Finance',
+        period: '07/2025 – 06/2026',
+        category: 'Custom software & AI',
+        title: 'An internal platform with AI support',
+        summary:
+          'Development and operation of a business platform with an AI assistant connected to existing applications and information.',
+        context:
+          'An internal platform was built to support the day-to-day work of a financial services company. It included an AI assistant and automated classification of incoming email.',
+        role: 'Sole developer, responsible from initial design through to operations.',
+        built: [
+          'Designed and built the platform as a connected application',
+          'Integrated an AI assistant with access to Microsoft 365, SharePoint and customer management',
+          'Used AI to classify incoming email, with fixed rules governing subsequent processing',
+          'Set up automated testing and releases, alongside encrypted backups stored separately',
+        ],
+        result:
+          'The platform and AI assistant were used in daily operations. I was responsible for development, technical documentation and running the system.',
+      },
+      {
+        id: 'mercedes',
+        client: 'Mercedes-Benz',
+        period: '11/2021 – 06/2025',
+        category: 'Development platform & operations',
+        title: 'Delivering software for in-car interfaces',
+        summary:
+          'Responsibility for the central platform used by the in-car interface development organisation to build, test and release its software.',
+        context:
+          'The teams developing in-car interfaces needed a reliable platform for automated testing and the delivery of new software versions.',
+        role: 'Responsible for the development platform for almost four years.',
+        built: [
+          'Developed and maintained automated testing and release processes',
+          'Led the migration between two development platforms',
+          'Optimised processing times through parallel execution and reuse of intermediate results',
+          'Extended monitoring, handled incidents and helped establish the team responsible for reliable operations',
+        ],
+        result:
+          'The central platform supported the entire in-car interface development organisation in testing and delivering its software. My responsibilities included both the migration and ongoing operations.',
+      },
+    ],
+  },
+  about: {
+    eyebrow: 'About me',
+    title: 'Hello, I’m Malte.',
+    homeTitle: 'One direct contact for your project.',
+    homeBody:
+      'I’m a software developer and IT consultant based in Esslingen, Germany. I have worked in IT since 2015, across the public sector, automotive industry and financial services. My work covers both new applications and existing systems.',
+    more: 'More about me',
+    paragraphs: [
+      'I develop software, automate workflows and help keep applications running reliably. I particularly enjoy projects where I can understand the business need and see the solution through from start to finish.',
+      'My experience ranges from large development environments at Mercedes-Benz to building an entire business platform at Aremus Finance. I know both how to contribute to an established team and how to take responsibility for a complete project.',
+      'I work remotely from Esslingen am Neckar, Germany. A one-off kick-off meeting in the Stuttgart area is possible. We can work together in German or English.',
+      'Outside work, I enjoy building things too, including my own hardware and maker projects.',
+    ],
+    facts: [
+      {
+        title: 'Working in IT since 2015',
+        detail: 'Experience in companies and the public sector',
+      },
+      { title: 'M.Sc. Computer Science & Media', detail: 'Stuttgart Media University' },
+      {
+        title: 'Based in Esslingen, Germany',
+        detail: 'Remote collaboration in German and English',
+      },
+    ],
+  },
+  career: {
+    title: 'My professional background',
+    stations: [
+      {
+        period: '07/2025 – 06/2026',
+        org: 'Aremus Finance',
+        role: 'Software development & AI',
+        desc: 'Sole development and operation of an internal business platform with an AI assistant connected to existing applications.',
+      },
+      {
+        period: '11/2021 – 06/2025',
+        org: 'Mercedes-Benz',
+        role: 'Development platform & operations',
+        desc: 'Responsible for automated testing and software delivery for in-car interfaces, including platform migration and monitoring.',
+      },
+      {
+        period: '02 – 07/2021',
+        org: 'Ministry of the Interior Baden-Württemberg',
+        role: 'Establishing the Cybersecurity Agency',
+        desc: 'Contributed to setting up Baden-Württemberg’s new Cybersecurity Agency.',
+      },
+      {
+        period: '2015 – 2020',
+        org: 'Daimler',
+        role: 'Working student & master’s thesis',
+        desc: 'Monitoring the infrastructure used for automated software testing and development workflows.',
+      },
+    ],
+  },
+  contact: {
+    eyebrow: 'Contact',
+    title: 'Let’s discuss your project.',
+    lead: 'Have a specific task in mind, or want to explore what is possible? Tell me a little about your situation. A few sentences are enough to get started.',
+    direct: 'Prefer to email me directly?',
+    nextTitle: 'What happens next?',
+    nextBody:
+      'I’ll get back to you to discuss any open questions and agree on a useful next step. You don’t need a finished specification to start the conversation.',
+    ctaTitle: 'What would you like to work on?',
+    ctaBody:
+      'A new application, less manual work or support for your team: tell me a little about what you have in mind.',
+    ctaButton: 'Get in touch',
+    facts: [
+      {
+        title: 'Available from October 2026',
+        detail: 'Enquiries and initial conversations are welcome now.',
+      },
+      {
+        title: 'Working remotely',
+        detail: 'A one-off kick-off meeting in the Stuttgart area is possible.',
+      },
+      {
+        title: 'German & English',
+        detail: 'Communication and documentation in the language that suits you.',
+      },
+    ],
+    form: {
+      name: 'Your name',
+      email: 'Your email address',
+      message: 'What do you have in mind?',
+      namePlaceholder: 'First and last name',
+      emailPlaceholder: 'name@company.com',
+      messagePlaceholder:
+        'What would you like to improve or build? Do you have a timeframe in mind?',
+      submit: 'Send enquiry',
+      sending: 'Sending …',
+      success: 'Thank you for your enquiry. I’ll get back to you.',
+      errorPrefix: 'Your enquiry could not be sent. Please email me directly at:',
+      privacyPrefix: 'I use your details to respond to your enquiry. Read more in the ',
+      privacyLink: 'privacy policy',
+      privacySuffix: ' (in German).',
+    },
+  },
+  footer: {
+    imprint: 'Legal notice',
+    privacy: 'Privacy',
+    top: 'Back to top',
+    tagline: 'Software Development & IT Consulting · Esslingen, Germany',
+  },
+  legal: { backHome: 'Back to home', home: 'Home', note: 'This document is provided in German.' },
+}
+export const COPY: Record<Lang, Copy> = { de, en }

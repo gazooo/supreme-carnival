@@ -3,10 +3,7 @@ import type { ComponentPropsWithoutRef } from 'react'
 export type ButtonVariant = 'primary' | 'secondary'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
-/**
- * Buttons read as commands: mono type, sharp corners, two variants only.
- * Primary is a light fill on the dark ground; hover shifts to the accent.
- */
+/** Two shared button styles for navigation and form actions. */
 // eslint-disable-next-line react-refresh/only-export-components
 export function buttonClasses(
   variant: ButtonVariant = 'primary',
@@ -14,10 +11,10 @@ export function buttonClasses(
   className = '',
 ): string {
   const base =
-    'inline-flex items-center justify-center gap-2 font-mono font-medium select-none transition-colors duration-200 ease-out'
+    'inline-flex min-h-11 items-center justify-center gap-2 rounded-md font-medium select-none transition-colors duration-150'
   const variants: Record<ButtonVariant, string> = {
-    primary: 'bg-fg text-base hover:bg-accent',
-    secondary: 'border border-line-strong text-fg hover:border-fg-3 hover:bg-base-2',
+    primary: 'bg-accent text-white hover:bg-fg',
+    secondary: 'border border-line-strong text-fg hover:border-fg-3 hover:bg-canvas-2',
   }
   const sizes: Record<ButtonSize, string> = {
     sm: 'px-4 py-2 text-[0.8125rem]',

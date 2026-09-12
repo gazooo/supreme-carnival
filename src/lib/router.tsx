@@ -35,8 +35,16 @@ interface RouterValue {
 
 const RouterContext = createContext<RouterValue>({ route: '/', navigate: () => {} })
 
-export function RouterProvider({ children }: { children: ReactNode }) {
-  const [route, setRoute] = useState<Route>(() => normalizeRoute(window.location.pathname))
+export function RouterProvider({
+  children,
+  initialRoute = '/',
+}: {
+  children: ReactNode
+  initialRoute?: Route
+}) {
+  const [route, setRoute] = useState<Route>(() =>
+    typeof window === 'undefined' ? initialRoute : normalizeRoute(window.location.pathname),
+  )
 
   useEffect(() => {
     const onPopState = () => setRoute(normalizeRoute(window.location.pathname))

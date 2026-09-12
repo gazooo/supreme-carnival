@@ -1,35 +1,41 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
-import { MotionConfig } from 'motion/react'
-import { RouterProvider, useRouter } from './lib/router'
-import { SmoothScrollProvider } from './lib/scroll'
-import { LangProvider, useCopy } from './lib/i18n'
+import { lazy, Suspense, useEffect, useRef, type ReactNode } from 'react'
+import { RouterProvider, useRouter, type Route } from './lib/router'
+import { LangProvider, useCopy, useI18n } from './lib/i18n'
 import Nav from './sections/Nav'
 import Footer from './sections/Footer'
-import ScrollProgress from './components/ScrollProgress'
 import Home from './pages/Home'
 
-// Every route except the landing tab loads as its own small chunk.
 const ServicesPage = lazy(() => import('./pages/ServicesPage'))
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
 const CareerPage = lazy(() => import('./pages/CareerPage'))
 const ContactPage = lazy(() => import('./pages/ContactPage'))
 const Impressum = lazy(() => import('./pages/Impressum'))
 const Datenschutz = lazy(() => import('./pages/Datenschutz'))
-
-/** Tall, empty fallback: no footer flash while a tab chunk loads. */
 const loading = <div className="min-h-svh" aria-hidden="true" />
 
-function Shell() {
+function Shell({ page }: { page?: ReactNode }) {
   const { route } = useRouter()
   const t = useCopy()
-
-  // The shell owns document.title — localized per route.
+  const { lang } = useI18n()
   useEffect(() => {
     document.title = t.titles[route]
-  }, [route, t])
+    const metadata: Record<string, string> = {
+      'meta[name="description"]': t.descriptions[route],
+      'meta[property="og:title"]': t.titles[route],
+      'meta[property="og:description"]': t.descriptions[route],
+      'meta[name="twitter:title"]': t.titles[route],
+      'meta[name="twitter:description"]': t.descriptions[route],
+      'meta[property="og:url"]': 'https://lohrer.dev' + route,
+      'meta[property="og:locale"]': lang === 'de' ? 'de_DE' : 'en_US',
+      'meta[property="og:locale:alternate"]': lang === 'de' ? 'en_US' : 'de_DE',
+    }
+    for (const [selector, content] of Object.entries(metadata))
+      document.querySelector(selector)?.setAttribute('content', content)
+    document
+      .querySelector('link[rel="canonical"]')
+      ?.setAttribute('href', 'https://lohrer.dev' + route)
+  }, [route, t, lang])
 
-  // On tab change (not initial load), move focus to the page content so
-  // keyboard and screen-reader users land where the visual change happened.
   const firstRender = useRef(true)
   useEffect(() => {
     if (firstRender.current) {
@@ -39,26 +45,26 @@ function Shell() {
     document.getElementById('main')?.focus({ preventScroll: true })
   }, [route])
 
-  if (route === '/impressum') {
-    return <Suspense fallback={loading}>{<Impressum />}</Suspense>
-  }
-  if (route === '/datenschutz') {
-    return <Suspense fallback={loading}>{<Datenschutz />}</Suspense>
-  }
+  if (route === '/impressum') return <Suspense fallback={loading}>{page ?? <Impressum />}</Suspense>
+  if (route === '/datenschutz')
+    return <Suspense fallback={loading}>{page ?? <Datenschutz />}</Suspense>
 
   return (
     <>
-      <ScrollProgress />
       <Nav />
       <main id="main" tabIndex={-1} className="outline-none">
         {route === '/' ? (
-          <Home />
+          (page ?? <Home />)
         ) : (
           <Suspense fallback={loading}>
-            {route === '/services' && <ServicesPage />}
-            {route === '/projects' && <ProjectsPage />}
-            {route === '/career' && <CareerPage />}
-            {route === '/contact' && <ContactPage />}
+            {page ?? (
+              <>
+                {route === '/services' && <ServicesPage />}
+                {route === '/projects' && <ProjectsPage />}
+                {route === '/career' && <CareerPage />}
+                {route === '/contact' && <ContactPage />}
+              </>
+            )}
           </Suspense>
         )}
       </main>
@@ -76,17 +82,20 @@ function SkipLink() {
   )
 }
 
-export default function App() {
+/** The build supplies a page and route for static HTML; the browser uses lazy routing. */
+export default function App({
+  initialRoute = '/',
+  page,
+}: {
+  initialRoute?: Route
+  page?: ReactNode
+}) {
   return (
-    <MotionConfig reducedMotion="user">
-      <LangProvider>
-        <RouterProvider>
-          <SmoothScrollProvider>
-            <SkipLink />
-            <Shell />
-          </SmoothScrollProvider>
-        </RouterProvider>
-      </LangProvider>
-    </MotionConfig>
+    <LangProvider>
+      <RouterProvider initialRoute={initialRoute}>
+        <SkipLink />
+        <Shell page={page} />
+      </RouterProvider>
+    </LangProvider>
   )
 }

@@ -1,12 +1,21 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import '@fontsource-variable/inter'
-import '@fontsource-variable/jetbrains-mono'
 import './styles/global.css'
 import App from './App.tsx'
 
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')!
+let useEnglish = false
+try {
+  useEnglish = window.localStorage.getItem('lang') === 'en'
+} catch {
+  /* storage is optional */
+}
+const app = (
   <StrictMode>
     <App />
-  </StrictMode>,
+  </StrictMode>
 )
+// Prerendered HTML is German. An explicit English preference renders fresh copy.
+if (useEnglish) createRoot(root).render(app)
+else hydrateRoot(root, app)

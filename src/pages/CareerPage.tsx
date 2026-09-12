@@ -1,11 +1,12 @@
+import About from '../sections/About'
 import Timeline from '../sections/Timeline'
-import Skills from '../sections/Skills'
-
+import ContactCTA from '../sections/ContactCTA'
 export default function CareerPage() {
   return (
-    <div className="pt-16 md:pt-18">
+    <>
+      <About />
       <Timeline />
-      <Skills />
-    </div>
+      <ContactCTA />
+    </>
   )
 }

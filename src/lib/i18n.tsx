@@ -12,14 +12,14 @@ import { COPY, type Copy, type Lang } from '../content/i18n'
 const STORAGE_KEY = 'lang'
 
 function initialLang(): Lang {
-  // English is the default; only an explicit earlier choice switches to German.
+  // German is the default; respect an explicit earlier language choice.
   try {
     const stored = window.localStorage.getItem(STORAGE_KEY)
     if (stored === 'de' || stored === 'en') return stored
   } catch {
     /* storage unavailable (private mode etc.) — fall through to default */
   }
-  return 'en'
+  return 'de'
 }
 
 interface I18nValue {
@@ -28,7 +28,7 @@ interface I18nValue {
   t: Copy
 }
 
-const I18nContext = createContext<I18nValue>({ lang: 'en', setLang: () => {}, t: COPY.en })
+const I18nContext = createContext<I18nValue>({ lang: 'de', setLang: () => {}, t: COPY.de })
 
 export function LangProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>(initialLang)

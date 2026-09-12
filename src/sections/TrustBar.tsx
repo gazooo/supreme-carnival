@@ -1,25 +1,21 @@
 import Container from '../components/Container'
-import Reveal from '../components/Reveal'
 import { useCopy } from '../lib/i18n'
-
-/** Trademark-safe text wordmarks — no logo files. */
 export default function TrustBar() {
   const t = useCopy()
   return (
-    <section id="trust" aria-label={t.trust.label} className="py-12 md:py-16">
+    <section aria-label={t.trust.label} className="border-y border-line py-7">
       <Container size="wide">
-        <Reveal>
-          <div className="grid gap-x-10 gap-y-5 lg:grid-cols-[10rem_1fr]">
-            <p className="mono-label pt-1">{t.trust.label}</p>
-            <ul className="flex flex-wrap items-center gap-x-10 gap-y-3">
-              {t.trust.names.map((name) => (
-                <li key={name} className="text-[0.9375rem] font-medium text-fg-2">
-                  {name}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Reveal>
+        <p className="text-xs text-fg-3">{t.trust.label}</p>
+        <ul className="mt-4 grid grid-cols-2 items-center gap-x-6 gap-y-4 md:flex md:justify-between">
+          {t.trust.names.map((name) => (
+            <li
+              key={name}
+              className="max-w-[230px] text-sm font-semibold leading-relaxed text-fg-2 md:text-base"
+            >
+              {name}
+            </li>
+          ))}
+        </ul>
       </Container>
     </section>
   )
