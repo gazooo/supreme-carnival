@@ -154,6 +154,10 @@ unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
   unveränderte Erreichbarkeit von `zoinkr.com` wurden geprüft. Build, Lint und
   21 Tests sind erfolgreich. Sprachwechsel und Formularannahme wurden im
   Live-Browser geprüft.
+  Die eigene Formular-Testmail wurde von Microsoft angenommen und im
+  Outlook-Ordner „Junk-E-Mail“ nachgewiesen. Dadurch greift die automatische
+  Weiterleitung dieser Nachricht nicht. Die Zustellung an das neue
+  Proton-Domainpostfach muss nach dessen Einrichtung separat getestet werden.
   Sicherungen: `/var/www/lohrer.dev/dist.before-domain-cutover.20260912T184940Z`
   und `/opt/lol-stats/deploy/Caddyfile.bak.domain-cutover.20260912T184940Z`.
   Die früheren Sicherungen bleiben erhalten; fremde Caddy-Bereiche sind
