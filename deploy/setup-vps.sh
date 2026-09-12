@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 #
-# Richtet lohrer.dev auf dem VPS ein — OHNE den laufenden Betrieb zu stören.
+# Richtet lohrer-digital.de auf dem VPS ein — OHNE den laufenden Betrieb zu stören.
 #
 # Ausgangslage (per deploy/inspect-*.sh ermittelt): Ports 80/443 gehören einem
 # Caddy-Container eines fremden Projekts. Dieses Skript installiert deshalb
 # KEINEN eigenen Webserver, sondern
 #   1. startet einen Node-Dienst auf dem Host (Website + /api/contact) und
-#   2. ergänzt das Caddyfile dieses Containers um einen lohrer.dev-Block,
+#   2. ergänzt das Caddyfile dieses Containers um einen Website-Block,
 #      der dorthin proxied — anschließend `caddy reload`, also ohne Neustart
 #      und ohne Ausfall für die bereits laufenden Sites.
 #
@@ -20,16 +20,18 @@
 # Idempotent: mehrfaches Ausführen aktualisiert nur.
 set -euo pipefail
 
-DOMAIN="lohrer.dev"
-WEBROOT="/var/www/${DOMAIN}"
-APPDIR="/opt/${DOMAIN}"
+DOMAIN="lohrer-digital.de"
+# Bestehende Verzeichnisse und Caddy-Marker bleiben bei einem Domainwechsel stabil.
+SITE_ID="lohrer.dev"
+WEBROOT="/var/www/${SITE_ID}"
+APPDIR="/opt/${SITE_ID}"
 ENVFILE="/etc/lohrer-site.env"
 PORT=3081
 CONTAINER="${CADDY_CONTAINER:-lol-stats-caddy-1}"
 DEPLOY_USER="${DEPLOY_USER:-${SUDO_USER:-root}}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BEGIN_MARK="# >>> ${DOMAIN} — verwaltet von supreme-carnival/deploy >>>"
-END_MARK="# <<< ${DOMAIN} <<<"
+BEGIN_MARK="# >>> ${SITE_ID} — verwaltet von supreme-carnival/deploy >>>"
+END_MARK="# <<< ${SITE_ID} <<<"
 
 die() { echo "FEHLER: $*" >&2; exit 1; }
 
@@ -107,7 +109,7 @@ if docker exec "${CONTAINER}" sh -c \
   "wget -q -O /dev/null --timeout=5 --tries=1 http://${GATEWAY}:${PORT}/ 2>/dev/null; rc=\$?; [ \$rc -eq 0 ] || [ \$rc -eq 8 ]"; then
   echo "  Container erreicht den Dienst."
 else
-  echo "  WARNUNG: Container erreicht ${GATEWAY}:${PORT} nicht — Caddy könnte lohrer.dev"
+  echo "  WARNUNG: Container erreicht ${GATEWAY}:${PORT} nicht — Caddy könnte lohrer-digital.de"
   echo "  nicht ausliefern. Docker-Netz/Routing prüfen, bevor es weitergeht."
 fi
 

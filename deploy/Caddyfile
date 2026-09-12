@@ -1,4 +1,4 @@
-# lohrer.dev — wird von deploy/setup-vps.sh in das Caddyfile des bestehenden
+# lohrer-digital.de — wird von deploy/setup-vps.sh in das Caddyfile des bestehenden
 # Caddy-Containers eingefügt (zwischen den Markern). __UPSTREAM__ ersetzt das
 # Skript durch die Gateway-IP des Docker-Netzes, in dem Caddy läuft.
 #
@@ -6,7 +6,7 @@
 # die statischen Dateien als auch /api/contact aus. So braucht der Container
 # kein zusätzliches Volume — und damit keinen Neustart.
 
-lohrer.dev {
+lohrer-digital.de {
 	encode zstd gzip
 
 	header {
@@ -20,6 +20,6 @@ lohrer.dev {
 	reverse_proxy __UPSTREAM__
 }
 
-www.lohrer.dev {
-	redir https://lohrer.dev{uri} permanent
+www.lohrer-digital.de, lohrer.dev, www.lohrer.dev {
+	redir https://lohrer-digital.de{uri} 308
 }

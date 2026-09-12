@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # NUR LESEN — dieses Skript ändert nichts. Es sammelt die Fakten, die für die
-# Einrichtung von lohrer.dev nötig sind, ohne den laufenden Betrieb anzufassen.
+# Einrichtung von lohrer-digital.de nötig sind, ohne den laufenden Betrieb anzufassen.
 #
 #   bash deploy/inspect-vps.sh            # oder: sudo bash deploy/inspect-vps.sh
 #
@@ -64,12 +64,12 @@ hr "Mailserver-API"
 code=$(curl -s -o /dev/null -m 5 -w '%{http_code}' http://127.0.0.1:3080/health 2>/dev/null)
 echo "GET http://127.0.0.1:3080/health -> ${code:-keine Antwort}"
 
-hr "DNS-Auflösung von lohrer.dev (vom Server aus)"
+hr "DNS-Auflösung von lohrer-digital.de (vom Server aus)"
 if have dig; then
-  echo "A:  $(dig +short A lohrer.dev)"
-  echo "NS: $(dig +short NS lohrer.dev | tr '\n' ' ')"
+  echo "A:  $(dig +short A lohrer-digital.de)"
+  echo "NS: $(dig +short NS lohrer-digital.de | tr '\n' ' ')"
 elif have getent; then
-  getent hosts lohrer.dev || echo "(keine Auflösung)"
+  getent hosts lohrer-digital.de || echo "(keine Auflösung)"
 fi
 echo "Öffentliche IP dieses Servers: $(curl -s -m 5 https://api.ipify.org 2>/dev/null || echo unbekannt)"
 

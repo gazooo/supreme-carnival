@@ -104,7 +104,7 @@ Datenschutzerklärung sind auf Deutsch verfügbar.
 ## Veröffentlichung
 
 Die lokale Überarbeitung veröffentlicht keine Änderungen. Build und
-Veröffentlichung auf lohrer.dev sind in [DEPLOY.md](DEPLOY.md) beschrieben.
+Veröffentlichung auf lohrer-digital.de sind in [DEPLOY.md](DEPLOY.md) beschrieben.
 
 Die Kontaktadresse steht in `src/content/site.ts` und in den strukturierten
 Personendaten in `index.html`. Ein Domain-Postfach sowie eine erteilte

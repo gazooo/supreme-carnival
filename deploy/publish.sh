@@ -47,4 +47,4 @@ else
   echo "   Übersprungen (kein passwortloses sudo)."
 fi
 
-echo "Fertig: https://lohrer.dev"
+echo "Fertig: https://lohrer-digital.de"

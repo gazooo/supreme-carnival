@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # NUR LESEN — ändert nichts. Untersucht den Caddy-Container, der auf diesem
-# Server 80/443 bedient, damit lohrer.dev dort sauber ergänzt werden kann.
+# Server 80/443 bedient, damit lohrer-digital.de dort sauber ergänzt werden kann.
 #
 #   bash deploy/inspect-caddy-container.sh
 #

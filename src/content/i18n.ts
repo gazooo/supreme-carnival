@@ -126,7 +126,7 @@ const de: Copy = {
     '/contact':
       'Sie suchen Unterstützung für ein Softwareprojekt? Schildern Sie mir Ihr Vorhaben. Remote-Zusammenarbeit, Deutsch und Englisch, Projektstart ab Oktober 2026.',
     '/impressum': 'Anbieterkennzeichnung und Kontaktdaten von Malte Lohrer.',
-    '/datenschutz': 'Informationen zur Verarbeitung personenbezogener Daten auf lohrer.dev.',
+    '/datenschutz': 'Informationen zur Verarbeitung personenbezogener Daten auf lohrer-digital.de.',
   },
   a11y: {
     skipLink: 'Zum Inhalt springen',
@@ -418,7 +418,7 @@ const en: Copy = {
     '/contact':
       'Need support with a software project? Tell me what you have in mind. Remote collaboration in German and English, available from October 2026.',
     '/impressum': 'Legal notice and contact details for Malte Lohrer.',
-    '/datenschutz': 'Information about the processing of personal data on lohrer.dev.',
+    '/datenschutz': 'Information about the processing of personal data on lohrer-digital.de.',
   },
   a11y: {
     skipLink: 'Skip to content',

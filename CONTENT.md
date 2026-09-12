@@ -76,6 +76,9 @@ Kundenzitate und Gestaltungselemente der Vorbilder wurden nicht kopiert.
 
 Inhalte und Metadaten: `src/content/i18n.ts`.
 Kontaktadresse: `src/content/site.ts` sowie Personendaten in `index.html`.
+Hauptadresse: `https://lohrer-digital.de`. Domainangaben in HTML-Vorlage,
+Browser-Metadaten, Sitemap, robots.txt und Linkvorschau gemeinsam pflegen.
+Ein Domainwechsel ändert die vorhandene Kontaktadresse nicht automatisch.
 Verfügbarkeit vor Veröffentlichung prüfen und bei Änderungen in beiden
 Sprachen aktualisieren. Projektangaben nur anhand gesicherter Fakten ergänzen.
 

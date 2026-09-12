@@ -69,13 +69,13 @@ find '__WEBROOT__/dist' -type f | wc -l
 
   Write-Host '== Pruefung ==' -ForegroundColor Cyan
   foreach ($path in '/', '/impressum', '/datenschutz') {
-    $code = & curl.exe -s -o NUL -w '%{http_code}' "https://lohrer.dev$path"
+    $code = & curl.exe -s -o NUL -w '%{http_code}' "https://lohrer-digital.de$path"
     $color = if ($code -eq '200') { 'Green' } else { 'Yellow' }
     Write-Host ("   {0,-14} {1}" -f $path, $code) -ForegroundColor $color
   }
 
   Write-Host ''
-  Write-Host 'Fertig: https://lohrer.dev' -ForegroundColor Green
+  Write-Host 'Fertig: https://lohrer-digital.de' -ForegroundColor Green
 }
 finally {
   Pop-Location

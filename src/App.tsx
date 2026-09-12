@@ -25,7 +25,7 @@ function Shell({ page }: { page?: ReactNode }) {
       'meta[property="og:description"]': t.descriptions[route],
       'meta[name="twitter:title"]': t.titles[route],
       'meta[name="twitter:description"]': t.descriptions[route],
-      'meta[property="og:url"]': 'https://lohrer.dev' + route,
+      'meta[property="og:url"]': 'https://lohrer-digital.de' + route,
       'meta[property="og:locale"]': lang === 'de' ? 'de_DE' : 'en_US',
       'meta[property="og:locale:alternate"]': lang === 'de' ? 'en_US' : 'de_DE',
     }
@@ -33,7 +33,7 @@ function Shell({ page }: { page?: ReactNode }) {
       document.querySelector(selector)?.setAttribute('content', content)
     document
       .querySelector('link[rel="canonical"]')
-      ?.setAttribute('href', 'https://lohrer.dev' + route)
+      ?.setAttribute('href', 'https://lohrer-digital.de' + route)
   }, [route, t, lang])
 
   const firstRender = useRef(true)

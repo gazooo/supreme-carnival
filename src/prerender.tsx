@@ -39,7 +39,7 @@ export function renderDocument(template: string, pathname: string) {
   return template
     .replaceAll('__PAGE_TITLE__', escapeHtml(COPY.de.titles[route]))
     .replaceAll('__PAGE_DESCRIPTION__', escapeHtml(COPY.de.descriptions[route]))
-    .replaceAll('__PAGE_URL__', 'https://lohrer.dev' + route)
+    .replaceAll('__PAGE_URL__', 'https://lohrer-digital.de' + route)
     .replaceAll('__PAGE_CANONICAL_PATH__', route.slice(1))
     .replace('<!--app-html-->', () => renderPage(route))
 }

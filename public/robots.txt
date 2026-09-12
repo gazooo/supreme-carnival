@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 
-Sitemap: https://lohrer.dev/sitemap.xml
+Sitemap: https://lohrer-digital.de/sitemap.xml
