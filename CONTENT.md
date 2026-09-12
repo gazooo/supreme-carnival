@@ -75,7 +75,8 @@ Kundenzitate und Gestaltungselemente der Vorbilder wurden nicht kopiert.
 ## Pflege
 
 Inhalte und Metadaten: `src/content/i18n.ts`.
-Kontaktadresse: `src/content/site.ts` sowie Personendaten in `index.html`.
+Kontaktadresse: `malte@lohrer-digital.de` in `src/content/site.ts` sowie
+Personendaten in `index.html`; Formular-Empfänger serverseitig gemeinsam pflegen.
 Hauptadresse: `https://lohrer-digital.de`. Domainangaben in HTML-Vorlage,
 Browser-Metadaten, Sitemap, robots.txt und Linkvorschau gemeinsam pflegen.
 Ein Domainwechsel ändert die vorhandene Kontaktadresse nicht automatisch.

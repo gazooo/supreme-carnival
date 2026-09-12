@@ -20,9 +20,9 @@ lohrer-digital.de → Caddy → 172.18.0.1:3081 → lohrer-site
 
 Die internen Pfade `/var/www/lohrer.dev`, `/opt/lohrer.dev`, der Dienstname
 `lohrer-site` und die Caddy-Marker mit `lohrer.dev` bleiben bewusst bestehen.
-Der Domainwechsel erfordert keine Verlagerung der Dateien. Die Umstellung des
-Kontakt-Empfängers erfolgt separat, sobald das neue Proton-Domainpostfach
-empfangsbereit ist. Andere Sites des VPS werden nicht verändert.
+Der Domainwechsel erfordert keine Verlagerung der Dateien. Der Kontakt-Empfänger
+ist auf das empfangsbereite Proton-Domainpostfach umgestellt. Andere Sites des
+VPS werden nicht verändert.
 
 ## DNS bei netcup
 
@@ -111,15 +111,36 @@ der öffentlichen Domain benannt. nginx bleibt inaktiv; Ports 80/443 gehören Ca
   Konfiguration und Validierung, verschickt aber keine E-Mail.
 
 Der Kontakt-Endpunkt nutzt weiterhin die bestehende private Mailserver-API.
-Aktuell ist `CONTACT_TO=maltelohrer1990@hotmail.de` in `/etc/lohrer-site.env`
-gesetzt. Die öffentlich sichtbare Kontaktadresse bleibt bis zur Einrichtung
-des Domain-Postfachs ebenfalls bei dieser Adresse. Ziel ist
-`malte@lohrer-digital.de` in Proton. Erst dessen Empfang prüfen, dann die
+Aktuell ist `CONTACT_TO=malte@lohrer-digital.de` in `/etc/lohrer-site.env`
+gesetzt. Dieselbe Adresse steht in `src/content/site.ts` und den strukturierten
+Personendaten in `index.html`. Das Postfach wird bei Proton betrieben;
+eingehende Nachrichten werden im selben Konto in den Ordner „Business“ sortiert.
+Bei künftigen Änderungen zuerst den Empfang der Zieladresse prüfen, dann die
 öffentlichen Angaben und `CONTACT_TO` gemeinsam umstellen. Vor der Änderung
 die Env-Datei sichern, ausschließlich den Empfänger ändern und `lohrer-site`
 neu starten. Zugangsdaten weder ausgeben noch ins Repository übernehmen.
 Ein HTTP-Erfolg des Formulars bestätigt nur die Annahme durch die Mail-API;
 ein Zustelltest erfordert zusätzlich den nachgewiesenen Eingang der Testmail.
+
+### Mail-DNS
+
+Die Website-A-Einträge bleiben unverändert. Für Proton sind zusätzlich folgende
+Records eingerichtet (TTL jeweils 3600 Sekunden):
+
+| Host | Typ | Priorität | Wert |
+| --- | --- | --- | --- |
+| `@` | MX | 10 | `mail.protonmail.ch` |
+| `@` | MX | 20 | `mailsec.protonmail.ch` |
+| `@` | TXT | – | `v=spf1 include:_spf.protonmail.ch ~all` |
+| `_dmarc` | TXT | – | `v=DMARC1; p=quarantine` |
+
+Außerdem bestehen der dauerhafte Proton-Verifizierungs-TXT-Eintrag sowie drei
+CNAMEs unter `protonmail._domainkey`, `protonmail2._domainkey` und
+`protonmail3._domainkey`. Die vollständigen, domainspezifischen Ziele stehen im
+Proton-Domainassistenten und in der Netcup-Zone. Alle drei DKIM-Records erhalten.
+Es gibt keine Catch-all-Adresse. Der Kontakt-Mailserver sendet weiterhin über
+seine bestehende Absenderdomain; die neue Geschäftsadresse ist der Empfänger,
+die im Formular angegebene Adresse wird als Reply-To gesetzt.
 
 ## Rückwechsel
 
@@ -164,3 +185,16 @@ unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
   unverändert. Die Mail-Umstellung ist noch offen: Der Proton-TXT-Nachweis ist
   öffentlich vorhanden, Proton verlangt vor einer erneuten Prüfung eine
   Stunde Wartezeit. MX, DKIM und Domainadresse sind deshalb noch nicht aktiv.
+- 12.09.2026, 21:32 UTC: Geschäftsadresse `malte@lohrer-digital.de` in Proton
+  eingerichtet. MX, SPF, alle drei DKIM-CNAMEs und DMARC sind öffentlich
+  auflösbar und von Proton bestätigt. Externe Testzustellung vom bestehenden
+  Website-Mailserver im Ordner „Business“ nachgewiesen. Öffentliche Adresse
+  und `CONTACT_TO` gemeinsam umgestellt; ausschließlich `lohrer-site` neu
+  gestartet. Build, Lint und alle 21 Tests erfolgreich.
+  Abschließender Versand über das veröffentlichte Kontaktformular erfolgreich:
+  Die Testanfrage ist im Proton-Ordner „Business“ angekommen. Auch der Versand
+  mit der Geschäftsadresse an ein eigenes externes Postfach wurde bestätigt.
+  Sicherungen: `/var/www/lohrer.dev/dist.before-business.20260912T213224Z`
+  und `/etc/lohrer-site.env.bak.business.20260912T213224Z`.
+  Vorherige Dateien mit gehashten Assetnamen bleiben für bereits geöffnete
+  Seiten verfügbar. Frühere Sicherungen und fremde Dienste bleiben erhalten.

@@ -13,9 +13,10 @@ Der bestehende Dienst `lohrer-site` bedient Website und `/api/contact` auf
 `172.18.0.1:3081`. Seine Dateien liegen weiter unter `/opt/lohrer.dev`, die
 Website unter `/var/www/lohrer.dev/dist`. Diese Pfade und die Marker mit
 `lohrer.dev` sind stabile Betriebsnamen. Die Domainweiterleitungen sind aktiv.
-Das Kontaktformular verwendet noch den bisherigen Empfänger. Die geplante
-Umstellung auf `malte@lohrer-digital.de` setzt ein empfangsbereites Proton-Postfach
-voraus; danach ausschließlich `CONTACT_TO` in der gesicherten Env-Datei ändern.
+Das Kontaktformular verwendet `CONTACT_TO=malte@lohrer-digital.de` in
+`/etc/lohrer-site.env`. Das Proton-Postfach ist empfangsbereit; MX, SPF, DKIM
+und DMARC sind eingerichtet. Öffentliche Kontaktangaben und Empfänger bei
+künftigen Änderungen gemeinsam pflegen und tatsächliche Zustellung testen.
 Private Zugangsdaten niemals ausgeben oder ins Repository übernehmen.
 
 `setup-vps.sh` ist für die Ersteinrichtung vorgesehen. Auf dem bereits

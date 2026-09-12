@@ -106,9 +106,10 @@ Datenschutzerklärung sind auf Deutsch verfügbar.
 Die lokale Überarbeitung veröffentlicht keine Änderungen. Build und
 Veröffentlichung auf lohrer-digital.de sind in [DEPLOY.md](DEPLOY.md) beschrieben.
 
-Die Kontaktadresse steht in `src/content/site.ts` und in den strukturierten
-Personendaten in `index.html`. Ein Domain-Postfach sowie eine erteilte
-USt-IdNr. dürfen erst nach Vorliegen der tatsächlichen Angaben ergänzt werden.
+Die Kontaktadresse `malte@lohrer-digital.de` steht in `src/content/site.ts`
+und in den strukturierten Personendaten in `index.html`. Das Kontaktformular
+stellt ebenfalls an diese Proton-Adresse zu. Betriebsdetails und Prüfungen
+stehen in [DEPLOY.md](DEPLOY.md). Eine USt-IdNr. erst nach Erteilung ergänzen.
 
 ## Bildmarken und Linkvorschau
 
