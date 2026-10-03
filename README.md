@@ -118,3 +118,5 @@ Die PNG-Dateien werden daraus gerendert: Favicon 32 × 32, Apple-Touch-Icon
 180 × 180, weitere Icons 192 × 192 und 512 × 512, Linkvorschau 1200 × 630.
 Bei einer Änderung der Vorlagen die entsprechenden PNG-Dateien ebenfalls
 aktualisieren. Das vorhandene Porträt wird ausschließlich per CSS dargestellt.
+
+Aktueller VPS: Quelle `/opt/lohrer.dev/repository`, private Konfiguration und Backups nach [DEPLOY.md](DEPLOY.md#private-vps-pfade-seit-2026-10-03).

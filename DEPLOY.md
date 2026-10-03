@@ -8,7 +8,7 @@ auf die Hauptadresse weitergeleitet. Pfad und
 Query-Parameter bleiben erhalten, etwa `/projects#mercedes` oder
 `/contact?source=referral` (URL-Fragmente verarbeitet der Browser).
 
-Auf dem VPS `178.104.124.207` bedient der Caddy-Container `lol-stats-caddy-1`
+Auf dem VPS `178.104.124.207` bedient der Caddy-Container `infrastructure-caddy-1`
 weiterhin TLS und die öffentlichen Ports 80/443. Der bestehende Node-Dienst
 `lohrer-site` liefert die Website und den Kontakt-Endpunkt aus:
 
@@ -60,7 +60,7 @@ bash deploy/publish.sh
 
 Beide Skripte bauen das Projekt und veröffentlichen weiterhin nach
 `/var/www/lohrer.dev/dist`. Die vorherige Fassung liegt anschließend in
-`dist.prev`. Das PowerShell-Skript veröffentlicht ausschließlich die Dateien;
+`/home/deploy/project-data/lohrer-dev/backups/dist.<UTC>`. Das PowerShell-Skript veröffentlicht ausschließlich die Dateien;
 das Bash-Skript kann zusätzlich einen geänderten `site-server.mjs` installieren.
 Für reine Website-Änderungen ist kein Dienstneustart erforderlich.
 
@@ -73,7 +73,7 @@ Browser umgeschaltet. Es ist kein zusätzlicher Rendering-Dienst erforderlich.
 `deploy/Caddyfile` enthält den endgültigen Site-Block mit Hauptadresse und
 Weiterleitungen. `__UPSTREAM__` wird durch `172.18.0.1:3081` ersetzt.
 Der Host-Pfad des gemounteten Caddyfiles ist aktuell
-`/opt/lol-stats/deploy/Caddyfile`.
+`/opt/infrastructure/Caddyfile`.
 
 1. Caddyfile sichern und ausschließlich den eigenen Bereich zwischen
    `# >>> lohrer.dev — verwaltet von supreme-carnival/deploy >>>` und
@@ -87,8 +87,8 @@ Der Host-Pfad des gemounteten Caddyfiles ist aktuell
    aus `deploy/Caddyfile` aktivieren. Bei einem Fehler die Sicherung zurückspielen.
 
 ```bash
-docker exec lol-stats-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
-docker exec lol-stats-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
+docker exec infrastructure-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+docker exec infrastructure-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
 ```
 
 `setup-vps.sh` dient der Ersteinrichtung und prüft Port 3081 auf freie Belegung.
@@ -106,12 +106,12 @@ der öffentlichen Domain benannt. nginx bleibt inaktiv; Ports 80/443 gehören Ca
 - Alte Domains und `www.lohrer-digital.de` liefern HTTP 308 mit erhaltenem Pfad
   und Query. HTTPS muss vor jeder Weiterleitung gültig sein.
 - Browser-Navigation und Sprachwechsel funktionieren ohne neue Konsolenfehler.
-- `zoinkr.com` und die bestehenden Dienste bleiben erreichbar.
+- `chat.zoinkr.com` und die bestehenden Dienste bleiben erreichbar; die alte Zoinkr-App ist entfernt.
 - Eine leere JSON-Anfrage an `/api/contact` liefert HTTP 400. Das prüft
   Konfiguration und Validierung, verschickt aber keine E-Mail.
 
 Der Kontakt-Endpunkt nutzt weiterhin die bestehende private Mailserver-API.
-Aktuell ist `CONTACT_TO=malte@lohrer-digital.de` in `/etc/lohrer-site.env`
+Aktuell ist `CONTACT_TO=malte@lohrer-digital.de` in `/home/deploy/project-data/lohrer-dev/config/app.env`
 gesetzt. Dieselbe Adresse steht in `src/content/site.ts` und den strukturierten
 Personendaten in `index.html`. Das Postfach wird bei Proton betrieben;
 eingehende Nachrichten werden im selben Konto in den Ordner „Business“ sortiert.
@@ -147,7 +147,7 @@ die im Formular angegebene Adresse wird als Reply-To gesetzt.
 Vor einer Konfigurationsänderung entsteht eine datierte Caddyfile-Sicherung.
 Den Inhalt dieser Sicherung in die bestehende gemountete Datei zurückschreiben,
 validieren und Caddy neu laden. Die vorherigen Website-Dateien liegen in
-`/var/www/lohrer.dev/dist.prev`; beim Wiederherstellen die aktuelle Fassung zuerst
+`/home/deploy/project-data/lohrer-dev/backups/dist.<UTC>`; beim Wiederherstellen die aktuelle Fassung zuerst
 unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
 
 ## Veröffentlichungsstand
@@ -162,7 +162,7 @@ unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
   Caddy bedient die neue Domain bereits zusätzlich und versucht das Zertifikat
   auszustellen; die Weiterleitung der alten Hauptdomain ist noch nicht aktiv.
   Sicherung vor dieser Vorbereitung:
-  `/opt/lol-stats/deploy/Caddyfile.bak.domain-stage.20260912T165208Z`.
+  `/opt/infrastructure/Caddyfile.bak.domain-stage.20260912T165208Z`.
   Build, Lint, alle 21 Tests sowie Navigation und Metadaten in der lokalen
   Browservorschau wurden erfolgreich geprüft. Für den Abschluss zuerst DNS
   und HTTPS bestätigen, dann den vorbereiteten Build aktivieren und den
@@ -180,7 +180,7 @@ unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
   Weiterleitung dieser Nachricht nicht. Die Zustellung an das neue
   Proton-Domainpostfach muss nach dessen Einrichtung separat getestet werden.
   Sicherungen: `/var/www/lohrer.dev/dist.before-domain-cutover.20260912T184940Z`
-  und `/opt/lol-stats/deploy/Caddyfile.bak.domain-cutover.20260912T184940Z`.
+  und `/opt/infrastructure/Caddyfile.bak.domain-cutover.20260912T184940Z`.
   Die früheren Sicherungen bleiben erhalten; fremde Caddy-Bereiche sind
   unverändert. Die Mail-Umstellung ist noch offen: Der Proton-TXT-Nachweis ist
   öffentlich vorhanden, Proton verlangt vor einer erneuten Prüfung eine
@@ -195,6 +195,12 @@ unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
   Die Testanfrage ist im Proton-Ordner „Business“ angekommen. Auch der Versand
   mit der Geschäftsadresse an ein eigenes externes Postfach wurde bestätigt.
   Sicherungen: `/var/www/lohrer.dev/dist.before-business.20260912T213224Z`
-  und `/etc/lohrer-site.env.bak.business.20260912T213224Z`.
+  und `/home/deploy/project-data/lohrer-dev/config/app.env.bak.business.20260912T213224Z`.
   Vorherige Dateien mit gehashten Assetnamen bleiben für bereits geöffnete
   Seiten verfügbar. Frühere Sicherungen und fremde Dienste bleiben erhalten.
+
+## Private VPS-Pfade seit 2026-10-03
+
+Die gepflegte VPS-Quelle liegt unter `/opt/lohrer.dev/repository`; die laufende Serverdatei bleibt `/opt/lohrer.dev/site-server.mjs`. `publish.sh` bewahrt jede vorige Dist-Version unter `/home/deploy/project-data/lohrer-dev/backups/dist.<UTC>`, ohne pauschales Loeschen. Der aktive oeffentliche Webroot bleibt `/var/www/lohrer.dev/dist`, weil `DynamicUser=yes` und `ProtectHome=yes` den privaten Homebaum sperren. Der systemd-Manager liest die externe private `config/app.env` als root (0600); der Migrations-Dropin setzt denselben Pfad wie die gepflegte Unit. Keine Hardening-Abschwaechung.
+
+Caddy ist jetzt unabhaengige Infrastruktur unter `/opt/infrastructure` mit Netz `infrastructure_proxy`, Gateway `172.18.0.1` und privatem State `/home/deploy/project-data/infrastructure/caddy`. Caddyfile-Sicherungen liegen privat unter `infrastructure/backups`; alle aktuellen Sicherungsbeispiele verwenden diesen Ort. Ein Payload-Rollback stoppt keinen Maildienst: die gewaehlte aktuelle Backup-Dist nach `/var/www/lohrer.dev/dist` umschalten, vorab Quelle/Ziel/Verbraucher pruefen; Secrets bleiben aktuell. Der Kontaktkanal wurde in der Pfadmigration ohne echten Mailversand geprueft. Der lokale Windows-Checkout mit fremden Aenderungen wurde nicht synchronisiert oder publiziert.

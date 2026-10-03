@@ -7,7 +7,7 @@ Wants=network-online.target
 [Service]
 ExecStart=/usr/bin/node /opt/lohrer.dev/site-server.mjs
 # STATIC_DIR, RELAY_HOST, MAIL_API_TOKEN, CONTACT_TO stehen hier (chmod 600):
-EnvironmentFile=/etc/lohrer-site.env
+EnvironmentFile=/home/deploy/project-data/lohrer-dev/config/app.env
 Restart=on-failure
 RestartSec=3
 

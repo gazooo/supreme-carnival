@@ -14,7 +14,7 @@
 #   sudo bash deploy/setup-vps.sh
 #
 # Optional:
-#   CADDY_CONTAINER=lol-stats-caddy-1   anderer Container
+#   CADDY_CONTAINER=infrastructure-caddy-1   anderer Container
 #   DEPLOY_USER=deploy                  Besitzer des Webroots
 #
 # Idempotent: mehrfaches Ausführen aktualisiert nur.
@@ -25,9 +25,9 @@ DOMAIN="lohrer-digital.de"
 SITE_ID="lohrer.dev"
 WEBROOT="/var/www/${SITE_ID}"
 APPDIR="/opt/${SITE_ID}"
-ENVFILE="/etc/lohrer-site.env"
+ENVFILE="/home/deploy/project-data/lohrer-dev/config/app.env"
 PORT=3081
-CONTAINER="${CADDY_CONTAINER:-lol-stats-caddy-1}"
+CONTAINER="${CADDY_CONTAINER:-infrastructure-caddy-1}"
 DEPLOY_USER="${DEPLOY_USER:-${SUDO_USER:-root}}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BEGIN_MARK="# >>> ${SITE_ID} — verwaltet von supreme-carnival/deploy >>>"
@@ -67,6 +67,8 @@ echo "  Webroot   : ${WEBROOT} (Besitzer: ${DEPLOY_USER})"
 
 echo "== 2/6 Node-Dienst installieren =="
 mkdir -p "${APPDIR}" "${WEBROOT}/dist"
+install -d -m 0700 -o deploy -g deploy /home/deploy/project-data/lohrer-dev /home/deploy/project-data/lohrer-dev/config
+install -d -m 0700 -o deploy -g deploy /home/deploy/project-data/infrastructure/backups
 install -m 0755 "${SCRIPT_DIR}/../server/site-server.mjs" "${APPDIR}/site-server.mjs"
 id -u "${DEPLOY_USER}" >/dev/null 2>&1 && chown -R "${DEPLOY_USER}:${DEPLOY_USER}" "${WEBROOT}"
 
@@ -114,8 +116,9 @@ else
 fi
 
 echo "== 4/6 Caddyfile ergänzen =="
-BACKUP="${CADDYFILE}.bak.$(date +%s)"
+BACKUP="/home/deploy/project-data/infrastructure/backups/Caddyfile.$(date +%s)"
 cp -a "${CADDYFILE}" "${BACKUP}"
+chmod 0600 "${BACKUP}"
 echo "  Sicherung: ${BACKUP}"
 
 # vorhandenen Block zwischen den Markern entfernen (idempotent), dann neu anhängen
@@ -148,7 +151,7 @@ fi
 
 cat <<DONE
 
-Fertig. Bereits laufende Sites (zoinkr.com, chat.zoinkr.com) wurden nicht
+Fertig. Bereits laufende Sites (chat.zoinkr.com) wurden nicht
 angefasst — es gab keinen Neustart, nur ein Reload.
 
 Nächste Schritte:

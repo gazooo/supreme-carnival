@@ -8,7 +8,7 @@
 # Ausgabe komplett zurückgeben.
 set -uo pipefail
 
-C="${CADDY_CONTAINER:-lol-stats-caddy-1}"
+C="${CADDY_CONTAINER:-infrastructure-caddy-1}"
 hr() { printf '\n=== %s ===\n' "$1"; }
 
 hr "Container-Basis: ${C}"

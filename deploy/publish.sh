@@ -2,7 +2,7 @@
 #
 # Baut die Website und lädt sie auf den VPS — nur mit ssh + tar, damit es
 # auch unter Git Bash (Windows) ohne rsync funktioniert. Der Wechsel ist
-# atomar (dist.new -> dist), die vorherige Version bleibt als dist.prev.
+# atomar (dist.new -> dist), die vorherige Version bleibt im privaten Backup-Verzeichnis.
 #
 # Aufruf aus dem Repo-Root:
 #   bash deploy/publish.sh
@@ -11,6 +11,7 @@ set -euo pipefail
 
 SSH_TARGET="${SSH_TARGET:-deploy@178.104.124.207}"
 WEBROOT="/var/www/lohrer.dev"
+BACKUPROOT="/home/deploy/project-data/lohrer-dev/backups"
 
 echo "== Build =="
 npm run build
@@ -18,11 +19,15 @@ npm run build
 echo "== Upload nach ${SSH_TARGET}:${WEBROOT} =="
 tar czf - -C dist . | ssh "${SSH_TARGET}" "
   set -e
-  rm -rf '${WEBROOT}/dist.new'
+  test ! -L '${WEBROOT}'
+  test \"\$(readlink -f '${WEBROOT}')\" = '${WEBROOT}'
+  test ! -e '${WEBROOT}/dist.new'
   mkdir -p '${WEBROOT}/dist.new'
   tar xzf - -C '${WEBROOT}/dist.new'
-  rm -rf '${WEBROOT}/dist.prev'
-  if [ -d '${WEBROOT}/dist' ]; then mv '${WEBROOT}/dist' '${WEBROOT}/dist.prev'; fi
+  test \"\$(readlink -f '${BACKUPROOT}')\" = '${BACKUPROOT}'
+  backup='${BACKUPROOT}/dist.'\$(date -u +%Y%m%dT%H%M%SZ)
+  test ! -e \"\$backup\"
+  if [ -d '${WEBROOT}/dist' ]; then mv '${WEBROOT}/dist' \"\$backup\"; fi
   mv '${WEBROOT}/dist.new' '${WEBROOT}/dist'
 "
 echo "-> Website aktualisiert (der Dienst liest die Dateien pro Anfrage neu,"
