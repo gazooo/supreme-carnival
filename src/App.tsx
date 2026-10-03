@@ -5,10 +5,6 @@ import Nav from './sections/Nav'
 import Footer from './sections/Footer'
 import Home from './pages/Home'
 
-const ServicesPage = lazy(() => import('./pages/ServicesPage'))
-const ProjectsPage = lazy(() => import('./pages/ProjectsPage'))
-const CareerPage = lazy(() => import('./pages/CareerPage'))
-const ContactPage = lazy(() => import('./pages/ContactPage'))
 const Impressum = lazy(() => import('./pages/Impressum'))
 const Datenschutz = lazy(() => import('./pages/Datenschutz'))
 const loading = <div className="min-h-svh" aria-hidden="true" />
@@ -53,20 +49,7 @@ function Shell({ page }: { page?: ReactNode }) {
     <>
       <Nav />
       <main id="main" tabIndex={-1} className="outline-none">
-        {route === '/' ? (
-          (page ?? <Home />)
-        ) : (
-          <Suspense fallback={loading}>
-            {page ?? (
-              <>
-                {route === '/services' && <ServicesPage />}
-                {route === '/projects' && <ProjectsPage />}
-                {route === '/career' && <CareerPage />}
-                {route === '/contact' && <ContactPage />}
-              </>
-            )}
-          </Suspense>
-        )}
+        {page ?? <Home />}
       </main>
       <Footer />
     </>
@@ -82,7 +65,7 @@ function SkipLink() {
   )
 }
 
-/** The build supplies a page and route for static HTML; the browser uses lazy routing. */
+/** Static onepager HTML and separately loaded legal documents share this shell. */
 export default function App({
   initialRoute = '/',
   page,

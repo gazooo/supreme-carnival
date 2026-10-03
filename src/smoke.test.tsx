@@ -21,7 +21,7 @@ describe('Public website', () => {
     expect(document.documentElement.lang).toBe('de')
     expect(
       screen.getAllByRole('link', { name: 'Projekt besprechen' })[0].getAttribute('href'),
-    ).toBe('/contact')
+    ).toBe('/#contact')
   })
   it('switches languages, updates metadata and remembers the choice on reload', () => {
     const view = openPage()
@@ -35,20 +35,21 @@ describe('Public website', () => {
     expect(document.documentElement.lang).toBe('en')
     expect(screen.getByRole('heading', { level: 1, name: /Build software/ })).toBeTruthy()
   })
-  it('navigates to projects and focuses the new page content', async () => {
+  it('scrolls to projects while retaining the other sections', async () => {
     openPage()
     fireEvent.click(screen.getAllByRole('link', { name: 'Projekte' })[0])
     expect(
-      await screen.findByRole('heading', { level: 1, name: COPY.de.projects.title }),
+      await screen.findByRole('heading', { level: 2, name: COPY.de.projects.title }),
     ).toBeTruthy()
-    expect(window.location.pathname).toBe('/projects')
-    expect(document.activeElement?.id).toBe('main')
-    expect(document.title).toBe(COPY.de.titles['/projects'])
+    expect(window.location.pathname).toBe('/')
+    expect(window.location.hash).toBe('#projects')
+    expect(document.getElementById('contact-message')).toBeTruthy()
+    expect(document.title).toBe(COPY.de.titles['/'])
   })
   it('returns to the previous route with browser history', async () => {
     openPage('/services')
     expect(
-      await screen.findByRole('heading', { level: 1, name: COPY.de.services.title }),
+      await screen.findByRole('heading', { level: 2, name: COPY.de.services.title }),
     ).toBeTruthy()
     window.history.replaceState(null, '', '/')
     fireEvent.popState(window)

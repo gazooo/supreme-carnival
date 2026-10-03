@@ -2,8 +2,8 @@
 
 Website für die Vorstellung von Leistungen, Projekterfahrung und die erste
 Kontaktaufnahme. Deutsche Standardsprache, vollständige englische Fassung und
-gespeicherte Sprachwahl. Ruhige, helle Gestaltung mit Porträt, grüner Akzentfarbe,
-normaler Navigation und direktem Kontaktweg.
+gespeicherte Sprachwahl. Ruhige, helle Gestaltung mit Porträt, blauer Akzentfarbe,
+Abschnittsnavigation und direktem Kontaktweg.
 
 Die redaktionellen Entscheidungen, Quellen und Regeln zur Pflege stehen in
 [CONTENT.md](CONTENT.md).
@@ -54,41 +54,38 @@ React 19, TypeScript, Vite und Tailwind CSS. Inter wird lokal ausgeliefert.
 Die Seite verwendet native Browserfunktionen für Scrollen und das mobile
 Dialogmenü; keine Animations- oder Scroll-Bibliothek.
 
-| Pfad                     | Aufgabe                                                              |
-| ------------------------ | -------------------------------------------------------------------- |
-| `src/content/i18n.ts`    | Alle Marketingtexte, Beschriftungen und Metadaten in DE und EN       |
-| `src/content/site.ts`    | Kontaktadresse und Formular-Endpunkt                                 |
-| `src/pages/`             | Startseite, Leistungen, Projekte, Über mich, Kontakt und Rechtliches |
-| `src/sections/`          | Wiederverwendbare Inhaltsabschnitte und Navigation                   |
-| `src/components/`        | Layout, Porträt, Formularelemente, Buttons                           |
-| `src/styles/global.css`  | Farben, Typografie, Abstände, Fokus und reduzierte Bewegung          |
-| `src/lib/router.tsx`     | Navigation mit History API; bestehende URLs bleiben erhalten         |
-| `src/lib/i18n.tsx`       | Sprachwahl; DE als Standard, Speicherung in localStorage             |
-| `src/prerender.tsx`      | Statisches HTML aus denselben React-Komponenten und Texten           |
-| `vite.config.ts`         | Build, lokale Formular-Weiterleitung und Ausgabe aller Routen        |
-| `index.html`             | Gemeinsame HTML-Vorlage und strukturierte Personendaten              |
-| `server/site-server.mjs` | Statische Auslieferung und Kontaktformular                           |
-| `public/`                | Porträt, Favicons, Linkvorschau, Sitemap und robots.txt              |
+| Pfad                     | Aufgabe                                                        |
+| ------------------------ | -------------------------------------------------------------- |
+| `src/content/i18n.ts`    | Alle Marketingtexte, Beschriftungen und Metadaten in DE und EN |
+| `src/content/site.ts`    | Kontaktadresse und Formular-Endpunkt                           |
+| `src/pages/`             | Onepager und rechtliche Dokumente; frühere Seitenbausteine     |
+| `src/sections/`          | Wiederverwendbare Inhaltsabschnitte und Navigation             |
+| `src/components/`        | Layout, Porträt, Formularelemente, Buttons                     |
+| `src/styles/global.css`  | Farben, Typografie, Abstände, Fokus und reduzierte Bewegung    |
+| `src/lib/router.tsx`     | Abschnittslinks, History API und Umleitung alter Seitenpfade   |
+| `src/lib/i18n.tsx`       | Sprachwahl; DE als Standard, Speicherung in localStorage       |
+| `src/prerender.tsx`      | Statisches HTML aus denselben React-Komponenten und Texten     |
+| `vite.config.ts`         | Build, lokale Formular-Weiterleitung und Ausgabe aller Routen  |
+| `index.html`             | Gemeinsame HTML-Vorlage und strukturierte Personendaten        |
+| `server/site-server.mjs` | Statische Auslieferung und Kontaktformular                     |
+| `public/`                | Porträt, Favicons, Linkvorschau, Sitemap und robots.txt        |
 
-Die Startseite fasst Leistungen, Projekte, Zusammenarbeit und Person zusammen.
-Die vorhandenen Routen `/services`, `/projects`, `/career` und `/contact`
-führen zu den Details. `/career` wird als „Über mich“ angezeigt.
+Der Onepager enthält alle Leistungen, Projekte, Zusammenarbeit, Vorstellung,
+Werdegang und das Kontaktformular ohne doppelte Vorschauen. Navbar-Links scrollen
+zu `/#home`, `/#services`, `/#projects`, `/#career` und `/#contact`. Die aktive
+Markierung folgt auch manuellem Scrollen und gleitet horizontal zwischen den
+Desktop-Links. Reduzierte Bewegung wird berücksichtigt. Rechtliches bleibt separat.
+Alte Seitenpfade führen im Browser zum passenden Anker; vorhandene Projektfragmente
+und Suchparameter bleiben erhalten.
 
 ## Statische Seiten und Metadaten
 
-Beim Build erhält jede Route eine eigene `dist/<route>/index.html` mit ihrem
-vollständigen deutschen Inhalt, einem passenden Titel, einer Beschreibung und
-der richtigen kanonischen URL. Es wird derselbe React-Code wie im Browser
-verwendet; eine separat gepflegte Startseiten-Kopie entfällt.
-
-Der Browser aktiviert das vorbereitete HTML mit React-Hydration. Bei zuvor
-gewähltem Englisch rendert er die englische Fassung direkt. Weitere Seiten
-werden bei Bedarf geladen. Navigation und Sprachwechsel aktualisieren Titel,
-Beschreibung und Social-Metadaten. Die öffentlich abrufbaren statischen
-Metadaten sind deutsch; Englisch hat keine separaten URLs.
-
-Es wird kein Rendering-Dienst in Produktion benötigt. Der bestehende statische
-Host und Kontaktformular-Dienst können die Ausgabe weiterhin ausliefern.
+Beim Build entstehen der Onepager und die rechtlichen Seiten als statisches
+HTML. Alte Seitenpfade liefern ebenfalls den Onepager mit Canonical `/`.
+Die Sitemap listet nur Hauptseite, Impressum und Datenschutz.
+React aktiviert das deutsche HTML; eine gespeicherte englische Sprachwahl
+rendert direkt Englisch. Rechtliche Seiten werden bei Bedarf nachgeladen.
+Sprachwechsel aktualisieren die Metadaten.
 
 ## Zugänglichkeit und Datenschutz
 
@@ -111,6 +108,8 @@ und in den strukturierten Personendaten in `index.html`. Das Kontaktformular
 stellt ebenfalls an diese Proton-Adresse zu. Betriebsdetails und Prüfungen
 stehen in [DEPLOY.md](DEPLOY.md). Eine USt-IdNr. erst nach Erteilung ergänzen.
 
+Aktueller VPS: Quelle `/opt/lohrer.dev/repository`, private Konfiguration und Backups nach [DEPLOY.md](DEPLOY.md#private-vps-pfade-seit-2026-10-03).
+
 ## Bildmarken und Linkvorschau
 
 Die bearbeitbaren Vorlagen liegen in `public/favicon.svg` und `public/og.svg`.
@@ -119,4 +118,17 @@ Die PNG-Dateien werden daraus gerendert: Favicon 32 × 32, Apple-Touch-Icon
 Bei einer Änderung der Vorlagen die entsprechenden PNG-Dateien ebenfalls
 aktualisieren. Das vorhandene Porträt wird ausschließlich per CSS dargestellt.
 
-Aktueller VPS: Quelle `/opt/lohrer.dev/repository`, private Konfiguration und Backups nach [DEPLOY.md](DEPLOY.md#private-vps-pfade-seit-2026-10-03).
+Das Hero verwendet das unveränderte transparente PNG
+`assets/portrait/portrait-no-bg.png`, als unveränderte Kopie unter
+`public/portrait-no-bg.png` ausgeliefert; „Über mich“ verwendet weiter `public/portrait.webp`.
+Der weiche, rechts nach oben gebogene Fade entsteht ausschließlich durch eine elliptische CSS-Maske in
+`src/styles/global.css`: `.hero-portrait` enthält `--portrait-width` (Mobil/Desktop),
+`--portrait-offset-y` (positiv = tiefer), `--portrait-caption-gap` und
+`--portrait-fade-start`. `--portrait-fade-center` verschiebt das Zentrum;
+`--portrait-fade-radius` steuert Breite und Höhe des Bogens. Die weiteren Stopps in `--portrait-fade` steuern die
+Weichheit; bei einem späteren Start die nachfolgenden Stopps ebenfalls nach hinten
+verschieben. `.hero-portrait-image` wendet die Maske an, `.hero-portrait-caption`
+steuert den Abstand zur unveränderten Beschriftung. Es gibt nur eine breite
+elliptische Maske, ohne überlagerte lineare Verläufe. Ihr Zentrum liegt oberhalb
+des Bildes; der äußere Radius endet kurz vor der unteren Bildkante, sodass auch
+diese weich verschwindet. Das PNG wird nicht bearbeitet.

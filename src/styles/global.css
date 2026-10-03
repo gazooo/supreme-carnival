@@ -1,16 +1,16 @@
 @import 'tailwindcss';
 @theme {
   --color-canvas: #faf9f6;
-  --color-canvas-2: #f0f2ed;
+  --color-canvas-2: #eef2f8;
   --color-raise: #ffffff;
-  --color-fg: #20312f;
-  --color-fg-2: #4f605b;
-  --color-fg-3: #5c6b65;
-  --color-line: #dce1da;
-  --color-line-strong: #a1ada4;
-  --color-accent: #2d6654;
-  --color-accent-soft: #e4ece5;
-  --color-signal: #2d6654;
+  --color-fg: #202e44;
+  --color-fg-2: #4e5f76;
+  --color-fg-3: #5d6b80;
+  --color-line: #dbe2ec;
+  --color-line-strong: #a0aec2;
+  --color-accent: #285fba;
+  --color-accent-soft: #e7eefb;
+  --color-signal: #285fba;
   --font-sans:
     'Inter Variable', Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: var(--font-sans);
@@ -61,6 +61,47 @@ summary {
   scroll-margin-top: 7rem;
 }
 @layer components {
+  .hero-portrait {
+    --portrait-width: 360px;
+    --portrait-offset-y: 0px;
+    --portrait-caption-gap: 8px;
+    --portrait-fade-start: 58%;
+    --portrait-fade-center: 20% -12%;
+    --portrait-fade-radius: 130% 111%;
+    --portrait-fade: radial-gradient(
+      ellipse var(--portrait-fade-radius) at var(--portrait-fade-center),
+      #000 0%,
+      #000 var(--portrait-fade-start),
+      rgb(0 0 0 / 0.98) 70%,
+      rgb(0 0 0 / 0.86) 78%,
+      rgb(0 0 0 / 0.66) 84%,
+      rgb(0 0 0 / 0.36) 90%,
+      rgb(0 0 0 / 0.1) 95%,
+      rgb(0 0 0 / 0.018) 98%,
+      transparent 100%
+    );
+    width: min(100%, var(--portrait-width));
+    margin-inline: auto;
+    position: relative;
+    top: var(--portrait-offset-y);
+  }
+  .hero-portrait-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    -webkit-mask-image: var(--portrait-fade);
+    mask-image: var(--portrait-fade);
+  }
+  .hero-portrait-caption {
+    margin-top: var(--portrait-caption-gap);
+  }
+  @media (min-width: 1024px) {
+    .hero-portrait {
+      --portrait-width: 420px;
+      justify-self: end;
+    }
+  }
   .section-space {
     padding-block: clamp(3.5rem, 7vw, 6rem);
   }
@@ -87,9 +128,20 @@ summary {
     text-underline-offset: 7px;
   }
   .nav-link:hover,
-  .nav-link[aria-current='page'] {
+  .nav-link[aria-current='location'] {
     color: var(--color-accent);
-    text-decoration: underline;
+  }
+  .nav-indicator {
+    position: absolute;
+    bottom: 3px;
+    left: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-accent);
+    pointer-events: none;
+    transition:
+      transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+      width 320ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   .text-link {
     display: inline-flex;

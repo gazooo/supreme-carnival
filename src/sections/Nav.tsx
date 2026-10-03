@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Container from '../components/Container'
 import { buttonClasses } from '../components/Button'
-import { RouteLink, useRouter } from '../lib/router'
+import { RouteLink, type Route } from '../lib/router'
 import { useCopy, useI18n } from '../lib/i18n'
 
 export function LangToggle() {
@@ -31,7 +31,53 @@ export function LangToggle() {
 
 export default function Nav() {
   const t = useCopy()
-  const { route } = useRouter()
+  const [active, setActive] = useState<Route>('/')
+  const desktopNav = useRef<HTMLElement>(null)
+  const [indicator, setIndicator] = useState({ left: 0, width: 0 })
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>
+    const update = () => {
+      const ids = ['home', 'services', 'projects', 'career', 'contact']
+      let current = 'home'
+      for (const id of ids) {
+        const section = document.getElementById(id)
+        if (section && section.getBoundingClientRect().top <= 140) current = id
+      }
+      if (
+        window.scrollY > 0 &&
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+      )
+        current = 'contact'
+      setActive(current === 'home' ? '/' : (('/' + current) as Route))
+    }
+    const onScroll = () => {
+      clearTimeout(timer)
+      timer = setTimeout(update, 100)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [])
+
+  useEffect(() => {
+    const nav = desktopNav.current
+    if (!nav) return
+    const measure = () => {
+      const link = nav.querySelector<HTMLElement>('[aria-current="location"]')
+      if (link) setIndicator({ left: link.offsetLeft, width: link.offsetWidth })
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(nav)
+    for (const link of nav.querySelectorAll('a')) observer.observe(link)
+    return () => observer.disconnect()
+  }, [active, t])
   const [open, setOpen] = useState(false)
   const dialogRef = useRef<HTMLDialogElement>(null)
   const close = () => dialogRef.current?.close()
@@ -58,8 +104,11 @@ export default function Nav() {
     <RouteLink
       key={tab.route}
       to={tab.route}
-      onClick={close}
-      aria-current={route === tab.route ? 'page' : undefined}
+      onClick={() => {
+        setActive(tab.route)
+        close()
+      }}
+      aria-current={active === tab.route ? 'location' : undefined}
       className="nav-link"
     >
       {tab.label}
@@ -79,8 +128,17 @@ export default function Nav() {
           <span className="text-base font-semibold tracking-tight sm:text-lg">Malte Lohrer</span>
         </RouteLink>
         <div className="hidden items-center gap-7 lg:flex">
-          <nav aria-label={t.a11y.mainNav} className="flex gap-6">
+          <nav ref={desktopNav} aria-label={t.a11y.mainNav} className="relative flex gap-6">
             {links}
+            <span
+              aria-hidden="true"
+              className="nav-indicator"
+              style={{
+                opacity: active === '/' ? 0 : 1,
+                width: indicator.width,
+                transform: `translateX(${indicator.left}px)`,
+              }}
+            />
           </nav>
           <LangToggle />
           <RouteLink to="/contact" className={buttonClasses('primary', 'sm')}>

@@ -14,7 +14,7 @@ export default function Contact() {
               eyebrow={t.contact.eyebrow}
               title={t.contact.title}
               description={t.contact.lead}
-              level={1}
+              level={2}
             />
             <div className="mt-8">
               <p className="text-sm text-fg-2">{t.contact.direct}</p>
@@ -34,7 +34,7 @@ export default function Contact() {
           <div className="rounded-lg border border-line bg-raise p-6 sm:p-8">
             <ContactForm />
             <div className="mt-8 border-t border-line pt-6">
-              <h2 className="text-sm font-semibold">{t.contact.nextTitle}</h2>
+              <h3 className="text-sm font-semibold">{t.contact.nextTitle}</h3>
               <p className="mt-2 text-sm leading-relaxed text-fg-2">{t.contact.nextBody}</p>
             </div>
           </div>

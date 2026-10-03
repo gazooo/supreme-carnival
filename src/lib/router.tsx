@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 
-/** Tab routes plus the two (German) legal documents. */
+/** Legacy section paths remain valid alongside the two legal documents. */
 export type Route =
   '/' | '/services' | '/projects' | '/career' | '/contact' | '/impressum' | '/datenschutz'
 
@@ -35,6 +35,15 @@ interface RouterValue {
 
 const RouterContext = createContext<RouterValue>({ route: '/', navigate: () => {} })
 
+function documentRoute(path: Route): Route {
+  return path === '/impressum' || path === '/datenschutz' ? path : '/'
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function routeHref(to: Route): string {
+  return documentRoute(to) === '/' ? '/#' + (to === '/' ? 'home' : to.slice(1)) : to
+}
+
 export function RouterProvider({
   children,
   initialRoute = '/',
@@ -43,21 +52,61 @@ export function RouterProvider({
   initialRoute?: Route
 }) {
   const [route, setRoute] = useState<Route>(() =>
-    typeof window === 'undefined' ? initialRoute : normalizeRoute(window.location.pathname),
+    documentRoute(
+      typeof window === 'undefined' ? initialRoute : normalizeRoute(window.location.pathname),
+    ),
   )
+  const [scrollRequest, setScrollRequest] = useState(0)
 
   useEffect(() => {
-    const onPopState = () => setRoute(normalizeRoute(window.location.pathname))
-    window.addEventListener('popstate', onPopState)
-    return () => window.removeEventListener('popstate', onPopState)
+    const sync = () => {
+      const path = normalizeRoute(window.location.pathname)
+      setRoute(documentRoute(path))
+      if (documentRoute(path) === '/' && path !== '/') {
+        window.history.replaceState(
+          null,
+          '',
+          '/' + window.location.search + (window.location.hash || '#' + path.slice(1)),
+        )
+      }
+      setScrollRequest((value) => value + 1)
+    }
+    sync()
+    window.addEventListener('popstate', sync)
+    window.addEventListener('hashchange', sync)
+    return () => {
+      window.removeEventListener('popstate', sync)
+      window.removeEventListener('hashchange', sync)
+    }
   }, [])
 
+  useEffect(() => {
+    if (route !== '/') return
+    const frame = requestAnimationFrame(() => {
+      let id = 'home'
+      try {
+        id = decodeURIComponent(window.location.hash.slice(1)) || id
+      } catch {
+        /* Invalid fragment: show top. */
+      }
+      const target = document.getElementById(id)
+      target?.scrollIntoView({
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      })
+      if (window.location.hash) target?.focus({ preventScroll: true })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [route, scrollRequest])
+
   const navigate = useCallback((to: Route) => {
-    if (normalizeRoute(window.location.pathname) !== to) {
-      window.history.pushState(null, '', to)
-    }
-    setRoute(to)
-    window.scrollTo({ top: 0, behavior: 'instant' })
+    const href = routeHref(to)
+    if (window.location.pathname + window.location.hash !== href)
+      window.history.pushState(null, '', href)
+    setRoute(documentRoute(to))
+    setScrollRequest((value) => value + 1)
+    if (documentRoute(to) !== '/') window.scrollTo({ top: 0, behavior: 'instant' })
   }, [])
 
   return <RouterContext.Provider value={{ route, navigate }}>{children}</RouterContext.Provider>
@@ -89,7 +138,7 @@ export function RouteLink({
     navigate(to)
   }
   return (
-    <a href={to} className={className} onClick={handleClick} {...rest}>
+    <a href={routeHref(to)} className={className} onClick={handleClick} {...rest}>
       {children}
     </a>
   )

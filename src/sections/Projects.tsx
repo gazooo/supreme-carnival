@@ -12,7 +12,7 @@ export default function Projects({ preview = false }: { preview?: boolean }) {
           eyebrow={t.projects.eyebrow}
           title={t.projects.title}
           description={t.projects.description}
-          level={preview ? 2 : 1}
+          level={2}
         />
         <div className={preview ? 'mt-10 grid gap-6 md:grid-cols-2' : 'mt-12 space-y-14'}>
           {t.projects.cases.map((study) => (

@@ -31,3 +31,11 @@ if (
     this.setAttribute('open', '')
   }
 }
+
+// Layout and scrolling are verified against a real browser.
+if (typeof HTMLElement !== 'undefined') HTMLElement.prototype.scrollIntoView = () => {}
+globalThis.ResizeObserver = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}

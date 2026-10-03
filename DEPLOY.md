@@ -127,12 +127,12 @@ ein Zustelltest erfordert zusätzlich den nachgewiesenen Eingang der Testmail.
 Die Website-A-Einträge bleiben unverändert. Für Proton sind zusätzlich folgende
 Records eingerichtet (TTL jeweils 3600 Sekunden):
 
-| Host | Typ | Priorität | Wert |
-| --- | --- | --- | --- |
-| `@` | MX | 10 | `mail.protonmail.ch` |
-| `@` | MX | 20 | `mailsec.protonmail.ch` |
-| `@` | TXT | – | `v=spf1 include:_spf.protonmail.ch ~all` |
-| `_dmarc` | TXT | – | `v=DMARC1; p=quarantine` |
+| Host     | Typ | Priorität | Wert                                     |
+| -------- | --- | --------- | ---------------------------------------- |
+| `@`      | MX  | 10        | `mail.protonmail.ch`                     |
+| `@`      | MX  | 20        | `mailsec.protonmail.ch`                  |
+| `@`      | TXT | –         | `v=spf1 include:_spf.protonmail.ch ~all` |
+| `_dmarc` | TXT | –         | `v=DMARC1; p=quarantine`                 |
 
 Außerdem bestehen der dauerhafte Proton-Verifizierungs-TXT-Eintrag sowie drei
 CNAMEs unter `protonmail._domainkey`, `protonmail2._domainkey` und
@@ -144,6 +144,17 @@ die im Formular angegebene Adresse wird als Reply-To gesetzt.
 
 ## Rückwechsel
 
+### Onepager seit 13.09.2026
+
+Die veröffentlichte Fassung enthält sämtliche Marketinginhalte auf `/` mit blauen Akzenten.
+Alte Seitenpfade liefern ebenfalls den Onepager mit Canonical `/`; der Browser
+führt sie zu den passenden Ankern. Vorhandene Projektfragmente und Suchparameter
+bleiben erhalten. Beim Deployment weiterhin alle Build-Verzeichnisse übernehmen.
+Caddy, Formular-Empfänger und Mail-DNS benötigen keine Änderung. Abschnittslinks,
+Browser-Zurück, mobiles Menü und aktive Markierung beim Scrollen prüfen.
+
+### Vorherige Fassung wiederherstellen
+
 Vor einer Konfigurationsänderung entsteht eine datierte Caddyfile-Sicherung.
 Den Inhalt dieser Sicherung in die bestehende gemountete Datei zurückschreiben,
 validieren und Caddy neu laden. Die vorherigen Website-Dateien liegen in
@@ -151,6 +162,18 @@ validieren und Caddy neu laden. Die vorherigen Website-Dateien liegen in
 unter einem neuen Sicherungsnamen erhalten. Keine Sicherung ungeprüft löschen.
 
 ## Veröffentlichungsstand
+
+- 13.09.2026, 08:33 UTC: Onepager mit blauen Akzenten und freigestelltem
+  Hero-Portrait veröffentlicht. Der Fade verwendet eine einzelne breite
+  elliptische CSS-Maske. Vorherige Live-Fassung gesichert unter
+  `/var/www/lohrer.dev/dist.before-onepager.20260913T083304Z`.
+  Bereits ausgelieferte gehashte Assets bleiben verfügbar; ältere Sicherungen
+  sind erhalten. Keine Änderung an Caddy, Mailkonfiguration oder Diensten.
+  Build, Lint und 21 Tests erfolgreich. Alle sieben Einstiege, Bilddatei,
+  Abschnittsnavigation, gleitende Markierung, mobile Navigation, Sprachwechsel,
+  Browser-Zurück und reduzierte Bewegung geprüft. Kontaktvalidierung liefert
+  HTTP 400 ohne Mailversand; der Browser-Formulartest verwendet eine simulierte
+  Antwort. Domainweiterleitungen und `zoinkr.com` weiterhin erreichbar.
 
 - 12.09.2026: Neugestaltung zunächst auf `lohrer.dev` veröffentlicht und geprüft.
   Die ältere Sicherung wurde als `dist.prev.20260912T111420Z` erhalten.

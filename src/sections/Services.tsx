@@ -12,7 +12,7 @@ export default function Services({ preview = false }: { preview?: boolean }) {
           eyebrow={t.services.eyebrow}
           title={t.services.title}
           description={t.services.description}
-          level={preview ? 2 : 1}
+          level={2}
         />
         <div
           className={

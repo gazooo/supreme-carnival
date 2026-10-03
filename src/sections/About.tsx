@@ -14,7 +14,7 @@ export default function About({ preview = false }: { preview?: boolean }) {
             <SectionHeading
               eyebrow={t.about.eyebrow}
               title={preview ? t.about.homeTitle : t.about.title}
-              level={preview ? 2 : 1}
+              level={2}
             />
             {!preview ? <Portrait className="mt-8 max-w-[260px]" /> : null}
           </div>

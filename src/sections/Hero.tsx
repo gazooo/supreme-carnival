@@ -1,5 +1,4 @@
 import Container from '../components/Container'
-import Portrait from '../components/Portrait'
 import { buttonClasses } from '../components/Button'
 import { ArrowRight } from '../components/doodles'
 import { RouteLink } from '../lib/router'
@@ -33,9 +32,17 @@ export default function Hero() {
               {t.nav.availability}
             </p>
           </div>
-          <figure className="mx-auto w-full max-w-[320px] lg:max-w-[360px] lg:justify-self-end">
-            <Portrait />
-            <figcaption className="mt-4 text-sm font-medium">
+          <figure className="hero-portrait">
+            <img
+              src="/portrait-no-bg.png"
+              width={1198}
+              height={1313}
+              alt={t.a11y.portraitAlt}
+              fetchPriority="high"
+              decoding="async"
+              className="hero-portrait-image"
+            />
+            <figcaption className="hero-portrait-caption text-sm font-medium">
               {t.hero.caption}
               <span className="mt-1 block text-xs font-normal leading-relaxed text-fg-2">
                 {t.hero.location}

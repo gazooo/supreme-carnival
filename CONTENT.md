@@ -1,6 +1,6 @@
 # Inhalt und Positionierung
 
-Stand der Überarbeitung: 12. September 2026.
+Stand der Überarbeitung: 13. September 2026.
 
 ## Ziel
 
@@ -11,18 +11,22 @@ wie eine Zusammenarbeit beginnt.
 
 ## Aufbau
 
-- Startseite: Angebot, Porträt, berufliche Stationen als Vertrauensbasis,
-  Leistungsüberblick, zwei Projektbeispiele, Zusammenarbeit, Kurzvorstellung,
-  Kontaktaufruf.
+Alle Inhalte stehen vollständig auf einem Onepager; doppelte Vorschauen entfallen.
+
+- Einstieg: Angebot, Porträt, berufliche Stationen als Vertrauensbasis.
 - Leistungen: individuelle Software, Automatisierung und KI, Unterstützung von
   Entwicklungsteams, Betrieb und Weiterentwicklung.
 - Projekte: Aufgabe, Rolle, Beitrag und Ergebnis bei Aremus Finance und
   Mercedes-Benz.
+- Zusammenarbeit: Ziel klären, früh ausprobieren, einführen und übergeben.
 - Über mich: persönliche Vorstellung, Ausbildung, Arbeitsort und Werdegang.
 - Kontakt: Ausgangslage schildern, Formular oder E-Mail, Verfügbarkeit und
   Erläuterung des nächsten Schritts.
 
 ## Redaktionelle Regeln
+
+Blaue Akzente ersetzen das Grün. Navbar-Links scrollen zu Abschnitten, der aktive
+Unterstrich gleitet horizontal. Impressum und Datenschutz bleiben separat.
 
 Deutsch ist die Standardsprache. Alle Marketingtexte und Beschriftungen werden
 auch auf Englisch gepflegt. Der Name eines Werkzeugs wird genannt, wenn er
