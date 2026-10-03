@@ -7,7 +7,7 @@
   Bewusst kein Binär-Piping (PowerShell verfälscht Binärströme in der
   Pipeline) — stattdessen: Tarball anlegen, per scp übertragen, auf dem
   Server entpacken. Der Wechsel bleibt atomar (dist.new -> dist), die
-  vorherige Version bleibt als dist.prev liegen.
+  vorherige Version bleibt als private datierte Sicherung erhalten.
 
 .EXAMPLE
   .\deploy\publish.ps1
@@ -20,6 +20,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if ($WebRoot -ne '/var/www/lohrer.dev') { throw 'Only the documented canonical VPS webroot is supported.' }
 
 # Immer aus dem Repo-Root arbeiten, egal von wo aufgerufen
 $repoRoot = Split-Path -Parent $PSScriptRoot
@@ -50,12 +51,17 @@ try {
   # auswerten. Die Platzhalter werden deshalb per Replace ersetzt.
   $remoteTemplate = @'
 set -e
-rm -rf '__WEBROOT__/dist.new'
+test ! -L '__WEBROOT__'
+test "$(readlink -f '__WEBROOT__')" = '__WEBROOT__'
+test ! -e '__WEBROOT__/dist.new'
 mkdir -p '__WEBROOT__/dist.new'
 tar xzf /tmp/lohrer-dist.tgz -C '__WEBROOT__/dist.new'
 rm -f /tmp/lohrer-dist.tgz
-rm -rf '__WEBROOT__/dist.prev'
-if [ -d '__WEBROOT__/dist' ]; then mv '__WEBROOT__/dist' '__WEBROOT__/dist.prev'; fi
+backups='/home/deploy/project-data/lohrer-dev/backups'
+test "$(readlink -f "$backups")" = "$backups"
+backup="$backups/dist.$(date -u +%Y%m%dT%H%M%SZ)"
+test ! -e "$backup"
+if [ -d '__WEBROOT__/dist' ]; then mv '__WEBROOT__/dist' "$backup"; fi
 mv '__WEBROOT__/dist.new' '__WEBROOT__/dist'
 printf '   entpackt: '
 find '__WEBROOT__/dist' -type f | wc -l
