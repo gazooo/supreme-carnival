@@ -10,8 +10,12 @@ Die redaktionellen Entscheidungen, Quellen und Regeln zur Pflege stehen in
 
 ## Lokal starten
 
+Empfohlen: Node.js 22 ab 22.12 (wie in CI) oder Node.js 24. Vite 7 und
+Vitest 4 laufen mit diesen Versionen. `npm ci` installiert den geprüften Stand
+aus `package-lock.json` reproduzierbar.
+
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -36,6 +40,8 @@ sind dafür nicht notwendig. Einrichtung und echter Versand: [DEPLOY.md](DEPLOY.
 ## Prüfungen
 
 ```bash
+npm audit
+npm audit --omit=dev
 npm run build
 npm run lint
 npm test
@@ -47,6 +53,16 @@ Die Tests prüfen Navigation, Seiteneinstiege, Sprachwechsel und gespeicherte
 Sprachwahl sowie Erfolg und Fehler des Kontaktformulars. Bei Änderungen am
 Layout zusätzlich im Browser prüfen: Desktop und Mobil, beide Sprachen,
 Menü per Tastatur, Projektlinks und Formular.
+
+Die Sicherheitsaktualisierung vom 04.10.2026 hebt Vitest und `@vitest/mocker`
+auf 4.1.11 an. Das Lockfile enthält außerdem `brace-expansion` 1.1.21/5.0.12
+und `js-yaml` 4.3.2 innerhalb der bestehenden ESLint-/typescript-eslint-Abhängigkeiten.
+Diese Versionen beheben die gemeldeten Entwicklungsschwachstellen ohne Overrides:
+[Vitest-Advisory](https://github.com/advisories/GHSA-82fw-gwwq-j7x9),
+[brace-expansion-Advisories](https://github.com/advisories/GHSA-q2hr-2g5m-vwhr),
+[js-yaml-Advisory](https://github.com/advisories/GHSA-2883-xcg3-v3hh).
+Der Prerender-Test lädt seine Node-Typen ausdrücklich; die bisherigen Testumgebungen
+und Mocks bleiben mit Vitest 4 kompatibel.
 
 ## Technik und Struktur
 
